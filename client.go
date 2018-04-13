@@ -70,7 +70,7 @@ func (c *IloClient) GetFwVersion() (string, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	defer resp.Body.Close()
 
