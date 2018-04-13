@@ -9,7 +9,7 @@ Hewlett Packard iLO4 golang library for scripting bare metal without HP OneView
 package main
 
 import "fmt"
-import "github.com/sherzberg/hpilo"
+import "github.com/kgrvamsi/hpilo"
 
 func main() {
     client := hpilo.NewIloClient("hostname-0", "username", "password")
