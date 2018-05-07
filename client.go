@@ -7,6 +7,7 @@ import (
 	"encoding/xml"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type IloClient struct {
@@ -97,6 +98,101 @@ type RIMP struct {
 	IPM                string   `xml:"MP>IPM"`
 }
 
+type HealthData struct {
+	XMLName                  xml.Name                  `xml:"RIBCL,omitempty" json:"RIBCL,omitempty"`
+	VERSION                  string                    `xml:"VERSION,attr"  json:",omitempty"`
+	GET_EMBEDDED_HEALTH_DATA *GET_EMBEDDED_HEALTH_DATA `xml:"GET_EMBEDDED_HEALTH_DATA,omitempty" json:"GET_EMBEDDED_HEALTH_DATA,omitempty"`
+}
+
+type GET_EMBEDDED_HEALTH_DATA struct {
+	XMLName            xml.Name            `xml:"GET_EMBEDDED_HEALTH_DATA,omitempty" json:"GET_EMBEDDED_HEALTH_DATA,omitempty"`
+	HEALTH_AT_A_GLANCE *HEALTH_AT_A_GLANCE `xml:"HEALTH_AT_A_GLANCE,omitempty" json:"HEALTH_AT_A_GLANCE,omitempty"`
+}
+
+type HEALTH_AT_A_GLANCE struct {
+	XMLName        xml.Name        `xml:"HEALTH_AT_A_GLANCE,omitempty" json:"HEALTH_AT_A_GLANCE,omitempty"`
+	BATTERY        *BATTERY        `xml:"BATTERY,omitempty" json:"BATTERY,omitempty"`
+	BIOS_HARDWARE  *BIOS_HARDWARE  `xml:"BIOS_HARDWARE,omitempty" json:"BIOS_HARDWARE,omitempty"`
+	FANS           *FANS           `xml:"FANS,omitempty" json:"FANS,omitempty"`
+	MEMORY         *MEMORY         `xml:"MEMORY,omitempty" json:"MEMORY,omitempty"`
+	NETWORK        *NETWORK        `xml:"NETWORK,omitempty" json:"NETWORK,omitempty"`
+	POWER_SUPPLIES *POWER_SUPPLIES `xml:"POWER_SUPPLIES,omitempty" json:"POWER_SUPPLIES,omitempty"`
+	PROCESSOR      *PROCESSOR      `xml:"PROCESSOR,omitempty" json:"PROCESSOR,omitempty"`
+	STORAGE        *STORAGE        `xml:"STORAGE,omitempty" json:"STORAGE,omitempty"`
+	TEMPERATURE    *TEMPERATURE    `xml:"TEMPERATURE,omitempty" json:"TEMPERATURE,omitempty"`
+}
+
+type FANS struct {
+	XMLName        xml.Name `xml:"FANS,omitempty" json:"FANS,omitempty"`
+	AttrREDUNDANCY string   `xml:"REDUNDANCY,attr"  json:",omitempty"`
+	AttrSTATUS     string   `xml:"STATUS,attr"  json:",omitempty"`
+}
+
+type MEMORY struct {
+	XMLName    xml.Name `xml:"MEMORY,omitempty" json:"MEMORY,omitempty"`
+	AttrSTATUS string   `xml:"STATUS,attr"  json:",omitempty"`
+}
+
+type BATTERY struct {
+	XMLName    xml.Name `xml:"BATTERY,omitempty" json:"BATTERY,omitempty"`
+	AttrSTATUS string   `xml:"STATUS,attr"  json:",omitempty"`
+}
+
+type BIOS_HARDWARE struct {
+	XMLName    xml.Name `xml:"BIOS_HARDWARE,omitempty" json:"BIOS_HARDWARE,omitempty"`
+	AttrSTATUS string   `xml:"STATUS,attr"  json:",omitempty"`
+}
+
+type NETWORK struct {
+	XMLName    xml.Name `xml:"NETWORK,omitempty" json:"NETWORK,omitempty"`
+	AttrSTATUS string   `xml:"STATUS,attr"  json:",omitempty"`
+}
+
+type POWER_SUPPLIES struct {
+	XMLName        xml.Name `xml:"POWER_SUPPLIES,omitempty" json:"POWER_SUPPLIES,omitempty"`
+	AttrREDUNDANCY string   `xml:"REDUNDANCY,attr"  json:",omitempty"`
+	AttrSTATUS     string   `xml:"STATUS,attr"  json:",omitempty"`
+}
+
+type PROCESSOR struct {
+	XMLName    xml.Name `xml:"PROCESSOR,omitempty" json:"PROCESSOR,omitempty"`
+	AttrSTATUS string   `xml:"STATUS,attr"  json:",omitempty"`
+}
+
+type CRIBCL struct {
+	XMLName                  xml.Name                  `xml:"RIBCL,omitempty" json:"RIBCL,omitempty"`
+	VERSION                  string                    `xml:"VERSION,attr"  json:",omitempty"`
+	GET_EMBEDDED_HEALTH_DATA *GET_EMBEDDED_HEALTH_DATA `xml:"GET_EMBEDDED_HEALTH_DATA,omitempty" json:"GET_EMBEDDED_HEALTH_DATA,omitempty"`
+}
+
+type STORAGE struct {
+	XMLName    xml.Name `xml:"STORAGE,omitempty" json:"STORAGE,omitempty"`
+	AttrSTATUS string   `xml:"STATUS,attr"  json:",omitempty"`
+}
+
+type TEMPERATURE struct {
+	XMLName    xml.Name `xml:"TEMPERATURE,omitempty" json:"TEMPERATURE,omitempty"`
+	AttrSTATUS string   `xml:"STATUS,attr"  json:",omitempty"`
+}
+
+type HealthInfo struct {
+	BatteryStatus           string `json:"battery_status"`
+	BiosStatus              string `json:"bios_status"`
+	FanRedundancy           string `json:"fan_redundancy"`
+	FanStatus               string `json:"fan_status"`
+	MemoryStatus            string `json:"memory_status"`
+	NetworkStatus           string `json:"network_status"`
+	PowerSupliesStatus      string `json:"power_suplies_status"`
+	PowerSuppliesRedundancy string `json:"power_supplies_redundancy"`
+	ProcessorStatus         string `json:"processor_status"`
+	StorageStatus           string `json:"storage_status"`
+	TemperatureStatus       string `json:"temperature_status"`
+}
+
+type HardwareInfo struct {
+	ExtraData string `json:"extra_data"`
+}
+
 func NewIloClient(hostname string, username string, password string) *IloClient {
 
 	return &IloClient{
@@ -171,9 +267,9 @@ func (c *IloClient) GetHostData() (string, error) {
 	xml.Unmarshal(_body, &x)
 
 	hostData := HostInfo{
-		UUID:        x.UUID,
-		ServerModel: x.SPN,
-		Serial:      x.SBSN,
+		UUID:        strings.TrimSpace(x.UUID),
+		ServerModel: strings.TrimSpace(x.SPN),
+		Serial:      strings.TrimSpace(x.SBSN),
 	}
 
 	output, _ := json.Marshal(hostData)
@@ -288,4 +384,86 @@ func (c *IloClient) RestartServer() (string, error) {
 	output, _ := json.Marshal(_response)
 
 	return string(output), nil
+}
+
+func (c *IloClient) GetHealthData() (string, error) {
+
+	url := c.Hostname + "/ribcl"
+
+	body := "<?xml version=\"1.0\"?>" +
+		"<?ilo entity-processing=\"standard\"?>" +
+		"<?xmlilo output-format=\"xml\"?>" +
+		"<RIBCL VERSION=\"2.0\">" +
+		"<LOGIN PASSWORD=\"" + c.Password + "\" USER_LOGIN=\"" + c.Username + "\">" +
+		"<SERVER_INFO MODE=\"read\">" +
+		"<GET_EMBEDDED_HEALTH>" +
+		"</GET_EMBEDDED_HEALTH>" +
+		"</SERVER_INFO>" +
+		"</LOGIN>" +
+		"</RIBCL>"
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(body)))
+	req.Header.Set("Content-Type", "application/xml")
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+
+	var healthData CRIBCL
+	xml.Unmarshal(_body, &healthData)
+
+	_healthData, _ := json.Marshal(HealthInfo{
+		BiosStatus:              string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.BIOS_HARDWARE.AttrSTATUS),
+		FanStatus:               string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.FANS.AttrSTATUS),
+		FanRedundancy:           string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.FANS.AttrREDUNDANCY),
+		TemperatureStatus:       string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.TEMPERATURE.AttrSTATUS),
+		PowerSupliesStatus:      string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.POWER_SUPPLIES.AttrSTATUS),
+		PowerSuppliesRedundancy: string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.POWER_SUPPLIES.AttrREDUNDANCY),
+		BatteryStatus:           string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.BATTERY.AttrSTATUS),
+		ProcessorStatus:         string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.PROCESSOR.AttrSTATUS),
+		MemoryStatus:            string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.MEMORY.AttrSTATUS),
+		NetworkStatus:           string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.NETWORK.AttrSTATUS),
+		StorageStatus:           string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.STORAGE.AttrSTATUS),
+	},
+	)
+
+	return string(_healthData), nil
+}
+
+//GetHardwareData will fetch all the data in raw xaml format
+//will be Depreciated soon to get the list of fields in different structs
+func (c *IloClient) GetHardwareData() (string, error) {
+
+	url := c.Hostname + "/ribcl"
+
+	body := "<?xml version=\"1.0\"?>" +
+		"<?ilo entity-processing=\"standard\"?>" +
+		"<?xmlilo output-format=\"xml\"?>" +
+		"<RIBCL VERSION=\"2.0\">" +
+		"<LOGIN PASSWORD=\"" + c.Password + "\" USER_LOGIN=\"" + c.Username + "\">" +
+		"<SERVER_INFO MODE=\"read\">" +
+		"<GET_EMBEDDED_HEALTH>" +
+		"</GET_EMBEDDED_HEALTH>" +
+		"</SERVER_INFO>" +
+		"</LOGIN>" +
+		"</RIBCL>"
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(body)))
+	req.Header.Set("Content-Type", "application/xml")
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+
+	return string(_body), nil
 }
