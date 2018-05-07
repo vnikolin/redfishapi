@@ -176,7 +176,7 @@ type TEMPERATURE struct {
 }
 
 type HealthInfo struct {
-	BatteryStatus           string `json:"battery_status"`
+	//BatteryStatus           string `json:"battery_status"`
 	BiosStatus              string `json:"bios_status"`
 	FanRedundancy           string `json:"fan_redundancy"`
 	FanStatus               string `json:"fan_status"`
@@ -424,11 +424,11 @@ func (c *IloClient) GetHealthData() (string, error) {
 		TemperatureStatus:       string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.TEMPERATURE.AttrSTATUS),
 		PowerSupliesStatus:      string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.POWER_SUPPLIES.AttrSTATUS),
 		PowerSuppliesRedundancy: string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.POWER_SUPPLIES.AttrREDUNDANCY),
-		BatteryStatus:           string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.BATTERY.AttrSTATUS),
-		ProcessorStatus:         string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.PROCESSOR.AttrSTATUS),
-		MemoryStatus:            string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.MEMORY.AttrSTATUS),
-		NetworkStatus:           string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.NETWORK.AttrSTATUS),
-		StorageStatus:           string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.STORAGE.AttrSTATUS),
+		//BatteryStatus:           string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.BATTERY.AttrSTATUS),
+		ProcessorStatus: string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.PROCESSOR.AttrSTATUS),
+		MemoryStatus:    string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.MEMORY.AttrSTATUS),
+		NetworkStatus:   string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.NETWORK.AttrSTATUS),
+		StorageStatus:   string(healthData.GET_EMBEDDED_HEALTH_DATA.HEALTH_AT_A_GLANCE.STORAGE.AttrSTATUS),
 	},
 	)
 
