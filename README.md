@@ -2,6 +2,9 @@
 
 This Library should support both Dell and Hp Servers which have Redfish API enabled.
 
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/kgrvamsi/redfishapi)](https://goreportcard.com/report/github.com/kgrvamsi/redfishapi)
+
 ## Usage
 
 ```go
