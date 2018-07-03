@@ -1,4 +1,4 @@
-package client
+package redfishapi
 
 import (
 	"crypto/tls"
@@ -349,6 +349,7 @@ func basicAuth(username, password string) string {
 func (c *IloClient) GetFwVersion() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1/FirmwareInventory/"
+	return "yet to do", error
 }
 
 func (c *IloClient) GetMacAddressHp() (string, error) {

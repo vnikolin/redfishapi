@@ -1,4 +1,4 @@
-package client
+package redfishapi
 
 import (
 	"crypto/tls"
