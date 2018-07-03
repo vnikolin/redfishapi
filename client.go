@@ -1,4 +1,4 @@
-package client
+package redfishapi
 
 type IloClient struct {
 	Hostname string
@@ -18,10 +18,10 @@ func NewIloClient(hostname string, username string, password string) *IloClient 
 func (c *IloClient) GetMacAddress(make string) (string, error) {
 
 	if make == "dell" {
-		return dell.GetMacAddress()
+		return GetMacAddressDell(), nil
 
 	} else if make == "hp" {
-		return hp.GetMacAddress()
+		return GetMacAddressHp(), nil
 
 	}
 }
