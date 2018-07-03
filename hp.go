@@ -349,7 +349,7 @@ func basicAuth(username, password string) string {
 func (c *IloClient) GetFwVersion() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1/FirmwareInventory/"
-	return "yet to do", error
+	return "yet to do", nil
 }
 
 func (c *IloClient) GetMacAddressHp() (string, error) {

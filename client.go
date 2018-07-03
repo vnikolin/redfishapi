@@ -14,14 +14,3 @@ func NewIloClient(hostname string, username string, password string) *IloClient 
 		Password: password,
 	}
 }
-
-func (c *IloClient) GetMacAddress(make string) (string, error) {
-
-	if make == "dell" {
-		return GetMacAddressDell(), nil
-
-	} else if make == "hp" {
-		return GetMacAddressHp(), nil
-
-	}
-}
