@@ -1,6 +1,6 @@
-# hpilo
+# Redfish API
 
-Hewlett Packard iLO4 golang library for scripting bare metal without HP OneView
+This Library should support both Dell and Hp Servers which have Redfish API enabled.
 
 ## Usage
 
@@ -9,16 +9,16 @@ Hewlett Packard iLO4 golang library for scripting bare metal without HP OneView
 package main
 
 import "fmt"
-import "github.com/kgrvamsi/hpilo"
+import "github.com/kgrvamsi/redfishapi"
 
 func main() {
-    client := hpilo.NewIloClient("hostname-0", "username", "password")
-
-    fw_version, err := client.GetFwVersion()
+    client := redfishapi.NewIloClient("hostname-0", "username", "password")
+    // use lowercase
+    mac_address, err := client.GetMacAddress("dell")
     if err != nil {
         panic(err)
     }
 
-    fmt.Println(fw_version)
+    fmt.Println(mac_address)
 }
 ```
