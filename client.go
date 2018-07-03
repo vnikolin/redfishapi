@@ -1,9 +1,4 @@
-package redfishapi
-
-import (
-	"dell"
-	"hp"
-)
+package client
 
 type IloClient struct {
 	Hostname string
