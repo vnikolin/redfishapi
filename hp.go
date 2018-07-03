@@ -1,7 +1,6 @@
-package hp
+package client
 
 import (
-	"client"
 	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
@@ -347,12 +346,12 @@ func basicAuth(username, password string) string {
 }
 
 // TODO: Need to complete
-func (c *client.IloClient) GetFwVersion() (string, error) {
+func (c *IloClient) GetFwVersion() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1/FirmwareInventory/"
 }
 
-func (c *IloClient) GetMacAddress() (string, error) {
+func (c *IloClient) GetMacAddressHp() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1"
 

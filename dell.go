@@ -1,4 +1,4 @@
-package dell
+package client
 
 import (
 	"crypto/tls"
@@ -59,7 +59,7 @@ type MACData struct {
 	MacAddresss []string `json:"macaddress"`
 }
 
-func (c *IloClient) GetMacAddress() (string, error) {
+func (c *IloClient) GetMacAddressDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/EthernetInterfaces/"
 
