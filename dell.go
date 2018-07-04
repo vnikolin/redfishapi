@@ -3,6 +3,7 @@ package redfishapi
 import (
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 )
@@ -75,8 +76,12 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
-	if err != nil {
-		return "", err
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New("Unauthorized")
+			return "", err
+		}
+
 	}
 	defer resp.Body.Close()
 
