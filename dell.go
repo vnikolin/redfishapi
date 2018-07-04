@@ -83,7 +83,7 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var x EtherInterfaces
-	var Macs []string
+	var Macs []MACData
 
 	json.Unmarshal(_body, &x)
 
@@ -109,11 +109,10 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 			Name:        y.Name,
 			Description: y.Description,
 			MacAddresss: y.MACAddress,
-			Status:      y.Status,
-			State:       y.State,
+			Status:      y.Status.Health,
+			State:       y.Status.State,
 			Vlan:        y.VLAN,
 		}
-
 		Macs = append(Macs, macData)
 
 	}
