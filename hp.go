@@ -346,11 +346,11 @@ func basicAuth(username, password string) string {
 }
 
 // TODO: Need to complete
-func (c *IloClient) GetFwVersion() (string, error) {
+// func (c *IloClient) GetFwVersion() (string, error) {
 
-	url := c.Hostname + "/redfish/v1/Systems/1/FirmwareInventory/"
-	return "yet to do", nil
-}
+// 	url := c.Hostname + "/redfish/v1/Systems/1/FirmwareInventory/"
+// 	return "yet to do", nil
+// }
 
 func (c *IloClient) GetMacAddressHp() (string, error) {
 

@@ -39,8 +39,8 @@ type GetMacAddress struct {
 		Health string `json:"Health"`
 		State  string `json:"State"`
 	} `json:"Status"`
-	UefiDevicePath string      `json:"UefiDevicePath"`
-	VLAN           interface{} `json:"VLAN"`
+	UefiDevicePath string `json:"UefiDevicePath"`
+	VLAN           string `json:"VLAN"`
 }
 
 type EtherInterfaces struct {
@@ -56,7 +56,12 @@ type EtherInterfaces struct {
 }
 
 type MACData struct {
-	MacAddresss []string `json:"macaddress"`
+	MacAddresss string `json:"macaddress"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Status      string `json:"status"`
+	State       string `json:"state"`
+	Vlan        string `json:"vlan"`
 }
 
 func (c *IloClient) GetMacAddressDell() (string, error) {
@@ -100,15 +105,20 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 
 		json.Unmarshal(_body, &y)
 
-		Macs = append(Macs, y.MACAddress)
+		macData := MACData{
+			Name:        y.Name,
+			Description: y.Description,
+			MacAddresss: y.MACAddress,
+			Status:      y.Status,
+			State:       y.State,
+			Vlan:        y.VLAN,
+		}
+
+		Macs = append(Macs, macData)
 
 	}
 
-	mac_address := MACData{
-		MacAddresss: Macs,
-	}
-
-	output, _ := json.Marshal(mac_address)
+	output, _ := json.Marshal(Macs)
 
 	return string(output), nil
 
