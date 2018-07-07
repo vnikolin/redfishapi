@@ -105,7 +105,7 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
 
 	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, _ s:= client.Do(req)
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 401 {
 			err := errors.New("Unauthorized")
