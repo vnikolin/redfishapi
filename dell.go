@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"regexp"
 )
 
 type GetMacAddress struct {
@@ -44,7 +45,7 @@ type GetMacAddress struct {
 	VLAN           string `json:"VLAN"`
 }
 
-type EtherInterfaces struct {
+type MemberCount struct {
 	OdataContext string `json:"@odata.context"`
 	OdataId      string `json:"@odata.id"`
 	OdataType    string `json:"@odata.type"`
@@ -56,6 +57,21 @@ type EtherInterfaces struct {
 	Name                string `json:"Name"`
 }
 
+type FirmwareDataDell struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	ID             string `json:"Id"`
+	Name           string `json:"Name"`
+	Status         struct {
+		Health string `json:"Health"`
+		State  string `json:"State"`
+	} `json:"Status"`
+	Updateable bool   `json:"Updateable"`
+	Version    string `json:"Version"`
+}
+
 type MACData struct {
 	MacAddresss string `json:"macaddress"`
 	Name        string `json:"name"`
@@ -63,6 +79,20 @@ type MACData struct {
 	Status      string `json:"status"`
 	State       string `json:"state"`
 	Vlan        string `json:"vlan"`
+}
+
+type HealthData struct {
+	Name   string `json:"name"`
+	Id     string `json:"id"`
+	State  string `json:"state"`
+	Health string `json:"health"`
+}
+
+type FirmwareData struct {
+	Name       string `json:"name"`
+	Id         string `json:"id"`
+	Version    string `json:"version"`
+	Updateable bool   `json:"updateable"`
 }
 
 func (c *IloClient) GetMacAddressDell() (string, error) {
@@ -87,7 +117,7 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 
 	_body, _ := ioutil.ReadAll(resp.Body)
 
-	var x EtherInterfaces
+	var x MemberCount
 	var Macs []MACData
 
 	json.Unmarshal(_body, &x)
@@ -123,6 +153,140 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 	}
 
 	output, _ := json.Marshal(Macs)
+
+	return string(output), nil
+
+}
+
+func (c *IloClient) GetHealthDataDell() (string, error) {
+
+	url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New("Unauthorized")
+			return "", err
+		}
+
+	}
+	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+
+	var (
+		x           MemberCount
+		_healthdata []HealthData
+	)
+
+	json.Unmarshal(_body, &x)
+
+	for i := range x.Members {
+		r, _ := regexp.Compile("Installed")
+		if r.MatchString(x.Members[i].OdataId) == true {
+			_url := c.Hostname + x.Members[i].OdataId
+			req, err := http.NewRequest("GET", _url, nil)
+			req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+			client := &http.Client{}
+			resp, err := client.Do(req)
+			if err != nil {
+				return "", err
+			}
+			defer resp.Body.Close()
+
+			_body, _ := ioutil.ReadAll(resp.Body)
+
+			var y FirmwareDataDell
+
+			json.Unmarshal(_body, &y)
+
+			healthData := HealthData{
+				Name:   y.Name,
+				Id:     y.ID,
+				State:  y.Status.State,
+				Health: y.Status.Health,
+			}
+
+			_healthdata = append(_healthdata, healthData)
+
+		}
+	}
+
+	output, _ := json.Marshal(_healthdata)
+
+	return string(output), nil
+
+}
+
+func (c *IloClient) GetFirmwareDell() (string, error) {
+
+	url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New("Unauthorized")
+			return "", err
+		}
+
+	}
+	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+
+	var (
+		x         MemberCount
+		_firmdata []FirmwareData
+	)
+
+	json.Unmarshal(_body, &x)
+
+	for i := range x.Members {
+		r, _ := regexp.Compile("Installed")
+		if r.MatchString(x.Members[i].OdataId) == true {
+			_url := c.Hostname + x.Members[i].OdataId
+			req, err := http.NewRequest("GET", _url, nil)
+			req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+			client := &http.Client{}
+			resp, err := client.Do(req)
+			if err != nil {
+				return "", err
+			}
+			defer resp.Body.Close()
+
+			_body, _ := ioutil.ReadAll(resp.Body)
+
+			var y FirmwareDataDell
+
+			json.Unmarshal(_body, &y)
+
+			firmData := FirmwareData{
+				Name:       y.Name,
+				Id:         y.ID,
+				Version:    y.Version,
+				Updateable: y.Updateable,
+			}
+
+			_firmdata = append(_firmdata, firmData)
+
+		}
+	}
+
+	output, _ := json.Marshal(_firmdata)
 
 	return string(output), nil
 
