@@ -101,7 +101,7 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
-	req, err := http.NewRequest("GET", url, nil)
+	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
 
 	client := &http.Client{}
@@ -168,7 +168,7 @@ func (c *IloClient) GetHealthDataDell() (string, error) {
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
 
 	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, _ := client.Do(req)
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 401 {
 			err := errors.New("Unauthorized")
@@ -235,7 +235,7 @@ func (c *IloClient) GetFirmwareDell() (string, error) {
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
 
 	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, _ := client.Do(req)
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 401 {
 			err := errors.New("Unauthorized")
