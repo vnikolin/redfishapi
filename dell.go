@@ -9,6 +9,11 @@ import (
 	"regexp"
 )
 
+const (
+	StatusUnauthorized        = "Unauthorized"
+	StatusInternalServerError = "Server Error"
+)
+
 type GetMacAddress struct {
 	_odata_context                     string        `json:"@odata.context"`
 	_odata_id                          string        `json:"@odata.id"`
@@ -105,14 +110,24 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
 
 	client := &http.Client{}
-	resp, _ := client.Do(req)
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New(StatusInternalServerError)
+			return "", err
+		} else {
+			return "", err
+		}
+	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 401 {
-			err := errors.New("Unauthorized")
+			err := errors.New(StatusUnauthorized)
 			return "", err
 		}
 
 	}
+
 	defer resp.Body.Close()
 
 	_body, _ := ioutil.ReadAll(resp.Body)
@@ -168,7 +183,16 @@ func (c *IloClient) GetHealthDataDell() (string, error) {
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
 
 	client := &http.Client{}
-	resp, _ := client.Do(req)
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New("Server Error")
+			return "", err
+		} else {
+			return "", err
+		}
+	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 401 {
 			err := errors.New("Unauthorized")
@@ -235,7 +259,16 @@ func (c *IloClient) GetFirmwareDell() (string, error) {
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
 
 	client := &http.Client{}
-	resp, _ := client.Do(req)
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New("Server Error")
+			return "", err
+		} else {
+			return "", err
+		}
+	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 401 {
 			err := errors.New("Unauthorized")
