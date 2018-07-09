@@ -14,6 +14,110 @@ const (
 	StatusInternalServerError = "Server Error"
 )
 
+type SystemView struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Actions        struct {
+		_ComputerSystem_Reset struct {
+			ResetType_Redfish_AllowableValues []string `json:"ResetType@Redfish.AllowableValues"`
+			Target                            string   `json:"target"`
+		} `json:"#ComputerSystem.Reset"`
+	} `json:"Actions"`
+	AssetTag string `json:"AssetTag"`
+	Bios     struct {
+		_odata_id string `json:"@odata.id"`
+	} `json:"Bios"`
+	BiosVersion string `json:"BiosVersion"`
+	Boot        struct {
+		BootSourceOverrideEnabled                        string   `json:"BootSourceOverrideEnabled"`
+		BootSourceOverrideMode                           string   `json:"BootSourceOverrideMode"`
+		BootSourceOverrideTarget                         string   `json:"BootSourceOverrideTarget"`
+		BootSourceOverrideTarget_Redfish_AllowableValues []string `json:"BootSourceOverrideTarget@Redfish.AllowableValues"`
+		UefiTargetBootSourceOverride                     string   `json:"UefiTargetBootSourceOverride"`
+	} `json:"Boot"`
+	Description        string `json:"Description"`
+	EthernetInterfaces struct {
+		_odata_id string `json:"@odata.id"`
+	} `json:"EthernetInterfaces"`
+	HostName     string `json:"HostName"`
+	ID           string `json:"Id"`
+	IndicatorLED string `json:"IndicatorLED"`
+	Links        struct {
+		Chassis []struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"Chassis"`
+		Chassis_odata_count int `json:"Chassis@odata.count"`
+		CooledBy            []struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"CooledBy"`
+		CooledBy_odata_count int `json:"CooledBy@odata.count"`
+		ManagedBy            []struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"ManagedBy"`
+		ManagedBy_odata_count int `json:"ManagedBy@odata.count"`
+		Oem                   struct {
+			Dell struct {
+				_odata_type string `json:"@odata.type"`
+				BootOrder   struct {
+					_odata_id string `json:"@odata.id"`
+				} `json:"BootOrder"`
+			} `json:"Dell"`
+		} `json:"Oem"`
+		PoweredBy []struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"PoweredBy"`
+		PoweredBy_odata_count int `json:"PoweredBy@odata.count"`
+	} `json:"Links"`
+	Manufacturer  string `json:"Manufacturer"`
+	MemorySummary struct {
+		MemoryMirroring string `json:"MemoryMirroring"`
+		Status          struct {
+			Health       string `json:"Health"`
+			HealthRollup string `json:"HealthRollup"`
+			State        string `json:"State"`
+		} `json:"Status"`
+		TotalSystemMemoryGiB int `json:"TotalSystemMemoryGiB"`
+	} `json:"MemorySummary"`
+	Model            string `json:"Model"`
+	Name             string `json:"Name"`
+	PartNumber       string `json:"PartNumber"`
+	PowerState       string `json:"PowerState"`
+	ProcessorSummary struct {
+		Count  int    `json:"Count"`
+		Model  string `json:"Model"`
+		Status struct {
+			Health       string `json:"Health"`
+			HealthRollup string `json:"HealthRollup"`
+			State        string `json:"State"`
+		} `json:"Status"`
+	} `json:"ProcessorSummary"`
+	Processors struct {
+		_odata_id string `json:"@odata.id"`
+	} `json:"Processors"`
+	SKU        string `json:"SKU"`
+	SecureBoot struct {
+		_odata_id string `json:"@odata.id"`
+	} `json:"SecureBoot"`
+	SerialNumber  string `json:"SerialNumber"`
+	SimpleStorage struct {
+		_odata_id string `json:"@odata.id"`
+	} `json:"SimpleStorage"`
+	Status struct {
+		Health       string `json:"Health"`
+		HealthRollup string `json:"HealthRollup"`
+		State        string `json:"State"`
+	} `json:"Status"`
+	SystemType     string `json:"SystemType"`
+	TrustedModules []struct {
+		InterfaceType string `json:"InterfaceType"`
+		Status        struct {
+			State string `json:"State"`
+		} `json:"Status"`
+	} `json:"TrustedModules"`
+	UUID string `json:"UUID"`
+}
+
 type GetMacAddress struct {
 	_odata_context                     string        `json:"@odata.context"`
 	_odata_id                          string        `json:"@odata.id"`
@@ -98,6 +202,43 @@ type FirmwareData struct {
 	Id         string `json:"id"`
 	Version    string `json:"version"`
 	Updateable bool   `json:"updateable"`
+}
+
+func (c *IloClient) CheckLoginDell() (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New(StatusInternalServerError)
+			return "", err
+		} else {
+			return "", err
+		}
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New(StatusUnauthorized)
+			return "", err
+		}
+
+	}
+
+	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+
+	var data SystemView
+
+	json.Unmarshal(_body, &data)
+
+	return string(data.Status.Health), nil
 }
 
 func (c *IloClient) GetMacAddressDell() (string, error) {
