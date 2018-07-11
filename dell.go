@@ -783,7 +783,7 @@ func (c *IloClient) GetFirmwareDell() (string, error) {
 
 }
 
-func (c *IloClient) GetBiosDataDell(string, error) {
+func (c *IloClient) GetBiosDataDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
 
