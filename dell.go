@@ -616,7 +616,7 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 		macData := MACData{
 			Name:        y.Name,
 			Description: y.Description,
-			MacAddresss: y.MACAddress,
+			MacAddress:  y.MACAddress,
 			Status:      y.Status.Health,
 			State:       y.Status.State,
 			Vlan:        y.VLAN,
@@ -877,7 +877,7 @@ func (c *IloClient) GetLifecycleAttrDell() (string, error) {
 		AutoBackup:                          _data.LCAttributes_1_AutoBackup,
 		AutoDiscovery:                       _data.LCAttributes_1_AutoDiscovery,
 		BIOSRTDRequested:                    _data.LCAttributes_1_BIOSRTDRequested,
-		CollectSystemInventoryOnRestart:     _data.CollectSystemInventoryOnRestart,
+		CollectSystemInventoryOnRestart:     _data.LCAttributes_1_CollectSystemInventoryOnRestart,
 		DiscoveryFactoryDefaults:            _data.LCAttributes_1_DiscoveryFactoryDefaults,
 		IPAddress:                           _data.LCAttributes_1_IPAddress,
 		IPChangeNotifyPS:                    _data.LCAttributes_1_IPChangeNotifyPS,
