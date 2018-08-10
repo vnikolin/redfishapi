@@ -1457,6 +1457,36 @@ type GetMacAddress struct {
 	VLAN           string `json:"VLAN"`
 }
 
+type BootOrder struct {
+	_Redfish_Settings struct {
+		_odata_context string `json:"@odata.context"`
+		_odata_type    string `json:"@odata.type"`
+		SettingsObject struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"SettingsObject"`
+	} `json:"@Redfish.Settings"`
+	_odata_context    string `json:"@odata.context"`
+	_odata_id         string `json:"@odata.id"`
+	_odata_type       string `json:"@odata.type"`
+	AttributeRegistry string `json:"AttributeRegistry"`
+	Attributes        struct {
+		BootSeq []struct {
+			Enabled bool   `json:"Enabled"`
+			ID      string `json:"Id"`
+			Index   int    `json:"Index"`
+			Name    string `json:"Name"`
+		} `json:"BootSeq"`
+		HddSeq []struct {
+			ID    string `json:"Id"`
+			Index int    `json:"Index"`
+			Name  string `json:"Name"`
+		} `json:"HddSeq"`
+	} `json:"Attributes"`
+	Description string `json:"Description"`
+	ID          string `json:"Id"`
+	Name        string `json:"Name"`
+}
+
 type MemberCount struct {
 	OdataContext string `json:"@odata.context"`
 	OdataId      string `json:"@odata.id"`
@@ -1505,6 +1535,12 @@ type FirmwareData struct {
 	Id         string `json:"id"`
 	Version    string `json:"version"`
 	Updateable bool   `json:"updateable"`
+}
+
+type BootOrderData struct {
+	Enabled string `json:"enabled"`
+	Index   string `json:"index"`
+	Name    string `json:"name"`
 }
 
 func (c *IloClient) CheckLoginDell() (string, error) {
@@ -1983,6 +2019,60 @@ func (c *IloClient) GetSysAttrDell() (string, error) {
 	}
 
 	output, _ := json.Marshal(_sysData)
+
+	return string(output), nil
+
+}
+
+func (c *IloClient) GetBootOrderDell() (string, error) {
+
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/BootSources"
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New("Server Error")
+			return "", err
+		} else {
+			return "", err
+		}
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New("Unauthorized")
+			return "", err
+		}
+
+	}
+	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+
+	var x BootOrder
+
+	json.Unmarshal(_body, &x)
+
+	var _bootOrder []BootOrderData
+
+	for i := range x.Attributes.BootSeq {
+
+		_result := BootOrderData{
+			Enabled: x.Attributes.BootSeq[i].Enabled,
+			Index:   x.Attributes.BootSeq[i].Index,
+			Name:    x.Attributes.BootSeq[i].Name,
+		}
+
+		_bootOrder = append(_bootOrder, _result)
+	}
+
+	output, _ := json.Marshal(_bootOrder)
 
 	return string(output), nil
 
