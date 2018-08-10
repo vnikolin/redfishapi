@@ -1538,8 +1538,8 @@ type FirmwareData struct {
 }
 
 type BootOrderData struct {
-	Enabled string `json:"enabled"`
-	Index   string `json:"index"`
+	Enabled bool   `json:"enabled"`
+	Index   int    `json:"index"`
 	Name    string `json:"name"`
 }
 
