@@ -1850,6 +1850,7 @@ func (c *IloClient) GetBiosDataDell() (string, error) {
 		SysProfile:        _data.SysProfile,
 		AcPwrRcvry:        _data.AcPwrRcvry,
 		AcPwrRcvryDelay:   _data.AcPwrRcvryDelay,
+		Serial:            _data.SystemServiceTag,
 	}
 
 	output, _ := json.Marshal(_BiosData)
