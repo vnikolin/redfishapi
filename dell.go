@@ -1,6 +1,7 @@
 package redfishapi
 
 import (
+	"bytes"
 	"crypto/tls"
 	"encoding/json"
 	"errors"
@@ -1073,6 +1074,7 @@ type BiosData struct {
 	SysProfile        string `json:"sys_profile"`
 	AcPwrRcvry        string `json:"pwr_rcvry"`
 	AcPwrRcvryDelay   string `json:"pwr_rcvry_delay"`
+	Serial            string `json:"serial"`
 }
 
 type BiosDell struct {
@@ -1541,6 +1543,80 @@ type BootOrderData struct {
 	Enabled bool   `json:"enabled"`
 	Index   int    `json:"index"`
 	Name    string `json:"name"`
+}
+
+// ResetType@Redfish.AllowableValues
+// 0	"On"
+// 1	"ForceOff"
+// 2	"GracefulRestart"
+// 3	"GracefulShutdown"
+// 4	"PushPowerButton"
+// 5	"Nmi"
+// target: "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
+func (c *IloClient) StartServer() (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	var jsonStr = []byte(`{"ResetType": "On"}`)
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New(StatusInternalServerError)
+			return "", err
+		} else {
+			return "", err
+		}
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New(StatusUnauthorized)
+			return "", err
+		}
+
+	}
+
+	defer resp.Body.Close()
+
+	return "Server Started", nil
+}
+
+func (c *IloClient) StopServer() (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	var jsonStr = []byte(`{"ResetType": "ForceOff"}`)
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New(StatusInternalServerError)
+			return "", err
+		} else {
+			return "", err
+		}
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New(StatusUnauthorized)
+			return "", err
+		}
+
+	}
+
+	defer resp.Body.Close()
+
+	return "Server Stopped", nil
 }
 
 func (c *IloClient) CheckLoginDell() (string, error) {
