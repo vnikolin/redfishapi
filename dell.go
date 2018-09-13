@@ -1619,6 +1619,46 @@ func (c *IloClient) StopServer() (string, error) {
 	return "Server Stopped", nil
 }
 
+func (c *IloClient) GetServerPowerState() (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New(StatusInternalServerError)
+			return "nil", err
+		} else {
+			return "nil", err
+		}
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New(StatusUnauthorized)
+			return "", err
+		}
+
+	}
+
+	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+
+	var data SystemView
+
+	json.Unmarshal(_body, &data)
+
+	return data.PowerState, nil
+
+}
+
+func (c *IloClient) SetBiosAttributes() (string, error) {}
+
 func (c *IloClient) CheckLoginDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
