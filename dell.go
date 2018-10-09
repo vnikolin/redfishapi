@@ -1946,7 +1946,7 @@ func (c *IloClient) GetServerPowerState() (string, error) {
 
 }
 
-func (c *IloClient) SetBiosAttributes() (string, error) {}
+// func (c *IloClient) SetBiosAttributes() (string, error) {}
 
 func (c *IloClient) CheckLoginDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
@@ -2128,7 +2128,7 @@ func (c *IloClient) GetProcessorHealthDell() (string, error) {
 
 }
 
-func (c *IloClient) GetMemoryHealthDell() (string, error) {}
+// func (c *IloClient) GetMemoryHealthDell() (string, error) {}
 
 func (c *IloClient) GetPowerHealthDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/Power"
@@ -2265,14 +2265,14 @@ func (c *IloClient) GetSensorsHealthDell() (string, error) {
 		}
 	}
 
-	if x.Temperatures != 0 {
+	if x.Temperaturesount != 0 {
 		for i := range x.Temperatures {
 			tempData := HealthList{
 				Name:   x.Temperatures[i].Name,
 				Health: x.Temperatures[i].Status.Health,
 				State:  x.Temperatures[i].Status.State,
 			}
-			thermalHealth = append(thermalHealth, fanHealth)
+			thermalHealth = append(thermalHealth, tempData)
 		}
 	}
 
