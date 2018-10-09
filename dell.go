@@ -1370,7 +1370,7 @@ type SystemView struct {
 			} `json:"Dell"`
 		} `json:"Oem"`
 		PoweredBy []struct {
-			_odata_id string `json:"@odata.id"`
+			OdataId string `json:"@odata.id"`
 		} `json:"PoweredBy"`
 		PoweredBy_odata_count int `json:"PoweredBy@odata.count"`
 	} `json:"Links"`
@@ -1422,7 +1422,6 @@ type SystemView struct {
 	} `json:"TrustedModules"`
 	UUID string `json:"UUID"`
 }
-
 type GetMacAddress struct {
 	_odata_context                     string        `json:"@odata.context"`
 	_odata_id                          string        `json:"@odata.id"`
@@ -1458,7 +1457,6 @@ type GetMacAddress struct {
 	UefiDevicePath string `json:"UefiDevicePath"`
 	VLAN           string `json:"VLAN"`
 }
-
 type BootOrder struct {
 	_Redfish_Settings struct {
 		_odata_context string `json:"@odata.context"`
@@ -1488,7 +1486,6 @@ type BootOrder struct {
 	ID          string `json:"Id"`
 	Name        string `json:"Name"`
 }
-
 type MemberCount struct {
 	OdataContext string `json:"@odata.context"`
 	OdataId      string `json:"@odata.id"`
@@ -1500,7 +1497,6 @@ type MemberCount struct {
 	Members_odata_count int    `json:"Members@odata.count"`
 	Name                string `json:"Name"`
 }
-
 type FirmwareDataDell struct {
 	_odata_context string `json:"@odata.context"`
 	_odata_id      string `json:"@odata.id"`
@@ -1515,7 +1511,6 @@ type FirmwareDataDell struct {
 	Updateable bool   `json:"Updateable"`
 	Version    string `json:"Version"`
 }
-
 type MACData struct {
 	MacAddress  string `json:"macaddress"`
 	Name        string `json:"name"`
@@ -1524,25 +1519,319 @@ type MACData struct {
 	State       string `json:"state"`
 	Vlan        string `json:"vlan"`
 }
-
-type HealthData struct {
-	Name   string `json:"name"`
-	Id     string `json:"id"`
-	State  string `json:"state"`
-	Health string `json:"health"`
-}
-
 type FirmwareData struct {
 	Name       string `json:"name"`
 	Id         string `json:"id"`
 	Version    string `json:"version"`
 	Updateable bool   `json:"updateable"`
 }
-
 type BootOrderData struct {
 	Enabled bool   `json:"enabled"`
 	Index   int    `json:"index"`
 	Name    string `json:"name"`
+}
+type ProcessorData struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	ID             string `json:"Id"`
+	InstructionSet []struct {
+		Member string `json:"Member"`
+	} `json:"InstructionSet"`
+	Manufacturer          string `json:"Manufacturer"`
+	MaxSpeedMHz           int    `json:"MaxSpeedMHz"`
+	Model                 string `json:"Model"`
+	Name                  string `json:"Name"`
+	ProcessorArchitecture []struct {
+		Member string `json:"Member"`
+	} `json:"ProcessorArchitecture"`
+	ProcessorID struct {
+		EffectiveFamily         string `json:"EffectiveFamily"`
+		EffectiveModel          string `json:"EffectiveModel"`
+		IdentificationRegisters string `json:"IdentificationRegisters"`
+		MicrocodeInfo           string `json:"MicrocodeInfo"`
+		Step                    string `json:"Step"`
+		VendorID                string `json:"VendorId"`
+	} `json:"ProcessorId"`
+	ProcessorType string `json:"ProcessorType"`
+	Socket        string `json:"Socket"`
+	Status        struct {
+		Health string `json:"Health"`
+		State  string `json:"State"`
+	} `json:"Status"`
+	TotalCores   int `json:"TotalCores"`
+	TotalThreads int `json:"TotalThreads"`
+}
+type ProcessorsListData struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	Members        []struct {
+		OdataId string `json:"@odata.id"`
+	} `json:"Members"`
+	Members_odata_count int    `json:"Members@odata.count"`
+	Name                string `json:"Name"`
+}
+type PowerData struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	ID             string `json:"Id"`
+	Name           string `json:"Name"`
+	PowerControl   []struct {
+		_odata_id           string `json:"@odata.id"`
+		MemberID            string `json:"MemberId"`
+		Name                string `json:"Name"`
+		PowerAllocatedWatts int    `json:"PowerAllocatedWatts"`
+		PowerAvailableWatts int    `json:"PowerAvailableWatts"`
+		PowerCapacityWatts  int    `json:"PowerCapacityWatts"`
+		PowerConsumedWatts  int    `json:"PowerConsumedWatts"`
+		PowerLimit          struct {
+			CorrectionInMs int    `json:"CorrectionInMs"`
+			LimitException string `json:"LimitException"`
+			LimitInWatts   int    `json:"LimitInWatts"`
+		} `json:"PowerLimit"`
+		PowerMetrics struct {
+			AverageConsumedWatts int `json:"AverageConsumedWatts"`
+			IntervalInMin        int `json:"IntervalInMin"`
+			MaxConsumedWatts     int `json:"MaxConsumedWatts"`
+			MinConsumedWatts     int `json:"MinConsumedWatts"`
+		} `json:"PowerMetrics"`
+		PowerRequestedWatts int `json:"PowerRequestedWatts"`
+		RelatedItem         []struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"RelatedItem"`
+		RelatedItem_odata_count int `json:"RelatedItem@odata.count"`
+	} `json:"PowerControl"`
+	PowerControlcount int `json:"PowerControl@odata.count"`
+	PowerSupplies     []struct {
+		_odata_id       string `json:"@odata.id"`
+		FirmwareVersion string `json:"FirmwareVersion"`
+		InputRanges     []struct {
+			InputType          string `json:"InputType"`
+			MaximumFrequencyHz int    `json:"MaximumFrequencyHz"`
+			MaximumVoltage     int    `json:"MaximumVoltage"`
+			MinimumFrequencyHz int    `json:"MinimumFrequencyHz"`
+			MinimumVoltage     int    `json:"MinimumVoltage"`
+			OutputWattage      int    `json:"OutputWattage"`
+		} `json:"InputRanges"`
+		InputRanges_odata_count int    `json:"InputRanges@odata.count"`
+		LastPowerOutputWatts    int    `json:"LastPowerOutputWatts"`
+		LineInputVoltage        int    `json:"LineInputVoltage"`
+		LineInputVoltageType    string `json:"LineInputVoltageType"`
+		Manufacturer            string `json:"Manufacturer"`
+		MemberID                string `json:"MemberId"`
+		Model                   string `json:"Model"`
+		Name                    string `json:"Name"`
+		PartNumber              string `json:"PartNumber"`
+		PowerCapacityWatts      int    `json:"PowerCapacityWatts"`
+		PowerSupplyType         string `json:"PowerSupplyType"`
+		Redundancy              []struct {
+			_odata_id       string `json:"@odata.id"`
+			MaxNumSupported int    `json:"MaxNumSupported"`
+			MemberID        string `json:"MemberId"`
+			MinNumNeeded    int    `json:"MinNumNeeded"`
+			Mode            []struct {
+				Member string `json:"Member"`
+			} `json:"Mode"`
+			Name          string `json:"Name"`
+			RedundancySet []struct {
+				_odata_id string `json:"@odata.id"`
+			} `json:"RedundancySet"`
+			RedundancySet_odata_count int `json:"RedundancySet@odata.count"`
+			Status                    struct {
+				Health string `json:"Health"`
+				State  string `json:"State"`
+			} `json:"Status"`
+		} `json:"Redundancy"`
+		Redundancycount int `json:"Redundancy@odata.count"`
+		RelatedItem     []struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"RelatedItem"`
+		RelatedItem_odata_count int    `json:"RelatedItem@odata.count"`
+		SerialNumber            string `json:"SerialNumber"`
+		SparePartNumber         string `json:"SparePartNumber"`
+		Status                  struct {
+			Health string `json:"Health"`
+			State  string `json:"State"`
+		} `json:"Status"`
+	} `json:"PowerSupplies"`
+	PowerSuppliescount int `json:"PowerSupplies@odata.count"`
+	Redundancy         []struct {
+		_odata_id       string `json:"@odata.id"`
+		MaxNumSupported int    `json:"MaxNumSupported"`
+		MemberID        string `json:"MemberId"`
+		MinNumNeeded    int    `json:"MinNumNeeded"`
+		Mode            []struct {
+			Member string `json:"Member"`
+		} `json:"Mode"`
+		Name          string `json:"Name"`
+		RedundancySet []struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"RedundancySet"`
+		RedundancySet_odata_count int `json:"RedundancySet@odata.count"`
+		Status                    struct {
+			Health string `json:"Health"`
+			State  string `json:"State"`
+		} `json:"Status"`
+	} `json:"Redundancy"`
+	Redundancycount int `json:"Redundancy@odata.count"`
+	Voltages        []struct {
+		_odata_id                 string      `json:"@odata.id"`
+		LowerThresholdCritical    interface{} `json:"LowerThresholdCritical"`
+		LowerThresholdFatal       interface{} `json:"LowerThresholdFatal"`
+		LowerThresholdNonCritical interface{} `json:"LowerThresholdNonCritical"`
+		MaxReadingRange           int         `json:"MaxReadingRange"`
+		MemberID                  string      `json:"MemberId"`
+		MinReadingRange           int         `json:"MinReadingRange"`
+		Name                      string      `json:"Name"`
+		PhysicalContext           string      `json:"PhysicalContext"`
+		ReadingVolts              int         `json:"ReadingVolts"`
+		RelatedItem               []struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"RelatedItem"`
+		RelatedItem_odata_count int `json:"RelatedItem@odata.count"`
+		SensorNumber            int `json:"SensorNumber"`
+		Status                  struct {
+			Health string `json:"Health"`
+			State  string `json:"State"`
+		} `json:"Status"`
+		UpperThresholdCritical    interface{} `json:"UpperThresholdCritical"`
+		UpperThresholdFatal       interface{} `json:"UpperThresholdFatal"`
+		UpperThresholdNonCritical interface{} `json:"UpperThresholdNonCritical"`
+	} `json:"Voltages"`
+	Voltagescount int `json:"Voltages@odata.count"`
+}
+
+type HealthList struct {
+	Name   string `json:"name"`
+	Health string `json:"health"`
+	State  string `json:"state"`
+}
+type StorageHealthList struct {
+	Name   string `json:"name"`
+	Health string `json:"health"`
+	State  string `json:"state"`
+	Space  int    `json:"space"`
+}
+type StorageCollection struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	Members        []struct {
+		OdataId string `json:"@odata.id"`
+	} `json:"Members"`
+	Members_odata_count int    `json:"Members@odata.count"`
+	Name                string `json:"Name"`
+}
+type StorageDetails struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	Devices        []struct {
+		CapacityBytes int    `json:"CapacityBytes"`
+		Manufacturer  string `json:"Manufacturer"`
+		Model         string `json:"Model"`
+		Name          string `json:"Name"`
+		Status        struct {
+			Health       string `json:"Health"`
+			HealthRollup string `json:"HealthRollup"`
+			State        string `json:"State"`
+		} `json:"Status"`
+	} `json:"Devices"`
+	Devicescount int    `json:"Devices@odata.count"`
+	ID           string `json:"Id"`
+	Name         string `json:"Name"`
+	Status       struct {
+		Health       string `json:"Health"`
+		HealthRollup string `json:"HealthRollup"`
+		State        string `json:"State"`
+	} `json:"Status"`
+	UefiDevicePath string `json:"UefiDevicePath"`
+}
+
+type ThermalHealthList struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	Fans           []struct {
+		_odata_id                 string        `json:"@odata.id"`
+		FanName                   string        `json:"FanName"`
+		LowerThresholdCritical    int           `json:"LowerThresholdCritical"`
+		LowerThresholdFatal       int           `json:"LowerThresholdFatal"`
+		LowerThresholdNonCritical int           `json:"LowerThresholdNonCritical"`
+		MaxReadingRange           int           `json:"MaxReadingRange"`
+		MemberID                  string        `json:"MemberId"`
+		MinReadingRange           int           `json:"MinReadingRange"`
+		Name                      string        `json:"Name"`
+		PhysicalContext           string        `json:"PhysicalContext"`
+		Reading                   int           `json:"Reading"`
+		ReadingUnits              string        `json:"ReadingUnits"`
+		Redundancy                []interface{} `json:"Redundancy"`
+		Redundancy_odata_count    int           `json:"Redundancy@odata.count"`
+		RelatedItem               []struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"RelatedItem"`
+		RelatedItem_odata_count int `json:"RelatedItem@odata.count"`
+		Status                  struct {
+			Health string `json:"Health"`
+			State  string `json:"State"`
+		} `json:"Status"`
+		UpperThresholdCritical    interface{} `json:"UpperThresholdCritical"`
+		UpperThresholdFatal       interface{} `json:"UpperThresholdFatal"`
+		UpperThresholdNonCritical interface{} `json:"UpperThresholdNonCritical"`
+	} `json:"Fans"`
+	Fanscount  int    `json:"Fans@odata.count"`
+	ID         string `json:"Id"`
+	Name       string `json:"Name"`
+	Redundancy []struct {
+		_odata_id       string      `json:"@odata.id"`
+		MaxNumSupported interface{} `json:"MaxNumSupported"`
+		MemberID        string      `json:"MemberId"`
+		MinNumNeeded    interface{} `json:"MinNumNeeded"`
+		Mode            []struct {
+			Member string `json:"Member"`
+		} `json:"Mode"`
+		Name                      string        `json:"Name"`
+		RedundancySet             []interface{} `json:"RedundancySet"`
+		RedundancySet_odata_count int           `json:"RedundancySet@odata.count"`
+		Status                    struct {
+			Health string `json:"Health"`
+			State  string `json:"State"`
+		} `json:"Status"`
+	} `json:"Redundancy"`
+	Redundancycount int `json:"Redundancy@odata.count"`
+	Temperatures    []struct {
+		_odata_id                 string      `json:"@odata.id"`
+		LowerThresholdCritical    int         `json:"LowerThresholdCritical"`
+		LowerThresholdFatal       int         `json:"LowerThresholdFatal"`
+		LowerThresholdNonCritical interface{} `json:"LowerThresholdNonCritical"`
+		MaxReadingRangeTemp       int         `json:"MaxReadingRangeTemp"`
+		MemberID                  string      `json:"MemberId"`
+		MinReadingRangeTemp       int         `json:"MinReadingRangeTemp"`
+		Name                      string      `json:"Name"`
+		PhysicalContext           string      `json:"PhysicalContext"`
+		ReadingCelsius            int         `json:"ReadingCelsius"`
+		RelatedItem               []struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"RelatedItem"`
+		RelatedItem_odata_count int `json:"RelatedItem@odata.count"`
+		SensorNumber            int `json:"SensorNumber"`
+		Status                  struct {
+			Health string `json:"Health"`
+			State  string `json:"State"`
+		} `json:"Status"`
+		UpperThresholdCritical    int         `json:"UpperThresholdCritical"`
+		UpperThresholdFatal       int         `json:"UpperThresholdFatal"`
+		UpperThresholdNonCritical interface{} `json:"UpperThresholdNonCritical"`
+	} `json:"Temperatures"`
+	Temperaturesount int `json:"Temperatures@odata.count"`
 }
 
 // ResetType@Redfish.AllowableValues
@@ -1769,7 +2058,317 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 
 }
 
-func (c *IloClient) GetHealthDataDell() (string, error) {
+func (c *IloClient) GetProcessorHealthDell() (string, error) {
+	///redfish/v1/Systems/System.Embedded.1/Processors
+
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Processors"
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New("Server Error")
+			return "", err
+		} else {
+			return "", err
+		}
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New("Unauthorized")
+			return "", err
+		}
+
+	}
+	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+
+	var (
+		x             ProcessorsListData
+		processHealth []HealthList
+	)
+
+	json.Unmarshal(_body, &x)
+
+	for i := range x.Members {
+		_url := c.Hostname + x.Members[i].OdataId
+		req, err := http.NewRequest("GET", _url, nil)
+		req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			return "", err
+		}
+		defer resp.Body.Close()
+
+		_body, _ := ioutil.ReadAll(resp.Body)
+
+		var y ProcessorData
+
+		json.Unmarshal(_body, &y)
+
+		procHealth := HealthList{
+			Name:   y.ID,
+			Health: y.Status.Health,
+			State:  y.Status.State,
+		}
+		processHealth = append(processHealth, procHealth)
+	}
+
+	output, _ := json.Marshal(processHealth)
+	return string(output), nil
+
+}
+
+func (c *IloClient) GetMemoryHealthDell() (string, error) {}
+
+func (c *IloClient) GetPowerHealthDell() (string, error) {
+	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/Power"
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New("Server Error")
+			return "", err
+		} else {
+			return "", err
+		}
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New("Unauthorized")
+			return "", err
+		}
+
+	}
+	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+
+	var (
+		x             PowerData
+		powerSupplies []HealthList
+	)
+
+	json.Unmarshal(_body, &x)
+
+	if x.PowerSuppliescount != 0 {
+		for i := range x.PowerSupplies {
+			powerControlHealth := HealthList{
+				Name:   x.PowerSupplies[i].MemberID,
+				Health: x.PowerSupplies[i].Status.Health,
+				State:  x.PowerSupplies[i].Status.State,
+			}
+			powerSupplies = append(powerSupplies, powerControlHealth)
+		}
+	}
+
+	if x.Redundancycount != 0 {
+		for i := range x.Redundancy {
+			redundHealth := HealthList{
+				Name:   x.Redundancy[i].Name,
+				Health: x.Redundancy[i].Status.Health,
+				State:  x.Redundancy[i].Status.State,
+			}
+			powerSupplies = append(powerSupplies, redundHealth)
+		}
+	}
+
+	if x.Voltagescount != 0 {
+		for i := range x.Voltages {
+			voltageHealth := HealthList{
+				Name:   x.Voltages[i].Name,
+				Health: x.Voltages[i].Status.Health,
+				State:  x.Voltages[i].Status.State,
+			}
+			powerSupplies = append(powerSupplies, voltageHealth)
+		}
+	}
+
+	output, _ := json.Marshal(powerSupplies)
+	return string(output), nil
+}
+
+func (c *IloClient) GetSensorsHealthDell() (string, error) {
+
+	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/Thermal"
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New("Server Error")
+			return "", err
+		} else {
+			return "", err
+		}
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New("Unauthorized")
+			return "", err
+		}
+
+	}
+	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+
+	var (
+		x             ThermalHealthList
+		thermalHealth []HealthList
+	)
+
+	json.Unmarshal(_body, &x)
+
+	// Fetching the Redundancy health info
+	if x.Redundancycount != 0 {
+		for i := range x.Redundancy {
+			redundHealth := HealthList{
+				Name:   x.Redundancy[i].Name,
+				Health: x.Redundancy[i].Status.Health,
+				State:  x.Redundancy[i].Status.State,
+			}
+			thermalHealth = append(thermalHealth, redundHealth)
+		}
+	}
+
+	if x.Fanscount != 0 {
+		for i := range x.Fans {
+			fanHealth := HealthList{
+				Name:   x.Fans[i].Name,
+				Health: x.Fans[i].Status.Health,
+				State:  x.Fans[i].Status.State,
+			}
+			thermalHealth = append(thermalHealth, fanHealth)
+		}
+	}
+
+	if x.Temperatures != 0 {
+		for i := range x.Temperatures {
+			tempData := HealthList{
+				Name:   x.Temperatures[i].Name,
+				Health: x.Temperatures[i].Status.Health,
+				State:  x.Temperatures[i].Status.State,
+			}
+			thermalHealth = append(thermalHealth, fanHealth)
+		}
+	}
+
+	output, _ := json.Marshal(thermalHealth)
+	return string(output), nil
+
+}
+
+func (c *IloClient) GetStorageHealthDell() (string, error) {
+
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Storage/Controllers"
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New("Server Error")
+			return "", err
+		} else {
+			return "", err
+		}
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New("Unauthorized")
+			return "", err
+		}
+
+	}
+	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+
+	var (
+		x           StorageCollection
+		_healthdata []StorageHealthList
+	)
+
+	json.Unmarshal(_body, &x)
+
+	for i := range x.Members {
+
+		_url := c.Hostname + x.Members[i].OdataId
+		req, err := http.NewRequest("GET", _url, nil)
+		req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			return "", err
+		}
+		defer resp.Body.Close()
+
+		_body, _ := ioutil.ReadAll(resp.Body)
+
+		var y StorageDetails
+
+		json.Unmarshal(_body, &y)
+
+		storageHealth := StorageHealthList{
+			Name:   y.ID,
+			Health: y.Status.Health,
+			State:  y.Status.State,
+			Space:  0,
+		}
+		_healthdata = append(_healthdata, storageHealth)
+
+		if y.Devicescount != 0 {
+			for k := range y.Devices {
+				storageHealth := StorageHealthList{
+					Name:   y.Devices[k].Name,
+					Health: y.Devices[k].Status.Health,
+					State:  y.Devices[k].Status.State,
+					Space:  y.Devices[k].CapacityBytes,
+				}
+				_healthdata = append(_healthdata, storageHealth)
+			}
+
+		} else {
+			continue
+		}
+
+	}
+	output, _ := json.Marshal(_healthdata)
+	return string(output), nil
+
+}
+
+// GetAggHealthDataDell will fetch the data related to all components health(aggregated view)
+func (c *IloClient) GetAggHealthDataDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
 
@@ -1802,7 +2401,7 @@ func (c *IloClient) GetHealthDataDell() (string, error) {
 
 	var (
 		x           MemberCount
-		_healthdata []HealthData
+		_healthdata []HealthList
 	)
 
 	json.Unmarshal(_body, &x)
@@ -1827,9 +2426,8 @@ func (c *IloClient) GetHealthDataDell() (string, error) {
 
 			json.Unmarshal(_body, &y)
 
-			healthData := HealthData{
+			healthData := HealthList{
 				Name:   y.Name,
-				Id:     y.ID,
 				State:  y.Status.State,
 				Health: y.Status.Health,
 			}
