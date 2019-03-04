@@ -2829,7 +2829,7 @@ func (c *IloClient) GetBootOrderDell() (string, error) {
 }
 
 //SystemEventLogsDell() .. Fetch the System Event Logs from the Idrac
-func (c *IloClient) SystemEventLogsDell() (string, error) {
+func (c *IloClient) GetSystemEventLogsDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Logs/Sel"
 
