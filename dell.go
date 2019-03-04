@@ -1834,6 +1834,41 @@ type ThermalHealthList struct {
 	Temperaturesount int `json:"Temperatures@odata.count"`
 }
 
+type SystemEventLogs struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	Members        []struct {
+		_odata_id               string        `json:"@odata.id"`
+		_odata_type             string        `json:"@odata.type"`
+		Created                 string        `json:"Created"`
+		Description             string        `json:"Description"`
+		EntryCode               string        `json:"EntryCode"`
+		EntryType               string        `json:"EntryType"`
+		ID                      string        `json:"Id"`
+		Links                   struct{}      `json:"Links"`
+		Message                 string        `json:"Message"`
+		MessageArgs             []interface{} `json:"MessageArgs"`
+		MessageArgs_odata_count int           `json:"MessageArgs@odata.count"`
+		MessageID               string        `json:"MessageId"`
+		Name                    string        `json:"Name"`
+		SensorNumber            int           `json:"SensorNumber"`
+		SensorType              string        `json:"SensorType"`
+		Severity                string        `json:"Severity"`
+	} `json:"Members"`
+	Members_odata_count int    `json:"Members@odata.count"`
+	Name                string `json:"Name"`
+}
+
+type SystemEventLogRes struct {
+	EntryCode  string `json:"entry_code"`
+	Message    string `json:"message"`
+	Name       string `json:"name"`
+	SensorType string `json:"sensor_type"`
+	Severity   string `json:"severity"`
+}
+
 // ResetType@Redfish.AllowableValues
 // 0	"On"
 // 1	"ForceOff"
@@ -2788,6 +2823,63 @@ func (c *IloClient) GetBootOrderDell() (string, error) {
 	}
 
 	output, _ := json.Marshal(_bootOrder)
+
+	return string(output), nil
+
+}
+
+//SystemEventLogsDell() .. Fetch the System Event Logs from the Idrac
+func (c *IloClient) SystemEventLogsDell() (string, error) {
+
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Logs/Sel"
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New("Server Error")
+			return "", err
+		} else {
+			return "", err
+		}
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New("Unauthorized")
+			return "", err
+		}
+
+	}
+	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+
+	var x SystemEventLogs
+
+	json.Unmarshal(_body, &x)
+
+	var _systemEventLogs []SystemEventLogRes
+
+	for i := range x.Members {
+
+		_result := SystemEventLogRes{
+			EntryCode:  x.Members[i].EntryCode,
+			Message:    x.Members[i].Message,
+			Name:       x.Members[i].Name,
+			SensorType: x.Members[i].SensorType,
+			Severity:   x.Members[i].Severity,
+		}
+
+		_systemEventLogs = append(_systemEventLogs, _result)
+	}
+
+	output, _ := json.Marshal(_systemEventLogs)
 
 	return string(output), nil
 
