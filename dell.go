@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"regexp"
@@ -1834,7 +1835,7 @@ type ThermalHealthList struct {
 	Temperaturesount int `json:"Temperatures@odata.count"`
 }
 
-type SystemEventLogs struct {
+type SystemEventLogsV2 struct {
 	_odata_context string `json:"@odata.context"`
 	_odata_id      string `json:"@odata.id"`
 	_odata_type    string `json:"@odata.type"`
@@ -1856,6 +1857,37 @@ type SystemEventLogs struct {
 		SensorNumber            int           `json:"SensorNumber"`
 		SensorType              string        `json:"SensorType"`
 		Severity                string        `json:"Severity"`
+	} `json:"Members"`
+	Members_odata_count int    `json:"Members@odata.count"`
+	Name                string `json:"Name"`
+}
+
+type SystemEventLogsV1 struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	Members        []struct {
+		_odata_id   string `json:"@odata.id"`
+		_odata_type string `json:"@odata.type"`
+		Created     string `json:"Created"`
+		Description string `json:"Description"`
+		EntryCode   []struct {
+			Member string `json:"Member"`
+		} `json:"EntryCode"`
+		EntryType               string        `json:"EntryType"`
+		ID                      string        `json:"Id"`
+		Links                   struct{}      `json:"Links"`
+		Message                 string        `json:"Message"`
+		MessageArgs             []interface{} `json:"MessageArgs"`
+		MessageArgs_odata_count int           `json:"MessageArgs@odata.count"`
+		MessageID               string        `json:"MessageID"`
+		Name                    string        `json:"Name"`
+		SensorNumber            int           `json:"SensorNumber"`
+		SensorType              []struct {
+			Member string `json:"Member"`
+		} `json:"SensorType"`
+		Severity string `json:"Severity"`
 	} `json:"Members"`
 	Members_odata_count int    `json:"Members@odata.count"`
 	Name                string `json:"Name"`
@@ -2829,7 +2861,7 @@ func (c *IloClient) GetBootOrderDell() (string, error) {
 }
 
 //SystemEventLogsDell() .. Fetch the System Event Logs from the Idrac
-func (c *IloClient) GetSystemEventLogsDell() (string, error) {
+func (c *IloClient) GetSystemEventLogsDell(version string) (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Logs/Sel"
 
@@ -2860,27 +2892,63 @@ func (c *IloClient) GetSystemEventLogsDell() (string, error) {
 
 	_body, _ := ioutil.ReadAll(resp.Body)
 
-	var x SystemEventLogs
+	// v1, err := ver.NewVersion("3.15.17.15")
+	v1, err := ver.NewConstraint("<= 3.15.17.15")
+	v2, err := ver.NewConstraint("<= 3.21.26.22")
+	v3, err := ver.NewConstraint("> 3.21.26.22")
+	v4, err := ver.NewVersion(version)
 
-	json.Unmarshal(_body, &x)
+	fmt.Println(v1, v2, v3)
 
-	var _systemEventLogs []SystemEventLogRes
+	if v1.Check(v4) {
 
-	for i := range x.Members {
+		var x SystemEventLogsV1
 
-		_result := SystemEventLogRes{
-			EntryCode:  x.Members[i].EntryCode,
-			Message:    x.Members[i].Message,
-			Name:       x.Members[i].Name,
-			SensorType: x.Members[i].SensorType,
-			Severity:   x.Members[i].Severity,
+		json.Unmarshal(_body, &x)
+
+		var _systemEventLogs []SystemEventLogRes
+
+		for i := range x.Members {
+
+			_result := SystemEventLogRes{
+				EntryCode:  x.Members[i].EntryCode[0].Member,
+				Message:    x.Members[i].Message,
+				Name:       x.Members[i].Name,
+				SensorType: x.Members[i].SensorType[0].Member,
+				Severity:   x.Members[i].Severity,
+			}
+
+			_systemEventLogs = append(_systemEventLogs, _result)
 		}
 
-		_systemEventLogs = append(_systemEventLogs, _result)
+		output, _ := json.Marshal(_systemEventLogs)
+
+		return string(output), nil
+
+	} else if v2.Check(v4) || v3.Check(v4) {
+
+		var x SystemEventLogsV2
+
+		json.Unmarshal(_body, &x)
+
+		var _systemEventLogs []SystemEventLogRes
+
+		for i := range x.Members {
+
+			_result := SystemEventLogRes{
+				EntryCode:  x.Members[i].EntryCode,
+				Message:    x.Members[i].Message,
+				Name:       x.Members[i].Name,
+				SensorType: x.Members[i].SensorType,
+				Severity:   x.Members[i].Severity,
+			}
+
+			_systemEventLogs = append(_systemEventLogs, _result)
+		}
+
+		output, _ := json.Marshal(_systemEventLogs)
+
+		return string(output), nil
 	}
-
-	output, _ := json.Marshal(_systemEventLogs)
-
-	return string(output), nil
-
+	return "", err
 }
