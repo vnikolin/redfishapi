@@ -237,6 +237,8 @@ type IDRACData struct {
 	WebServerSSLEncryption    string `json:"webserver_ssl_encryption"`
 	IPMILanEnable             string `json:"ipmi_lan_enable"`
 	DNSDomainName             string `json:"dns_domainname"`
+	SnmpAgentStatus           string `json:"snmp_agent_status"`
+	SnmpAgentCommunity        string `json:"snmp_agent_community"`
 }
 
 type IDRACAttrDell struct {
@@ -2779,6 +2781,8 @@ func (c *IloClient) GetIDRACAttrDell() (string, error) {
 		WebServerSSLEncryption:    _data.WebServer_1_SSLEncryptionBitLength,
 		IPMILanEnable:             _data.IPMILan_1_Enable,
 		DNSDomainName:             _data.NIC_1_DNSDomainName,
+		SnmpAgentStatus:           _data.SNMP_1_AgentEnable,
+		SnmpAgentCommunity:        _data.SNMP_1_AgentCommunity,
 	}
 
 	output, _ := json.Marshal(_idracData)
