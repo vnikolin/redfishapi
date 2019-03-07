@@ -9,6 +9,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
+
+	ver "github.com/hashicorp/go-version"
 )
 
 const (
@@ -1901,6 +1903,33 @@ type SystemEventLogRes struct {
 	Severity   string `json:"severity"`
 }
 
+type AccountsInfo struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	Enabled        bool   `json:"Enabled"`
+	ID             string `json:"Id"`
+	Links          struct {
+		Role struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"Role"`
+	} `json:"Links"`
+	Locked   bool        `json:"Locked"`
+	Name     string      `json:"Name"`
+	Password interface{} `json:"Password"`
+	RoleID   string      `json:"RoleId"`
+	UserName string      `json:"UserName"`
+}
+
+type Accounts struct {
+	Enabled  string `json:"enabled"`
+	Locked   string `json:"locked"`
+	Name     string `json:"name"`
+	RoleId   string `json:"role_id"`
+	Username string `json:"username"`
+}
+
 // ResetType@Redfish.AllowableValues
 // 0	"On"
 // 1	"ForceOff"
@@ -2951,4 +2980,77 @@ func (c *IloClient) GetSystemEventLogsDell(version string) (string, error) {
 		return string(output), nil
 	}
 	return "", err
+}
+
+//GetUserAccountsDell ... Fetch the current users created
+func GetUserAccountsDell() (string, error) {
+
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Accounts"
+
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) == true {
+			err := errors.New(StatusInternalServerError)
+			return "", err
+		} else {
+			return "", err
+		}
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 401 {
+			err := errors.New(StatusUnauthorized)
+			return "", err
+		}
+
+	}
+
+	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+
+	var x MemberCount
+	var users []Accounts
+
+	json.Unmarshal(_body, &x)
+
+	for i := range x.Members {
+		_url := c.Hostname + x.Members[i].OdataId
+		req, err := http.NewRequest("GET", _url, nil)
+		req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			return "", err
+		}
+		defer resp.Body.Close()
+
+		_body, _ := ioutil.ReadAll(resp.Body)
+
+		var y AccountsInfo
+
+		json.Unmarshal(_body, &y)
+
+		user := Accounts{
+			Name:     y.Name,
+			Enabled:  y.Enabled,
+			Locked:   y.Locked,
+			RoleId:   y.RoleID,
+			Username: y.UserName,
+		}
+		users = append(users, user)
+
+	}
+
+	output, _ := json.Marshal(users)
+
+	return string(output), nil
+
 }
