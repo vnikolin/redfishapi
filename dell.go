@@ -1925,8 +1925,8 @@ type AccountsInfo struct {
 }
 
 type Accounts struct {
-	Enabled  string `json:"enabled"`
-	Locked   string `json:"locked"`
+	Enabled  bool   `json:"enabled"`
+	Locked   bool   `json:"locked"`
 	Name     string `json:"name"`
 	RoleId   string `json:"role_id"`
 	Username string `json:"username"`
@@ -2987,7 +2987,7 @@ func (c *IloClient) GetSystemEventLogsDell(version string) (string, error) {
 }
 
 //GetUserAccountsDell ... Fetch the current users created
-func GetUserAccountsDell() (string, error) {
+func (c *IloClient) GetUserAccountsDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Accounts"
 
