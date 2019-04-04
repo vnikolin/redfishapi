@@ -1524,12 +1524,6 @@ type MACData struct {
 	State       string `json:"state"`
 	Vlan        string `json:"vlan"`
 }
-type FirmwareData struct {
-	Name       string `json:"name"`
-	Id         string `json:"id"`
-	Version    string `json:"version"`
-	Updateable bool   `json:"updateable"`
-}
 type BootOrderData struct {
 	Enabled bool   `json:"enabled"`
 	Index   int    `json:"index"`

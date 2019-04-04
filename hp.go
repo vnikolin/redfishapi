@@ -2,7 +2,6 @@ package redfishapi
 
 import (
 	"crypto/tls"
-	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -130,7 +129,7 @@ type FirmwareInventory struct {
 }
 
 //SystemInfo is a struct which fetches the Overall System High Level info and its a Singleton Resource
-type SystemInfo struct {
+type SystemInfoHP struct {
 	OdataContext string `json:"@odata.context"`
 	OdataID      string `json:"@odata.id"`
 	OdataType    string `json:"@odata.type"`
@@ -335,14 +334,23 @@ type SystemInfo struct {
 	} `json:"links"`
 }
 
-type MacAdresssList struct {
-	// FactoryMacs []string `json:"factory_macs"`
-	HostMacs []string `json:"host_macs"`
-}
+func queryData(c *IloClient, call string, link string) ([]byte, error) {
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	req, err := http.NewRequest(call, link, nil)
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+	req.Header.Set("Content-Type", "application/json")
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
 
-func basicAuth(username, password string) string {
-	auth := username + ":" + password
-	return base64.StdEncoding.EncodeToString([]byte(auth))
+	_body, _ := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return _body, nil
 }
 
 // TODO: Need to complete
@@ -352,33 +360,28 @@ func basicAuth(username, password string) string {
 // 	return "yet to do", nil
 // }
 
-func (c *IloClient) GetMacAddressHp() (string, error) {
+func (c *IloClient) GetSystemInfoHP() (SystemDataHp, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, err := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url)
 	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
-
-	var x SystemInfo
-
-	json.Unmarshal(_body, &x)
-
-	macAddress := MacAdresssList{
-		HostMacs: x.HostCorrelation.HostMACAddress,
+		return SystemDataHp{}, err
 	}
 
-	output, _ := json.Marshal(macAddress)
-	return string(output), nil
+	var x SystemInfoHP
+
+	json.Unmarshal(resp, &x)
+
+	_result := SystemDataHp{Health: x.Status.Health,
+		Memory:          x.Memory.TotalSystemMemoryGB,
+		Model:           x.Model,
+		PowerState:      x.PowerState,
+		Processors:      x.Processors.Count,
+		ProcessorFamily: x.Processors.ProcessorFamily,
+		SerialNumber:    x.SerialNumber,
+	}
+
+	return _result, nil
 
 }
