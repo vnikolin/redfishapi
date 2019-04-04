@@ -11,7 +11,7 @@ import (
 // 	return "yet to do", nil
 // }
 
-func (c *IloClient) GetSystemInfoHP() (SystemDataHp, error) {
+func (c *IloClient) GetSystemInfoHP() (SystemData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1"
 
@@ -24,7 +24,7 @@ func (c *IloClient) GetSystemInfoHP() (SystemDataHp, error) {
 
 	json.Unmarshal(resp, &x)
 
-	_result := SystemDataHp{Health: x.Status.Health,
+	_result := SystemData{Health: x.Status.Health,
 		Memory:          x.Memory.TotalSystemMemoryGB,
 		Model:           x.Model,
 		PowerState:      x.PowerState,

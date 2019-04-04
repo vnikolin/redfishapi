@@ -2250,7 +2250,7 @@ type LifeCycleData struct {
 	VirtualAddressManagementApplication string      `json:"virtual_addr_mgmt_application"`
 }
 
-type SystemDataHp struct {
+type SystemData struct {
 	PowerState      string `json:"power_state"`
 	SerialNumber    string `json:"serial_number"`
 	Health          string `json:"health"`

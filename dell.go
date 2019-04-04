@@ -146,56 +146,26 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/EthernetInterfaces/"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New(StatusInternalServerError)
-			return "", err
-		} else {
-			return "", err
-		}
-	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New(StatusUnauthorized)
-			return "", err
-		}
-
+		return "", err
 	}
 
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
-
-	var x MemberCount
+	var x MemberCountDell
 	var Macs []MACData
 
-	json.Unmarshal(_body, &x)
+	json.Unmarshal(resp, &x)
 
 	for i := range x.Members {
 		_url := c.Hostname + x.Members[i].OdataId
-		req, err := http.NewRequest("GET", _url, nil)
-		req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-		client := &http.Client{}
-		resp, err := client.Do(req)
+		resp, err := queryData(c, "GET", _url)
 		if err != nil {
 			return "", err
 		}
-		defer resp.Body.Close()
-
-		_body, _ := ioutil.ReadAll(resp.Body)
 
 		var y GetMacAddressDell
 
-		json.Unmarshal(_body, &y)
+		json.Unmarshal(resp, &y)
 
 		macData := MACData{
 			Name:        y.Name,
