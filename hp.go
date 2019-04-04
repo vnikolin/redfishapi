@@ -2,6 +2,7 @@ package redfishapi
 
 import (
 	"crypto/tls"
+	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -332,6 +333,11 @@ type SystemInfoHP struct {
 			Href string `json:"href"`
 		} `json:"self"`
 	} `json:"links"`
+}
+
+func basicAuth(username, password string) string {
+	auth := username + ":" + password
+	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
 
 func queryData(c *IloClient, call string, link string) ([]byte, error) {
