@@ -1,12 +1,7 @@
 package redfishapi
 
 import (
-	"bytes"
-	"crypto/tls"
 	"encoding/json"
-	"errors"
-	"io/ioutil"
-	"net/http"
 	"regexp"
 
 	ver "github.com/hashicorp/go-version"
@@ -27,103 +22,38 @@ const (
 // target: "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
 func (c *IloClient) StartServer() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
 	var jsonStr = []byte(`{"ResetType": "On"}`)
-	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	_, err := queryData(c, "POST", url, jsonStr)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New(StatusInternalServerError)
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New(StatusUnauthorized)
-			return "", err
-		}
-
-	}
-
-	defer resp.Body.Close()
 
 	return "Server Started", nil
 }
 
 func (c *IloClient) StopServer() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
 	var jsonStr = []byte(`{"ResetType": "ForceOff"}`)
-	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	_, err := queryData(c, "POST", url, jsonStr)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New(StatusInternalServerError)
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New(StatusUnauthorized)
-			return "", err
-		}
-
-	}
-
-	defer resp.Body.Close()
 
 	return "Server Stopped", nil
 }
 
 func (c *IloClient) GetServerPowerState() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New(StatusInternalServerError)
-			return "nil", err
-		} else {
-			return "nil", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New(StatusUnauthorized)
-			return "", err
-		}
-
-	}
-
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var data SystemViewDell
 
-	json.Unmarshal(_body, &data)
+	json.Unmarshal(resp, &data)
 
 	return data.PowerState, nil
 
@@ -133,7 +63,7 @@ func (c *IloClient) GetServerPowerState() (string, error) {
 
 func (c *IloClient) CheckLoginDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
-	resp, err := queryData(c, "GET", url)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return "", err
 	}
@@ -143,30 +73,22 @@ func (c *IloClient) CheckLoginDell() (string, error) {
 }
 
 func (c *IloClient) GetMacAddressDell() (string, error) {
-
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/EthernetInterfaces/"
-
-	resp, err := queryData(c, "GET", url)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return "", err
 	}
-
 	var x MemberCountDell
 	var Macs []MACData
-
 	json.Unmarshal(resp, &x)
-
 	for i := range x.Members {
 		_url := c.Hostname + x.Members[i].OdataId
-		resp, err := queryData(c, "GET", _url)
+		resp, err := queryData(c, "GET", _url, nil)
 		if err != nil {
 			return "", err
 		}
-
 		var y GetMacAddressDell
-
 		json.Unmarshal(resp, &y)
-
 		macData := MACData{
 			Name:        y.Name,
 			Description: y.Description,
@@ -176,71 +98,37 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 			Vlan:        y.VLAN,
 		}
 		Macs = append(Macs, macData)
-
 	}
-
 	output, _ := json.Marshal(Macs)
-
 	return string(output), nil
-
 }
 
 func (c *IloClient) GetProcessorHealthDell() (string, error) {
 	///redfish/v1/Systems/System.Embedded.1/Processors
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Processors"
-
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New("Server Error")
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New("Unauthorized")
-			return "", err
-		}
-
-	}
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var (
 		x             ProcessorsListDataDell
 		processHealth []HealthList
 	)
 
-	json.Unmarshal(_body, &x)
+	json.Unmarshal(resp, &x)
 
 	for i := range x.Members {
 		_url := c.Hostname + x.Members[i].OdataId
-		req, err := http.NewRequest("GET", _url, nil)
-		req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-		client := &http.Client{}
-		resp, err := client.Do(req)
+		resp, err := queryData(c, "GET", _url, nil)
 		if err != nil {
 			return "", err
 		}
-		defer resp.Body.Close()
-
-		_body, _ := ioutil.ReadAll(resp.Body)
 
 		var y ProcessorDataDell
 
-		json.Unmarshal(_body, &y)
+		json.Unmarshal(resp, &y)
 
 		procHealth := HealthList{
 			Name:   y.ID,
@@ -260,39 +148,17 @@ func (c *IloClient) GetProcessorHealthDell() (string, error) {
 func (c *IloClient) GetPowerHealthDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/Power"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New("Server Error")
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New("Unauthorized")
-			return "", err
-		}
-
-	}
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var (
 		x             PowerDataDell
 		powerSupplies []HealthList
 	)
 
-	json.Unmarshal(_body, &x)
+	json.Unmarshal(resp, &x)
 
 	if x.PowerSuppliescount != 0 {
 		for i := range x.PowerSupplies {
@@ -335,39 +201,17 @@ func (c *IloClient) GetSensorsHealthDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/Thermal"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New("Server Error")
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New("Unauthorized")
-			return "", err
-		}
-
-	}
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var (
 		x             ThermalHealthListDell
 		thermalHealth []HealthList
 	)
 
-	json.Unmarshal(_body, &x)
+	json.Unmarshal(resp, &x)
 
 	// Fetching the Redundancy health info
 	if x.Redundancycount != 0 {
@@ -412,58 +256,29 @@ func (c *IloClient) GetStorageHealthDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Storage/Controllers"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New("Server Error")
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New("Unauthorized")
-			return "", err
-		}
-
-	}
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var (
 		x           StorageCollectionDell
 		_healthdata []StorageHealthList
 	)
 
-	json.Unmarshal(_body, &x)
+	json.Unmarshal(resp, &x)
 
 	for i := range x.Members {
 
 		_url := c.Hostname + x.Members[i].OdataId
-		req, err := http.NewRequest("GET", _url, nil)
-		req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-		client := &http.Client{}
-		resp, err := client.Do(req)
+		resp, err := queryData(c, "GET", _url, nil)
 		if err != nil {
 			return "", err
 		}
-		defer resp.Body.Close()
-
-		_body, _ := ioutil.ReadAll(resp.Body)
 
 		var y StorageDetailsDell
 
-		json.Unmarshal(_body, &y)
+		json.Unmarshal(resp, &y)
 
 		storageHealth := StorageHealthList{
 			Name:   y.ID,
@@ -499,59 +314,30 @@ func (c *IloClient) GetAggHealthDataDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New("Server Error")
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New("Unauthorized")
-			return "", err
-		}
-
-	}
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var (
 		x           MemberCountDell
 		_healthdata []HealthList
 	)
 
-	json.Unmarshal(_body, &x)
+	json.Unmarshal(resp, &x)
 
 	for i := range x.Members {
 		r, _ := regexp.Compile("Installed")
 		if r.MatchString(x.Members[i].OdataId) == true {
 			_url := c.Hostname + x.Members[i].OdataId
-			req, err := http.NewRequest("GET", _url, nil)
-			req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-			client := &http.Client{}
-			resp, err := client.Do(req)
+			resp, err := queryData(c, "GET", _url, nil)
 			if err != nil {
 				return "", err
 			}
-			defer resp.Body.Close()
-
-			_body, _ := ioutil.ReadAll(resp.Body)
 
 			var y FirmwareDataDell
 
-			json.Unmarshal(_body, &y)
+			json.Unmarshal(resp, &y)
 
 			healthData := HealthList{
 				Name:   y.Name,
@@ -574,32 +360,10 @@ func (c *IloClient) GetFirmwareDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New("Server Error")
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New("Unauthorized")
-			return "", err
-		}
-
-	}
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var (
 		x         MemberCountDell
@@ -612,21 +376,14 @@ func (c *IloClient) GetFirmwareDell() (string, error) {
 		r, _ := regexp.Compile("Installed")
 		if r.MatchString(x.Members[i].OdataId) == true {
 			_url := c.Hostname + x.Members[i].OdataId
-			req, err := http.NewRequest("GET", _url, nil)
-			req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-			client := &http.Client{}
-			resp, err := client.Do(req)
+			resp, err := queryData(c, "GET", _url, nil)
 			if err != nil {
 				return "", err
 			}
-			defer resp.Body.Close()
-
-			_body, _ := ioutil.ReadAll(resp.Body)
 
 			var y FirmwareDataDell
 
-			json.Unmarshal(_body, &y)
+			json.Unmarshal(resp, &y)
 
 			firmData := FirmwareData{
 				Name:       y.Name,
@@ -650,36 +407,14 @@ func (c *IloClient) GetBiosDataDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New("Server Error")
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New("Unauthorized")
-			return "", err
-		}
-
-	}
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var x BiosDell
 
-	json.Unmarshal(_body, &x)
+	json.Unmarshal(resp, &x)
 
 	_data := x.Attributes
 
@@ -704,36 +439,14 @@ func (c *IloClient) GetLifecycleAttrDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/LifecycleController.Embedded.1/Attributes"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New("Server Error")
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New("Unauthorized")
-			return "", err
-		}
-
-	}
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var x LifeCycleAttrDell
 
-	json.Unmarshal(_body, &x)
+	json.Unmarshal(resp, &x)
 
 	_data := x.Attributes
 
@@ -771,36 +484,14 @@ func (c *IloClient) GetIDRACAttrDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Attributes"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New("Server Error")
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New("Unauthorized")
-			return "", err
-		}
-
-	}
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var x IDRACAttrDell
 
-	json.Unmarshal(_body, &x)
+	json.Unmarshal(resp, &x)
 
 	_data := x.Attributes
 
@@ -824,36 +515,14 @@ func (c *IloClient) GetSysAttrDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/System.Embedded.1/Attributes"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New("Server Error")
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New("Unauthorized")
-			return "", err
-		}
-
-	}
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var x SysAttrDell
 
-	json.Unmarshal(_body, &x)
+	json.Unmarshal(resp, &x)
 
 	_data := x.Attributes
 
@@ -872,36 +541,14 @@ func (c *IloClient) GetBootOrderDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/BootSources"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New("Server Error")
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New("Unauthorized")
-			return "", err
-		}
-
-	}
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var x BootOrderDell
 
-	json.Unmarshal(_body, &x)
+	json.Unmarshal(resp, &x)
 
 	var _bootOrder []BootOrderData
 
@@ -927,32 +574,10 @@ func (c *IloClient) GetSystemEventLogsDell(version string) (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Logs/Sel"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New("Server Error")
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New("Unauthorized")
-			return "", err
-		}
-
-	}
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	// v1, err := ver.NewVersion("3.15.17.15")
 	v1, err := ver.NewConstraint("<= 3.15.17.15")
@@ -964,7 +589,7 @@ func (c *IloClient) GetSystemEventLogsDell(version string) (string, error) {
 
 		var x SystemEventLogsV1Dell
 
-		json.Unmarshal(_body, &x)
+		json.Unmarshal(resp, &x)
 
 		var _systemEventLogs []SystemEventLogRes
 
@@ -1018,52 +643,22 @@ func (c *IloClient) GetUserAccountsDell() (string, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Accounts"
 
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
-			err := errors.New(StatusInternalServerError)
-			return "", err
-		} else {
-			return "", err
-		}
+		return "", err
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 401 {
-			err := errors.New(StatusUnauthorized)
-			return "", err
-		}
-
-	}
-
-	defer resp.Body.Close()
-
-	_body, _ := ioutil.ReadAll(resp.Body)
 
 	var x MemberCountDell
 	var users []Accounts
 
-	json.Unmarshal(_body, &x)
+	json.Unmarshal(resp, &x)
 
 	for i := range x.Members {
 		_url := c.Hostname + x.Members[i].OdataId
-		req, err := http.NewRequest("GET", _url, nil)
-		req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
-
-		client := &http.Client{}
-		resp, err := client.Do(req)
+		resp, err := queryData(c, "GET", _url, nil)
 		if err != nil {
 			return "", err
 		}
-		defer resp.Body.Close()
-
-		_body, _ := ioutil.ReadAll(resp.Body)
 
 		var y AccountsInfoDell
 

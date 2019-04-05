@@ -17,7 +17,7 @@ func (c *IloClient) GetSystemInfoHP() (SystemData, error) {
 
 	resp, err := queryData(c, "GET", url)
 	if err != nil {
-		return SystemDataHp{}, err
+		return SystemData{}, err
 	}
 
 	var x SystemInfoHP

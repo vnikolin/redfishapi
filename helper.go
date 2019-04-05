@@ -1,6 +1,7 @@
 package redfishapi
 
 import (
+	"bytes"
 	"crypto/tls"
 	"encoding/base64"
 	"errors"
@@ -14,9 +15,9 @@ func basicAuth(username, password string) string {
 	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
 
-func queryData(c *IloClient, call string, link string) ([]byte, error) {
+func queryData(c *IloClient, call string, link string, data []byte) ([]byte, error) {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	req, err := http.NewRequest(call, link, nil)
+	req, err := http.NewRequest(call, link, bytes.NewBuffer(data))
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
 	req.Header.Set("Content-Type", "application/json")
 	client := &http.Client{}
