@@ -1357,7 +1357,7 @@ type SystemViewDell struct {
 			HealthRollup string `json:"HealthRollup"`
 			State        string `json:"State"`
 		} `json:"Status"`
-		TotalSystemMemoryGiB int `json:"TotalSystemMemoryGiB"`
+		TotalSystemMemoryGiB float32 `json:"TotalSystemMemoryGiB"`
 	} `json:"MemorySummary"`
 	Model            string `json:"Model"`
 	Name             string `json:"Name"`
@@ -1998,13 +1998,13 @@ type SystemInfoHP struct {
 		Status struct {
 			HealthRollUp string `json:"HealthRollUp"`
 		} `json:"Status"`
-		TotalSystemMemoryGB int `json:"TotalSystemMemoryGB"`
+		TotalSystemMemoryGB float32 `json:"TotalSystemMemoryGB"`
 	} `json:"Memory"`
 	MemorySummary struct {
 		Status struct {
 			HealthRollUp string `json:"HealthRollUp"`
 		} `json:"Status"`
-		TotalSystemMemoryGiB int `json:"TotalSystemMemoryGiB"`
+		TotalSystemMemoryGiB float32 `json:"TotalSystemMemoryGiB"`
 	} `json:"MemorySummary"`
 	Model string `json:"Model"`
 	Name  string `json:"Name"`
@@ -2251,14 +2251,14 @@ type LifeCycleData struct {
 }
 
 type SystemData struct {
-	PowerState      string `json:"power_state"`
-	SerialNumber    string `json:"serial_number"`
-	Health          string `json:"health"`
-	SystemType      string `json:"system_type"`
-	Model           string `json:"model"`
-	Memory          int    `json:"memory"`
-	Processors      int    `json:"processors"`
-	ProcessorFamily string `json:"processor_family"`
+	PowerState      string  `json:"power_state"`
+	SerialNumber    string  `json:"serial_number"`
+	Health          string  `json:"health"`
+	SystemType      string  `json:"system_type"`
+	Model           string  `json:"model"`
+	Memory          float32 `json:"memory"`
+	Processors      int     `json:"processors"`
+	ProcessorFamily string  `json:"processor_family"`
 }
 
 type FirmwareData struct {

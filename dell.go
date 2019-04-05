@@ -20,7 +20,7 @@ const (
 // 4	"PushPowerButton"
 // 5	"Nmi"
 // target: "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
-func (c *IloClient) StartServer() (string, error) {
+func (c *IloClient) StartServerDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
 
 	var jsonStr = []byte(`{"ResetType": "On"}`)
@@ -32,7 +32,7 @@ func (c *IloClient) StartServer() (string, error) {
 	return "Server Started", nil
 }
 
-func (c *IloClient) StopServer() (string, error) {
+func (c *IloClient) StopServerDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
 
 	var jsonStr = []byte(`{"ResetType": "ForceOff"}`)
@@ -681,13 +681,13 @@ func (c *IloClient) GetUserAccountsDell() (string, error) {
 
 }
 
-func (c *IloClient) GetSystemInfoDell() (*SystemData, error) {
+func (c *IloClient) GetSystemInfoDell() (SystemData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var x SystemViewDell
