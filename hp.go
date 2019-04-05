@@ -11,11 +11,11 @@ import (
 // 	return "yet to do", nil
 // }
 
-func (c *IloClient) GetSystemInfoHP() (SystemData, error) {
+func (c *IloClient) GetSystemInfoHP() (*SystemData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1"
 
-	resp, err := queryData(c, "GET", url)
+	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return SystemData{}, err
 	}

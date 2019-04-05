@@ -370,7 +370,7 @@ func (c *IloClient) GetFirmwareDell() (string, error) {
 		_firmdata []FirmwareData
 	)
 
-	json.Unmarshal(_body, &x)
+	json.Unmarshal(resp, &x)
 
 	for i := range x.Members {
 		r, _ := regexp.Compile("Installed")
@@ -614,7 +614,7 @@ func (c *IloClient) GetSystemEventLogsDell(version string) (string, error) {
 
 		var x SystemEventLogsV2Dell
 
-		json.Unmarshal(_body, &x)
+		json.Unmarshal(resp, &x)
 
 		var _systemEventLogs []SystemEventLogRes
 
@@ -662,7 +662,7 @@ func (c *IloClient) GetUserAccountsDell() (string, error) {
 
 		var y AccountsInfoDell
 
-		json.Unmarshal(_body, &y)
+		json.Unmarshal(resp, &y)
 
 		user := Accounts{
 			Name:     y.Name,
@@ -678,5 +678,31 @@ func (c *IloClient) GetUserAccountsDell() (string, error) {
 	output, _ := json.Marshal(users)
 
 	return string(output), nil
+
+}
+
+func (c *IloClient) GetSystemInfoDell() (*SystemData, error) {
+
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
+
+	resp, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return "", err
+	}
+
+	var x SystemViewDell
+
+	json.Unmarshal(resp, &x)
+
+	_result := SystemData{Health: x.Status.Health,
+		Memory:          x.MemorySummary.TotalSystemMemoryGiB,
+		Model:           x.Model,
+		PowerState:      x.PowerState,
+		Processors:      x.ProcessorSummary.Count,
+		ProcessorFamily: x.ProcessorSummary.Model,
+		SerialNumber:    x.SerialNumber,
+	}
+
+	return _result, nil
 
 }
