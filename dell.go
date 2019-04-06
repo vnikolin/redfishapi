@@ -109,13 +109,13 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 }
 
 //GetProcessorHealthDell... Will Fetch the Processor Health Details
-func (c *IloClient) GetProcessorHealthDell() (string, error) {
+func (c *IloClient) GetProcessorHealthDell() ([]HealthList, error) {
 	///redfish/v1/Systems/System.Embedded.1/Processors
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Processors"
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var (
@@ -129,7 +129,7 @@ func (c *IloClient) GetProcessorHealthDell() (string, error) {
 		_url := c.Hostname + x.Members[i].OdataId
 		resp, err := queryData(c, "GET", _url, nil)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 
 		var y ProcessorDataDell
@@ -144,20 +144,19 @@ func (c *IloClient) GetProcessorHealthDell() (string, error) {
 		processHealth = append(processHealth, procHealth)
 	}
 
-	output, _ := json.Marshal(processHealth)
-	return string(output), nil
+	return processHealth, nil
 
 }
 
 // func (c *IloClient) GetMemoryHealthDell() (string, error) {}
 
 //GetPowerHealthDell... Will Fetch the Power Health Details
-func (c *IloClient) GetPowerHealthDell() (string, error) {
+func (c *IloClient) GetPowerHealthDell() ([]HealthList, error) {
 	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/Power"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var (
@@ -200,18 +199,17 @@ func (c *IloClient) GetPowerHealthDell() (string, error) {
 		}
 	}
 
-	output, _ := json.Marshal(powerSupplies)
-	return string(output), nil
+	return powerSupplies, nil
 }
 
 //GetSensorsHealthDell... Will Fetch the Sensors Health Details
-func (c *IloClient) GetSensorsHealthDell() (string, error) {
+func (c *IloClient) GetSensorsHealthDell() ([]HealthList, error) {
 
 	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/Thermal"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var (
@@ -255,8 +253,7 @@ func (c *IloClient) GetSensorsHealthDell() (string, error) {
 		}
 	}
 
-	output, _ := json.Marshal(thermalHealth)
-	return string(output), nil
+	return thermalHealth, nil
 
 }
 
@@ -318,13 +315,13 @@ func (c *IloClient) GetStorageHealthDell() ([]StorageHealthList, error) {
 }
 
 //GetAggHealthDataDell... will fetch the data related to all components health(aggregated view)
-func (c *IloClient) GetAggHealthDataDell() (string, error) {
+func (c *IloClient) GetAggHealthDataDell() ([]HealthList, error) {
 
 	url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var (
@@ -340,7 +337,7 @@ func (c *IloClient) GetAggHealthDataDell() (string, error) {
 			_url := c.Hostname + x.Members[i].OdataId
 			resp, err := queryData(c, "GET", _url, nil)
 			if err != nil {
-				return "", err
+				return nil, err
 			}
 
 			var y FirmwareDataDell
@@ -358,20 +355,18 @@ func (c *IloClient) GetAggHealthDataDell() (string, error) {
 		}
 	}
 
-	output, _ := json.Marshal(_healthdata)
-
-	return string(output), nil
+	return _healthdata, nil
 
 }
 
 //GetFirmwareDell... will fetch the Firmware details
-func (c *IloClient) GetFirmwareDell() (string, error) {
+func (c *IloClient) GetFirmwareDell() ([]FirmwareData, error) {
 
 	url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var (
@@ -387,7 +382,7 @@ func (c *IloClient) GetFirmwareDell() (string, error) {
 			_url := c.Hostname + x.Members[i].OdataId
 			resp, err := queryData(c, "GET", _url, nil)
 			if err != nil {
-				return "", err
+				return nil, err
 			}
 
 			var y FirmwareDataDell
@@ -406,9 +401,7 @@ func (c *IloClient) GetFirmwareDell() (string, error) {
 		}
 	}
 
-	output, _ := json.Marshal(_firmdata)
-
-	return string(output), nil
+	return _firmdata, nil
 
 }
 
