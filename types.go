@@ -1844,17 +1844,6 @@ type FirmwareInventoryHP struct {
 			Updateable      bool     `json:"Updateable"`
 			VersionString   string   `json:"VersionString"`
 		} `json:"103c3239103c21c0"`
-		One0df0720103c220a []struct {
-			ImageSizeBytes  int      `json:"ImageSizeBytes"`
-			InUse           bool     `json:"InUse"`
-			Key             string   `json:"Key"`
-			Location        string   `json:"Location"`
-			Name            string   `json:"Name"`
-			ResetRequired   bool     `json:"ResetRequired"`
-			UEFIDevicePaths []string `json:"UEFIDevicePaths"`
-			Updateable      bool     `json:"Updateable"`
-			VersionString   string   `json:"VersionString"`
-		} `json:"10df0720103c220a"`
 		One4e41657103c22be []struct {
 			ImageSizeBytes  int      `json:"ImageSizeBytes"`
 			Key             string   `json:"Key"`
@@ -1864,6 +1853,16 @@ type FirmwareInventoryHP struct {
 			Updateable      bool     `json:"Updateable"`
 			VersionString   string   `json:"VersionString"`
 		} `json:"14e41657103c22be"`
+		Eight08610fb103c17d0 []struct {
+			ImageSizeBytes  int      `json:"ImageSizeBytes"`
+			Key             string   `json:"Key"`
+			Location        string   `json:"Location"`
+			Name            string   `json:"Name"`
+			ResetRequired   bool     `json:"ResetRequired"`
+			UEFIDevicePaths []string `json:"UEFIDevicePaths"`
+			Updateable      bool     `json:"Updateable"`
+			VersionString   string   `json:"VersionString"`
+		} `json:"808610fb103c17d0"`
 		Eight08610fb103c17d3 []struct {
 			ImageSizeBytes  int      `json:"ImageSizeBytes"`
 			Key             string   `json:"Key"`
@@ -1874,6 +1873,11 @@ type FirmwareInventoryHP struct {
 			Updateable      bool     `json:"Updateable"`
 			VersionString   string   `json:"VersionString"`
 		} `json:"808610fb103c17d3"`
+		IntelligentProvisioning []struct {
+			Location      string `json:"Location"`
+			Name          string `json:"Name"`
+			VersionString string `json:"VersionString"`
+		} `json:"IntelligentProvisioning"`
 		PlatformDefinitionTable []struct {
 			Location      string `json:"Location"`
 			Name          string `json:"Name"`
@@ -2151,6 +2155,425 @@ type SystemInfoHP struct {
 		Processors struct {
 			Href string `json:"href"`
 		} `json:"Processors"`
+		Self struct {
+			Href string `json:"href"`
+		} `json:"self"`
+	} `json:"links"`
+}
+
+type MemberCountHP struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	MemberType     string `json:"MemberType"`
+	Members        []struct {
+		_odata_id string `json:"@odata.id"`
+	} `json:"Members"`
+	Members_odata_count int    `json:"Members@odata.count"`
+	Name                string `json:"Name"`
+	Total               int    `json:"Total"`
+	Type                string `json:"Type"`
+	Links               struct {
+		Member []struct {
+			Href string `json:"href"`
+		} `json:"Member"`
+		Self struct {
+			Href string `json:"href"`
+		} `json:"self"`
+	} `json:"links"`
+}
+
+type ThermalHealthListHP struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Fans           []struct {
+		CurrentReading int    `json:"CurrentReading"`
+		FanName        string `json:"FanName"`
+		Oem            struct {
+			Hp struct {
+				_odata_type string `json:"@odata.type"`
+				Location    string `json:"Location"`
+				Type        string `json:"Type"`
+			} `json:"Hp"`
+		} `json:"Oem"`
+		Status struct {
+			Health string `json:"Health"`
+			State  string `json:"State"`
+		} `json:"Status"`
+		Units string `json:"Units"`
+	} `json:"Fans"`
+	ID           string `json:"Id"`
+	Name         string `json:"Name"`
+	Temperatures []struct {
+		CurrentReading int    `json:"CurrentReading"`
+		Name           string `json:"Name"`
+		Number         int    `json:"Number"`
+		Oem            struct {
+			Hp struct {
+				_odata_type string `json:"@odata.type"`
+				LocationXmm int    `json:"LocationXmm"`
+				LocationYmm int    `json:"LocationYmm"`
+				Type        string `json:"Type"`
+			} `json:"Hp"`
+		} `json:"Oem"`
+		PhysicalContext string `json:"PhysicalContext"`
+		ReadingCelsius  int    `json:"ReadingCelsius"`
+		Status          struct {
+			Health string `json:"Health"`
+			State  string `json:"State"`
+		} `json:"Status"`
+		Units                  string `json:"Units"`
+		UpperThresholdCritical int    `json:"UpperThresholdCritical"`
+		UpperThresholdFatal    int    `json:"UpperThresholdFatal"`
+	} `json:"Temperatures"`
+	Type  string `json:"Type"`
+	Links struct {
+		Self struct {
+			Href string `json:"href"`
+		} `json:"self"`
+	} `json:"links"`
+}
+
+type PowerDataHP struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	ID             string `json:"Id"`
+	Name           string `json:"Name"`
+	Oem            struct {
+		Hp struct {
+			_odata_type             string `json:"@odata.type"`
+			SNMPPowerThresholdAlert struct {
+				DurationInMin  int    `json:"DurationInMin"`
+				ThresholdWatts int    `json:"ThresholdWatts"`
+				Trigger        string `json:"Trigger"`
+			} `json:"SNMPPowerThresholdAlert"`
+			Type  string `json:"Type"`
+			Links struct {
+				FastPowerMeter struct {
+					Href string `json:"href"`
+				} `json:"FastPowerMeter"`
+				FederatedGroupCapping struct {
+					Href string `json:"href"`
+				} `json:"FederatedGroupCapping"`
+				PowerMeter struct {
+					Href string `json:"href"`
+				} `json:"PowerMeter"`
+			} `json:"links"`
+		} `json:"Hp"`
+	} `json:"Oem"`
+	PowerCapacityWatts int `json:"PowerCapacityWatts"`
+	PowerConsumedWatts int `json:"PowerConsumedWatts"`
+	PowerControl       []struct {
+		PowerCapacityWatts int `json:"PowerCapacityWatts"`
+		PowerConsumedWatts int `json:"PowerConsumedWatts"`
+		PowerLimit         struct {
+			LimitInWatts interface{} `json:"LimitInWatts"`
+		} `json:"PowerLimit"`
+		PowerMetrics struct {
+			AverageConsumedWatts int `json:"AverageConsumedWatts"`
+			IntervalInMin        int `json:"IntervalInMin"`
+			MaxConsumedWatts     int `json:"MaxConsumedWatts"`
+			MinConsumedWatts     int `json:"MinConsumedWatts"`
+		} `json:"PowerMetrics"`
+	} `json:"PowerControl"`
+	PowerLimit struct {
+		LimitInWatts interface{} `json:"LimitInWatts"`
+	} `json:"PowerLimit"`
+	PowerMetrics struct {
+		AverageConsumedWatts int `json:"AverageConsumedWatts"`
+		IntervalInMin        int `json:"IntervalInMin"`
+		MaxConsumedWatts     int `json:"MaxConsumedWatts"`
+		MinConsumedWatts     int `json:"MinConsumedWatts"`
+	} `json:"PowerMetrics"`
+	PowerSupplies []struct {
+		FirmwareVersion      string `json:"FirmwareVersion"`
+		LastPowerOutputWatts int    `json:"LastPowerOutputWatts"`
+		LineInputVoltage     int    `json:"LineInputVoltage"`
+		LineInputVoltageType string `json:"LineInputVoltageType"`
+		Model                string `json:"Model"`
+		Name                 string `json:"Name"`
+		Oem                  struct {
+			Hp struct {
+				_odata_type             string `json:"@odata.type"`
+				AveragePowerOutputWatts int    `json:"AveragePowerOutputWatts"`
+				BayNumber               int    `json:"BayNumber"`
+				HotplugCapable          bool   `json:"HotplugCapable"`
+				MaxPowerOutputWatts     int    `json:"MaxPowerOutputWatts"`
+				Mismatched              bool   `json:"Mismatched"`
+				PowerSupplyStatus       struct {
+					State string `json:"State"`
+				} `json:"PowerSupplyStatus"`
+				Type        string `json:"Type"`
+				IPDUCapable bool   `json:"iPDUCapable"`
+			} `json:"Hp"`
+		} `json:"Oem"`
+		PowerCapacityWatts int    `json:"PowerCapacityWatts"`
+		PowerSupplyType    string `json:"PowerSupplyType"`
+		SerialNumber       string `json:"SerialNumber"`
+		SparePartNumber    string `json:"SparePartNumber"`
+		Status             struct {
+			Health string `json:"Health"`
+			State  string `json:"State"`
+		} `json:"Status"`
+	} `json:"PowerSupplies"`
+	Redundancy []struct {
+		MaxNumSupported int    `json:"MaxNumSupported"`
+		MemberID        string `json:"MemberId"`
+		MinNumNeeded    int    `json:"MinNumNeeded"`
+		Mode            string `json:"Mode"`
+		Name            string `json:"Name"`
+		RedundancySet   []struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"RedundancySet"`
+	} `json:"Redundancy"`
+	Type  string `json:"Type"`
+	Links struct {
+		Self struct {
+			Href string `json:"href"`
+		} `json:"self"`
+	} `json:"links"`
+}
+
+type EthernetInterfacesHealthHP struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	Items          []struct {
+		_odata_context    string `json:"@odata.context"`
+		_odata_id         string `json:"@odata.id"`
+		_odata_type       string `json:"@odata.type"`
+		AutoNeg           bool   `json:"AutoNeg"`
+		Autosense         bool   `json:"Autosense"`
+		Description       string `json:"Description"`
+		FQDN              string `json:"FQDN"`
+		FactoryMacAddress string `json:"FactoryMacAddress"`
+		FullDuplex        bool   `json:"FullDuplex"`
+		HostName          string `json:"HostName"`
+		IPv4Addresses     []struct {
+			Address       string `json:"Address"`
+			AddressOrigin string `json:"AddressOrigin"`
+			Gateway       string `json:"Gateway"`
+			SubnetMask    string `json:"SubnetMask"`
+		} `json:"IPv4Addresses"`
+		IPv6AddressPolicyTable []struct {
+			Label      interface{} `json:"Label"`
+			Precedence int         `json:"Precedence"`
+			Prefix     string      `json:"Prefix"`
+		} `json:"IPv6AddressPolicyTable"`
+		IPv6Addresses []struct {
+			Address       string `json:"Address"`
+			AddressOrigin string `json:"AddressOrigin"`
+			AddressState  string `json:"AddressState"`
+			PrefixLength  int    `json:"PrefixLength"`
+		} `json:"IPv6Addresses"`
+		IPv6DefaultGateway  string `json:"IPv6DefaultGateway"`
+		IPv6StaticAddresses []struct {
+			Address      string      `json:"Address"`
+			PrefixLength interface{} `json:"PrefixLength"`
+		} `json:"IPv6StaticAddresses"`
+		ID                     string `json:"Id"`
+		LinkTechnology         string `json:"LinkTechnology"`
+		MacAddress             string `json:"MacAddress"`
+		MaxIPv6StaticAddresses int    `json:"MaxIPv6StaticAddresses"`
+		Name                   string `json:"Name"`
+		Oem                    struct {
+			Hp struct {
+				_odata_type           string `json:"@odata.type"`
+				ConfigurationSettings string `json:"ConfigurationSettings"`
+				DHCPv4                struct {
+					Enabled         bool `json:"Enabled"`
+					UseDNSServers   bool `json:"UseDNSServers"`
+					UseDomainName   bool `json:"UseDomainName"`
+					UseGateway      bool `json:"UseGateway"`
+					UseNTPServers   bool `json:"UseNTPServers"`
+					UseStaticRoutes bool `json:"UseStaticRoutes"`
+					UseWINSServers  bool `json:"UseWINSServers"`
+				} `json:"DHCPv4"`
+				DHCPv6 struct {
+					StatefulModeEnabled  bool `json:"StatefulModeEnabled"`
+					StatelessModeEnabled bool `json:"StatelessModeEnabled"`
+					UseDNSServers        bool `json:"UseDNSServers"`
+					UseDomainName        bool `json:"UseDomainName"`
+					UseNTPServers        bool `json:"UseNTPServers"`
+					UseRapidCommit       bool `json:"UseRapidCommit"`
+				} `json:"DHCPv6"`
+				DomainName string `json:"DomainName"`
+				HostName   string `json:"HostName"`
+				IPv4       struct {
+					DDNSRegistration bool     `json:"DDNSRegistration"`
+					DNSServers       []string `json:"DNSServers"`
+					StaticRoutes     []struct {
+						Destination string `json:"Destination"`
+						Gateway     string `json:"Gateway"`
+						SubnetMask  string `json:"SubnetMask"`
+					} `json:"StaticRoutes"`
+					WINSRegistration bool     `json:"WINSRegistration"`
+					WINSServers      []string `json:"WINSServers"`
+				} `json:"IPv4"`
+				IPv6 struct {
+					DDNSRegistration     bool     `json:"DDNSRegistration"`
+					DNSServers           []string `json:"DNSServers"`
+					SLAACEnabled         bool     `json:"SLAACEnabled"`
+					StaticDefaultGateway string   `json:"StaticDefaultGateway"`
+					StaticRoutes         []struct {
+						Destination  string      `json:"Destination"`
+						Gateway      string      `json:"Gateway"`
+						PrefixLength interface{} `json:"PrefixLength"`
+						Status       string      `json:"Status"`
+					} `json:"StaticRoutes"`
+				} `json:"IPv6"`
+				NICEnabled           bool   `json:"NICEnabled"`
+				NICSupportsIPv6      bool   `json:"NICSupportsIPv6"`
+				PingGatewayOnStartup bool   `json:"PingGatewayOnStartup"`
+				Type                 string `json:"Type"`
+				Links                struct {
+					DateTimeService struct {
+						Href string `json:"href"`
+					} `json:"DateTimeService"`
+				} `json:"links"`
+			} `json:"Hp"`
+		} `json:"Oem"`
+		PermanentMACAddress string `json:"PermanentMACAddress"`
+		SpeedMbps           int    `json:"SpeedMbps"`
+		Status              struct {
+			Health string `json:"Health"`
+			State  string `json:"State"`
+		} `json:"Status"`
+		Type  string `json:"Type"`
+		Links struct {
+			NetworkServices []struct {
+				Href string `json:"href"`
+			} `json:"NetworkServices"`
+			Self struct {
+				Href string `json:"href"`
+			} `json:"self"`
+		} `json:"links"`
+	} `json:"Items"`
+	MemberType string `json:"MemberType"`
+	Members    []struct {
+		_odata_id string `json:"@odata.id"`
+	} `json:"Members"`
+	Members_odata_count int    `json:"Members@odata.count"`
+	Name                string `json:"Name"`
+	Total               int    `json:"Total"`
+	Type                string `json:"Type"`
+	Links               struct {
+		Member []struct {
+			Href string `json:"href"`
+		} `json:"Member"`
+		Self struct {
+			Href string `json:"href"`
+		} `json:"self"`
+	} `json:"links"`
+}
+
+type AccountsInfoHP struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	Items          []struct {
+		_odata_context string `json:"@odata.context"`
+		_odata_id      string `json:"@odata.id"`
+		_odata_type    string `json:"@odata.type"`
+		Description    string `json:"Description"`
+		ID             string `json:"Id"`
+		Name           string `json:"Name"`
+		Oem            struct {
+			Hp struct {
+				_odata_type string `json:"@odata.type"`
+				LoginName   string `json:"LoginName"`
+				Privileges  struct {
+					LoginPriv                bool `json:"LoginPriv"`
+					RemoteConsolePriv        bool `json:"RemoteConsolePriv"`
+					UserConfigPriv           bool `json:"UserConfigPriv"`
+					VirtualMediaPriv         bool `json:"VirtualMediaPriv"`
+					VirtualPowerAndResetPriv bool `json:"VirtualPowerAndResetPriv"`
+					ILOConfigPriv            bool `json:"iLOConfigPriv"`
+				} `json:"Privileges"`
+				Type string `json:"Type"`
+			} `json:"Hp"`
+		} `json:"Oem"`
+		Password interface{} `json:"Password"`
+		Type     string      `json:"Type"`
+		UserName string      `json:"UserName"`
+		Links    struct {
+			Self struct {
+				Href string `json:"href"`
+			} `json:"self"`
+		} `json:"links"`
+	} `json:"Items"`
+	MemberType string `json:"MemberType"`
+	Members    []struct {
+		_odata_id string `json:"@odata.id"`
+	} `json:"Members"`
+	Members_odata_count int    `json:"Members@odata.count"`
+	Name                string `json:"Name"`
+	Total               int    `json:"Total"`
+	Type                string `json:"Type"`
+	Links               struct {
+		Member []struct {
+			Href string `json:"href"`
+		} `json:"Member"`
+		Self struct {
+			Href string `json:"href"`
+		} `json:"self"`
+	} `json:"links"`
+}
+
+type SystemEventLogsHP struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	Items          []struct {
+		_odata_context string `json:"@odata.context"`
+		_odata_id      string `json:"@odata.id"`
+		_odata_type    string `json:"@odata.type"`
+		Created        string `json:"Created"`
+		EntryType      string `json:"EntryType"`
+		ID             string `json:"Id"`
+		Message        string `json:"Message"`
+		Name           string `json:"Name"`
+		Number         int    `json:"Number"`
+		Oem            struct {
+			Hp struct {
+				_odata_type string `json:"@odata.type"`
+				EventNumber int    `json:"EventNumber"`
+				Type        string `json:"Type"`
+				Updated     string `json:"Updated"`
+			} `json:"Hp"`
+		} `json:"Oem"`
+		OemRecordFormat string `json:"OemRecordFormat"`
+		RecordID        int    `json:"RecordId"`
+		Severity        string `json:"Severity"`
+		Type            string `json:"Type"`
+		Links           struct {
+			Self struct {
+				Href string `json:"href"`
+			} `json:"self"`
+		} `json:"links"`
+	} `json:"Items"`
+	MemberType string `json:"MemberType"`
+	Members    []struct {
+		_odata_id string `json:"@odata.id"`
+	} `json:"Members"`
+	Members_odata_count int    `json:"Members@odata.count"`
+	Name                string `json:"Name"`
+	Total               int    `json:"Total"`
+	Type                string `json:"Type"`
+	Links               struct {
+		Member []struct {
+			Href string `json:"href"`
+		} `json:"Member"`
+		NextPage struct {
+			Count int `json:"count"`
+			Page  int `json:"page"`
+		} `json:"NextPage"`
 		Self struct {
 			Href string `json:"href"`
 		} `json:"self"`

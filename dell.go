@@ -44,7 +44,7 @@ func (c *IloClient) StopServerDell() (string, error) {
 	return "Server Stopped", nil
 }
 
-func (c *IloClient) GetServerPowerState() (string, error) {
+func (c *IloClient) GetServerPowerStateDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
