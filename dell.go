@@ -261,13 +261,13 @@ func (c *IloClient) GetSensorsHealthDell() (string, error) {
 }
 
 //GetStorageHealthDell... Will Fetch the Storage Health Details
-func (c *IloClient) GetStorageHealthDell() (string, error) {
+func (c *IloClient) GetStorageHealthDell() ([]StorageHealthList, error) {
 
-	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Storage/Controllers"
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Storage"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var (
@@ -282,7 +282,7 @@ func (c *IloClient) GetStorageHealthDell() (string, error) {
 		_url := c.Hostname + x.Members[i].OdataId
 		resp, err := queryData(c, "GET", _url, nil)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 
 		var y StorageDetailsDell
@@ -313,8 +313,7 @@ func (c *IloClient) GetStorageHealthDell() (string, error) {
 		}
 
 	}
-	output, _ := json.Marshal(_healthdata)
-	return string(output), nil
+	return _healthdata, nil
 
 }
 
@@ -703,7 +702,7 @@ func (c *IloClient) GetSystemInfoDell() (SystemData, error) {
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return nil, err
+		return SystemData{}, err
 	}
 
 	var x SystemViewDell

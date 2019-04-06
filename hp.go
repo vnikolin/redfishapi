@@ -43,7 +43,7 @@ func (c *IloClient) GetSystemInfoHP() (SystemData, error) {
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return nil, err
+		return SystemData{}, err
 	}
 
 	var x SystemInfoHP
@@ -262,7 +262,7 @@ func (c *IloClient) GetUserAccountsHP() ([]Accounts, error) {
 	var (
 		x       AccountsInfoHP
 		users   []Accounts
-		_locked string
+		_locked bool
 	)
 
 	json.Unmarshal(resp, &x)
