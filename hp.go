@@ -2,9 +2,10 @@ package redfishapi
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
-//StartServerHP
+//StartServerHP ...
 // ResetType@Redfish.AllowableValues
 // 0	"On"
 // 1	"ForceOff"
@@ -23,7 +24,7 @@ func (c *IloClient) StartServerHP() (string, error) {
 	return "Server Started", nil
 }
 
-//StopServerHP...Will Request to stop the server
+//StopServerHP ... Will Request to stop the server
 func (c *IloClient) StopServerHP() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/1/Actions/ComputerSystem.Reset/"
 	var jsonStr = []byte(`{"ResetType": "ForceOff"}`)
@@ -213,7 +214,8 @@ func (c *IloClient) GetPowerHealthHP() ([]HealthList, error) {
 	json.Unmarshal(resp, &x)
 
 	for i := range x.PowerSupplies {
-		_result := HealthList{Name: x.PowerSupplies[i].Name,
+		_name := fmt.Sprintf("%s_%d", x.PowerSupplies[i].Name, i)
+		_result := HealthList{Name: _name,
 			Health: x.PowerSupplies[i].Status.Health,
 			State:  x.PowerSupplies[i].Status.State}
 		_health = append(_health, _result)
@@ -224,7 +226,7 @@ func (c *IloClient) GetPowerHealthHP() ([]HealthList, error) {
 
 //GetInterfaceHealthHP ... will fetch the Interface Health
 func (c *IloClient) GetInterfaceHealthHP() ([]HealthList, error) {
-	url := c.Hostname + "redfish/v1/Managers/1/EthernetInterfaces"
+	url := c.Hostname + "/redfish/v1/Managers/1/EthernetInterfaces"
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -289,7 +291,7 @@ func (c *IloClient) GetUserAccountsHP() ([]Accounts, error) {
 }
 
 //GetSystemEventLogsHP ... will fetch the SystemEvent Logs
-func (c *IloClient) GetSystemEventLogsHP() (string, error) {
+func (c *IloClient) GetSystemEventLogsHP() ([]SystemEventLogRes, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/1/LogServices/IEL/Entries/"
 
