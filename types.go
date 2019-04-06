@@ -1831,10 +1831,10 @@ type StorageDetailsDell struct {
 //HP Based Structs
 
 type FirmwareInventoryHP struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
-	Current        struct {
+	OdataContext string `json:"@odata.context"`
+	OdataID      string `json:"@odata.id"`
+	OdataType    string `json:"@odata.type"`
+	Current      struct {
 		One03c3239103c21c0 []struct {
 			ImageSizeBytes  int      `json:"ImageSizeBytes"`
 			Key             string   `json:"Key"`
@@ -2162,12 +2162,12 @@ type SystemInfoHP struct {
 }
 
 type MemberCountHP struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
-	Description    string `json:"Description"`
-	MemberType     string `json:"MemberType"`
-	Members        []struct {
+	OdataContext string `json:"@odata.context"`
+	OdataID      string `json:"@odata.id"`
+	OdataType    string `json:"@odata.type"`
+	Description  string `json:"Description"`
+	MemberType   string `json:"MemberType"`
+	Members      []struct {
 		_odata_id string `json:"@odata.id"`
 	} `json:"Members"`
 	Members_odata_count int    `json:"Members@odata.count"`
@@ -2185,10 +2185,10 @@ type MemberCountHP struct {
 }
 
 type ThermalHealthListHP struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
-	Fans           []struct {
+	OdataContext string `json:"@odata.context"`
+	OdataID      string `json:"@odata.id"`
+	OdataType    string `json:"@odata.type"`
+	Fans         []struct {
 		CurrentReading int    `json:"CurrentReading"`
 		FanName        string `json:"FanName"`
 		Oem            struct {
@@ -2237,12 +2237,12 @@ type ThermalHealthListHP struct {
 }
 
 type PowerDataHP struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
-	ID             string `json:"Id"`
-	Name           string `json:"Name"`
-	Oem            struct {
+	OdataContext string `json:"@odata.context"`
+	OdataID      string `json:"@odata.id"`
+	OdataType    string `json:"@odata.type"`
+	ID           string `json:"Id"`
+	Name         string `json:"Name"`
+	Oem          struct {
 		Hp struct {
 			_odata_type             string `json:"@odata.type"`
 			SNMPPowerThresholdAlert struct {
@@ -2338,11 +2338,11 @@ type PowerDataHP struct {
 }
 
 type EthernetInterfacesHealthHP struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
-	Description    string `json:"Description"`
-	Items          []struct {
+	OdataContext string `json:"@odata.context"`
+	OdataID      string `json:"@odata.id"`
+	OdataType    string `json:"@odata.type"`
+	Description  string `json:"Description"`
+	Items        []struct {
 		_odata_context    string `json:"@odata.context"`
 		_odata_id         string `json:"@odata.id"`
 		_odata_type       string `json:"@odata.type"`
@@ -2472,11 +2472,11 @@ type EthernetInterfacesHealthHP struct {
 }
 
 type AccountsInfoHP struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
-	Description    string `json:"Description"`
-	Items          []struct {
+	OdataContext string `json:"@odata.context"`
+	OdataID      string `json:"@odata.id"`
+	OdataType    string `json:"@odata.type"`
+	Description  string `json:"Description"`
+	Items        []struct {
 		_odata_context string `json:"@odata.context"`
 		_odata_id      string `json:"@odata.id"`
 		_odata_type    string `json:"@odata.type"`
@@ -2526,11 +2526,11 @@ type AccountsInfoHP struct {
 }
 
 type SystemEventLogsHP struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
-	Description    string `json:"Description"`
-	Items          []struct {
+	OdataContext string `json:"@odata.context"`
+	OdataID      string `json:"@odata.id"`
+	OdataType    string `json:"@odata.type"`
+	Description  string `json:"Description"`
+	Items        []struct {
 		_odata_context string `json:"@odata.context"`
 		_odata_id      string `json:"@odata.id"`
 		_odata_type    string `json:"@odata.type"`

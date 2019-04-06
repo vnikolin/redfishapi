@@ -10,11 +10,13 @@ import (
 	"regexp"
 )
 
+//basicAuth ... will create the basicauth encoded string for the credentials
 func basicAuth(username, password string) string {
 	auth := username + ":" + password
 	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
 
+//queryData ... will make REST verbs based on the url
 func queryData(c *IloClient, call string, link string, data []byte) ([]byte, error) {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	req, err := http.NewRequest(call, link, bytes.NewBuffer(data))
@@ -27,9 +29,8 @@ func queryData(c *IloClient, call string, link string, data []byte) ([]byte, err
 		if r.MatchString(err.Error()) == true {
 			err := errors.New(StatusInternalServerError)
 			return nil, err
-		} else {
-			return nil, err
 		}
+		return nil, err
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 401 {
