@@ -406,13 +406,13 @@ func (c *IloClient) GetFirmwareDell() ([]FirmwareData, error) {
 }
 
 //GetBiosDataDell ... will fetch the Bios Details
-func (c *IloClient) GetBiosDataDell() (string, error) {
+func (c *IloClient) GetBiosDataDell() (_BiosData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return _BiosData{}, err
 	}
 
 	var x BiosDell
@@ -432,20 +432,18 @@ func (c *IloClient) GetBiosDataDell() (string, error) {
 		Serial:            _data.SystemServiceTag,
 	}
 
-	output, _ := json.Marshal(_BiosData)
-
-	return string(output), nil
+	return _BiosData, nil
 
 }
 
 //GetLifecycleAttrDell... will fetch the lifecycle attributes
-func (c *IloClient) GetLifecycleAttrDell() (string, error) {
+func (c *IloClient) GetLifecycleAttrDell() (LifeCycleData, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/LifecycleController.Embedded.1/Attributes"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return LifeCycleData{}, err
 	}
 
 	var x LifeCycleAttrDell
@@ -478,20 +476,18 @@ func (c *IloClient) GetLifecycleAttrDell() (string, error) {
 		VirtualAddressManagementApplication: _data.LCAttributes_1_VirtualAddressManagementApplication,
 	}
 
-	output, _ := json.Marshal(_LfcycleDat)
-
-	return string(output), nil
+	return _LfcycleDat, nil
 
 }
 
 //GetIDRACAttrDell... will fetch the Idrac attributes
-func (c *IloClient) GetIDRACAttrDell() (string, error) {
+func (c *IloClient) GetIDRACAttrDell() (IDRACData, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Attributes"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return IDRACData{}, err
 	}
 
 	var x IDRACAttrDell
@@ -510,20 +506,18 @@ func (c *IloClient) GetIDRACAttrDell() (string, error) {
 		SnmpAgentCommunity:        _data.SNMP_1_AgentCommunity,
 	}
 
-	output, _ := json.Marshal(_idracData)
-
-	return string(output), nil
+	return _idracData, nil
 
 }
 
 //GetSysAttrDell... will fetch the System Attributes
-func (c *IloClient) GetSysAttrDell() (string, error) {
+func (c *IloClient) GetSysAttrDell() (SysAttrData, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/System.Embedded.1/Attributes"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return SysAttrData{}, err
 	}
 
 	var x SysAttrDell
@@ -537,20 +531,18 @@ func (c *IloClient) GetSysAttrDell() (string, error) {
 		ServerPwrPSRapidOn:   _data.ServerPwr_1_PSRapidOn,
 	}
 
-	output, _ := json.Marshal(_sysData)
-
-	return string(output), nil
+	return _sysData, nil
 
 }
 
 //GetBootOrderDell... will fetch the BootOrder Details
-func (c *IloClient) GetBootOrderDell() (string, error) {
+func (c *IloClient) GetBootOrderDell() ([]BootOrderData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/BootSources"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var x BootOrderDell
@@ -570,20 +562,18 @@ func (c *IloClient) GetBootOrderDell() (string, error) {
 		_bootOrder = append(_bootOrder, _result)
 	}
 
-	output, _ := json.Marshal(_bootOrder)
-
-	return string(output), nil
+	return _bootOrder, nil
 
 }
 
 //GetSystemEventLogsDell .. Fetch the System Event Logs from the Idrac
-func (c *IloClient) GetSystemEventLogsDell(version string) (string, error) {
+func (c *IloClient) GetSystemEventLogsDell(version string) ([]SystemEventLogRes, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Logs/Sel"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// v1, err := ver.NewVersion("3.15.17.15")
@@ -613,9 +603,7 @@ func (c *IloClient) GetSystemEventLogsDell(version string) (string, error) {
 			_systemEventLogs = append(_systemEventLogs, _result)
 		}
 
-		output, _ := json.Marshal(_systemEventLogs)
-
-		return string(output), nil
+		return _systemEventLogs, nil
 
 	} else if v2.Check(v4) || v3.Check(v4) {
 
@@ -638,21 +626,19 @@ func (c *IloClient) GetSystemEventLogsDell(version string) (string, error) {
 			_systemEventLogs = append(_systemEventLogs, _result)
 		}
 
-		output, _ := json.Marshal(_systemEventLogs)
-
-		return string(output), nil
+		return _systemEventLogs, nil
 	}
-	return "", err
+	return nil, err
 }
 
 //GetUserAccountsDell ... Fetch the current users created
-func (c *IloClient) GetUserAccountsDell() (string, error) {
+func (c *IloClient) GetUserAccountsDell() ([]Accounts, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Accounts"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	var x MemberCountDell
@@ -664,7 +650,7 @@ func (c *IloClient) GetUserAccountsDell() (string, error) {
 		_url := c.Hostname + x.Members[i].OdataId
 		resp, err := queryData(c, "GET", _url, nil)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 
 		var y AccountsInfoDell
@@ -682,9 +668,7 @@ func (c *IloClient) GetUserAccountsDell() (string, error) {
 
 	}
 
-	output, _ := json.Marshal(users)
-
-	return string(output), nil
+	return users, nil
 
 }
 
