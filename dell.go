@@ -416,7 +416,7 @@ func (c *IloClient) GetBiosDataDell() (BiosData, error) {
 		return BiosData{}, err
 	}
 
-	var x BiosDell
+	var x BiosAttrDell
 
 	json.Unmarshal(resp, &x)
 
