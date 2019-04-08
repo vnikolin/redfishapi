@@ -6,9 +6,9 @@ Author: kgrvamsi
 
 # Redfish API
 
-This Library should support both Dell and Hp Servers which have Redfish API enabled.
+This Library supports both Dell and Hp Servers which have Redfish API enabled.
 
-
+[![GoDoc](https://godoc.org/github.com/kgrvamsi/redfishapi?status.svg)](https://godoc.org/github.com/kgrvamsi/redfishapi)
 [![Go Report Card](https://goreportcard.com/badge/github.com/kgrvamsi/redfishapi)](https://goreportcard.com/report/github.com/kgrvamsi/redfishapi)
 
 ## Usage
@@ -21,13 +21,24 @@ import "fmt"
 import "github.com/kgrvamsi/redfishapi"
 
 func main() {
-    client := redfishapi.NewIloClient("hostname-0", "username", "password")
+    client := redfishapi.NewIloClient("https://hostname-0", "username", "password")
     // use lowercase
-    mac_address, err := client.GetMacAddress("dell")
+    //Dell
+    biosData, err := client.GetBiosDataDell()
     if err != nil {
         panic(err)
     }
 
-    fmt.Println(mac_address)
+    fmt.Println(biosData)
+
+    //HP
+    client2 := redfishapi.NewIloClient("https://hostname-0", "username", "password")
+
+    fwrData, err := client2.GetFirmwareHP()
+    if err != nil {
+        panic(err)
+    }
+
+    fmt.Println(fwrData)
 }
 ```

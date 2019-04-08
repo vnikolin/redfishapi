@@ -7,12 +7,13 @@ import (
 	ver "github.com/hashicorp/go-version"
 )
 
+// Declaring the Constant Values
 const (
 	StatusUnauthorized        = "Unauthorized"
 	StatusInternalServerError = "Server Error"
 )
 
-//StartServerDell
+//StartServerDell ...
 // ResetType@Redfish.AllowableValues
 // 0	"On"
 // 1	"ForceOff"
@@ -33,7 +34,7 @@ func (c *IloClient) StartServerDell() (string, error) {
 	return "Server Started", nil
 }
 
-//StopServerDell... Will Request to stop the server
+//StopServerDell ... Will Request to stop the server
 func (c *IloClient) StopServerDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
 
@@ -46,7 +47,7 @@ func (c *IloClient) StopServerDell() (string, error) {
 	return "Server Stopped", nil
 }
 
-//GetServerPowerStateDell... Will fetch the current state of the Server
+//GetServerPowerStateDell ... Will fetch the current state of the Server
 func (c *IloClient) GetServerPowerStateDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
 	resp, err := queryData(c, "GET", url, nil)
@@ -64,7 +65,7 @@ func (c *IloClient) GetServerPowerStateDell() (string, error) {
 
 // func (c *IloClient) SetBiosAttributes() (string, error) {}
 
-//CheckLoginDell... Will check the credentials of the Server
+//CheckLoginDell ... Will check the credentials of the Server
 func (c *IloClient) CheckLoginDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
 	resp, err := queryData(c, "GET", url, nil)
@@ -76,7 +77,7 @@ func (c *IloClient) CheckLoginDell() (string, error) {
 	return string(data.Status.Health), nil
 }
 
-//GetMacAddressDell... Will fetch all the mac address of a particular Server
+//GetMacAddressDell ... Will fetch all the mac address of a particular Server
 func (c *IloClient) GetMacAddressDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/EthernetInterfaces/"
 	resp, err := queryData(c, "GET", url, nil)
@@ -108,7 +109,7 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 	return string(output), nil
 }
 
-//GetProcessorHealthDell... Will Fetch the Processor Health Details
+//GetProcessorHealthDell ... Will Fetch the Processor Health Details
 func (c *IloClient) GetProcessorHealthDell() ([]HealthList, error) {
 	///redfish/v1/Systems/System.Embedded.1/Processors
 
@@ -150,7 +151,7 @@ func (c *IloClient) GetProcessorHealthDell() ([]HealthList, error) {
 
 // func (c *IloClient) GetMemoryHealthDell() (string, error) {}
 
-//GetPowerHealthDell... Will Fetch the Power Health Details
+//GetPowerHealthDell ... Will Fetch the Power Health Details
 func (c *IloClient) GetPowerHealthDell() ([]HealthList, error) {
 	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/Power"
 
@@ -202,7 +203,7 @@ func (c *IloClient) GetPowerHealthDell() ([]HealthList, error) {
 	return powerSupplies, nil
 }
 
-//GetSensorsHealthDell... Will Fetch the Sensors Health Details
+//GetSensorsHealthDell ... Will Fetch the Sensors Health Details
 func (c *IloClient) GetSensorsHealthDell() ([]HealthList, error) {
 
 	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/Thermal"
@@ -257,7 +258,7 @@ func (c *IloClient) GetSensorsHealthDell() ([]HealthList, error) {
 
 }
 
-//GetStorageHealthDell... Will Fetch the Storage Health Details
+//GetStorageHealthDell ... Will Fetch the Storage Health Details
 func (c *IloClient) GetStorageHealthDell() ([]StorageHealthList, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Storage"
@@ -314,7 +315,7 @@ func (c *IloClient) GetStorageHealthDell() ([]StorageHealthList, error) {
 
 }
 
-//GetAggHealthDataDell... will fetch the data related to all components health(aggregated view)
+//GetAggHealthDataDell ... will fetch the data related to all components health(aggregated view)
 func (c *IloClient) GetAggHealthDataDell() ([]HealthList, error) {
 
 	url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
@@ -359,7 +360,7 @@ func (c *IloClient) GetAggHealthDataDell() ([]HealthList, error) {
 
 }
 
-//GetFirmwareDell... will fetch the Firmware details
+//GetFirmwareDell ... will fetch the Firmware details
 func (c *IloClient) GetFirmwareDell() ([]FirmwareData, error) {
 
 	url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
@@ -406,13 +407,13 @@ func (c *IloClient) GetFirmwareDell() ([]FirmwareData, error) {
 }
 
 //GetBiosDataDell ... will fetch the Bios Details
-func (c *IloClient) GetBiosDataDell() (_BiosData, error) {
+func (c *IloClient) GetBiosDataDell() (BiosData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios"
 
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return _BiosData{}, err
+		return BiosData{}, err
 	}
 
 	var x BiosDell
@@ -436,7 +437,7 @@ func (c *IloClient) GetBiosDataDell() (_BiosData, error) {
 
 }
 
-//GetLifecycleAttrDell... will fetch the lifecycle attributes
+//GetLifecycleAttrDell ... will fetch the lifecycle attributes
 func (c *IloClient) GetLifecycleAttrDell() (LifeCycleData, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/LifecycleController.Embedded.1/Attributes"
@@ -480,7 +481,7 @@ func (c *IloClient) GetLifecycleAttrDell() (LifeCycleData, error) {
 
 }
 
-//GetIDRACAttrDell... will fetch the Idrac attributes
+//GetIDRACAttrDell ... will fetch the Idrac attributes
 func (c *IloClient) GetIDRACAttrDell() (IDRACData, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Attributes"
@@ -510,7 +511,7 @@ func (c *IloClient) GetIDRACAttrDell() (IDRACData, error) {
 
 }
 
-//GetSysAttrDell... will fetch the System Attributes
+//GetSysAttrDell ... will fetch the System Attributes
 func (c *IloClient) GetSysAttrDell() (SysAttrData, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/System.Embedded.1/Attributes"
@@ -535,7 +536,7 @@ func (c *IloClient) GetSysAttrDell() (SysAttrData, error) {
 
 }
 
-//GetBootOrderDell... will fetch the BootOrder Details
+//GetBootOrderDell ... will fetch the BootOrder Details
 func (c *IloClient) GetBootOrderDell() ([]BootOrderData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/BootSources"
@@ -566,7 +567,7 @@ func (c *IloClient) GetBootOrderDell() ([]BootOrderData, error) {
 
 }
 
-//GetSystemEventLogsDell .. Fetch the System Event Logs from the Idrac
+//GetSystemEventLogsDell ... Fetch the System Event Logs from the Idrac
 func (c *IloClient) GetSystemEventLogsDell(version string) ([]SystemEventLogRes, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Logs/Sel"
@@ -672,7 +673,7 @@ func (c *IloClient) GetUserAccountsDell() ([]Accounts, error) {
 
 }
 
-//GetSystemInfoDell... Will fetch the system info
+//GetSystemInfoDell ... Will fetch the system info
 func (c *IloClient) GetSystemInfoDell() (SystemData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
