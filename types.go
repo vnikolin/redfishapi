@@ -5,15 +5,15 @@ package redfishapi
 //SysAttrDell ...
 type SysAttrDell struct {
 	_Redfish_Settings struct {
-		_odata_context string `json:"@odata.context"`
-		_odata_type    string `json:"@odata.type"`
+		_odata_context string
+		_odata_type    string
 		SettingsObject struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"SettingsObject"`
-	} `json:"@Redfish.Settings"`
-	_odata_context    string `json:"@odata.context"`
-	_odata_id         string `json:"@odata.id"`
-	_odata_type       string `json:"@odata.type"`
+	}
+	_odata_context    string
+	_odata_id         string
+	_odata_type       string
 	AttributeRegistry string `json:"AttributeRegistry"`
 	Attributes        struct {
 		Backplane_1_BackplaneBusMode                         string `json:"Backplane.1.BackplaneBusMode"`
