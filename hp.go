@@ -79,6 +79,18 @@ func (c *IloClient) GetServerPowerStateHP() (string, error) {
 
 }
 
+//CheckLoginHP ... Will check the credentials of the Server
+func (c *IloClient) CheckLoginHP() (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/1"
+	resp, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return "", err
+	}
+	var data SystemInfoHP
+	json.Unmarshal(resp, &data)
+	return string(data.Status.Health), nil
+}
+
 //GetFirmwareHP ... will fetch the Firmware details
 func (c *IloClient) GetFirmwareHP() ([]FirmwareData, error) {
 
@@ -249,6 +261,45 @@ func (c *IloClient) GetInterfaceHealthHP() ([]HealthList, error) {
 	return _health, nil
 }
 
+//GetProcessorHealthHP ... will Fetch the Processor Health Details
+func (c *IloClient) GetProcessorHealthHP() ([]HealthList, error) {
+
+	url := c.Hostname + "/redfish/v1/Systems/1/Processors/"
+	resp, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		x             MemberCountHP
+		processHealth []HealthList
+	)
+
+	json.Unmarshal(resp, &x)
+
+	for i := range x.Members {
+		_url := c.Hostname + x.Members[i].OdataID
+		resp, err := queryData(c, "GET", _url, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		var y ProcessorInfoHP
+
+		json.Unmarshal(resp, &y)
+
+		procHealth := HealthList{
+			Name:   y.ID,
+			Health: y.Status.Health,
+			State:  y.Oem.Hp.ConfigStatus.State,
+		}
+		processHealth = append(processHealth, procHealth)
+	}
+
+	return processHealth, nil
+
+}
+
 //GetUserAccountsHP ... will fetch the current User Accounts
 func (c *IloClient) GetUserAccountsHP() ([]Accounts, error) {
 
@@ -321,4 +372,177 @@ func (c *IloClient) GetSystemEventLogsHP() ([]SystemEventLogRes, error) {
 
 	return _systemEventLogs, nil
 
+}
+
+//GetBiosDataHP ... will fetch the Bios Details
+func (c *IloClient) GetBiosDataHP() (BiosDataHP, error) {
+
+	url := c.Hostname + "/redfish/v1/systems/1/bios/settings/"
+
+	resp, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return BiosDataHP{}, err
+	}
+
+	var x BiosAttrHP
+
+	json.Unmarshal(resp, &x)
+
+	_BiosData := BiosDataHP{
+		AcpiRootBridgePxm:            x.AcpiRootBridgePxm,
+		AcpiSlit:                     x.AcpiSlit,
+		AdjSecPrefetch:               x.AdjSecPrefetch,
+		AdminEmail:                   x.AdminEmail,
+		AdminName:                    x.AdminName,
+		AdminOtherInfo:               x.AdminOtherInfo,
+		AdminPhone:                   x.AdminPhone,
+		AdvancedMemProtection:        x.AdvancedMemProtection,
+		AsrStatus:                    x.AsrStatus,
+		AsrTimeoutMinutes:            x.AsrTimeoutMinutes,
+		AssetTagProtection:           x.AssetTagProtection,
+		AutoPowerOn:                  x.AutoPowerOn,
+		BootMode:                     x.BootMode,
+		BootOrderPolicy:              x.BootOrderPolicy,
+		ChannelInterleaving:          x.ChannelInterleaving,
+		CollabPowerControl:           x.CollabPowerControl,
+		ConsistentDevNaming:          x.ConsistentDevNaming,
+		CustomPostMessage:            x.CustomPostMessage,
+		DaylightSavingsTime:          x.DaylightSavingsTime,
+		DcuIPPrefetcher:              x.DcuIPPrefetcher,
+		DcuStreamPrefetcher:          x.DcuStreamPrefetcher,
+		Description:                  x.Description,
+		Dhcpv4:                       x.Dhcpv4,
+		DynamicPowerCapping:          x.DynamicPowerCapping,
+		DynamicPowerResponse:         x.DynamicPowerResponse,
+		EmbNicEnable:                 x.EmbNicEnable,
+		EmbSas1Boot:                  x.EmbSas1Boot,
+		EmbSasEnable:                 x.EmbSasEnable,
+		EmbSata1Enable:               x.EmbSata1Enable,
+		EmbSata2Enable:               x.EmbSata2Enable,
+		EmbVideoConnection:           x.EmbVideoConnection,
+		EmbeddedDiagnostics:          x.EmbeddedDiagnostics,
+		EmbeddedDiagsMode:            x.EmbeddedDiagsMode,
+		EmbeddedSata:                 x.EmbeddedSata,
+		EmbeddedSerialPort:           x.EmbeddedSerialPort,
+		EmbeddedUefiShell:            x.EmbeddedUefiShell,
+		EmbeddedUserPartition:        x.EmbeddedUserPartition,
+		EmsConsole:                   x.EmsConsole,
+		EnergyPerfBias:               x.EnergyPerfBias,
+		EraseUserDefaults:            x.EraseUserDefaults,
+		ExtendedAmbientTemp:          x.ExtendedAmbientTemp,
+		ExtendedMemTest:              x.ExtendedMemTest,
+		F11BootMenu:                  x.F11BootMenu,
+		FCScanPolicy:                 x.FCScanPolicy,
+		FanFailPolicy:                x.FanFailPolicy,
+		FanInstallReq:                x.FanInstallReq,
+		FlexLom1Enable:               x.FlexLom1Enable,
+		HwPrefetcher:                 x.HwPrefetcher,
+		IntelDmiLinkFreq:             x.IntelDmiLinkFreq,
+		IntelNicDmaChannels:          x.IntelNicDmaChannels,
+		IntelPerfMonitoring:          x.IntelPerfMonitoring,
+		IntelProcVtd:                 x.IntelProcVtd,
+		IntelQpiFreq:                 x.IntelQpiFreq,
+		IntelQpiLinkEn:               x.IntelQpiLinkEn,
+		IntelQpiPowerManagement:      x.IntelQpiPowerManagement,
+		IntelligentProvisioning:      x.IntelligentProvisioning,
+		InternalSDCardSlot:           x.InternalSDCardSlot,
+		IoNonPostedPrefetching:       x.IoNonPostedPrefetching,
+		Ipv4Address:                  x.Ipv4Address,
+		Ipv4Gateway:                  x.Ipv4Gateway,
+		Ipv4PrimaryDNS:               x.Ipv4PrimaryDNS,
+		Ipv4SecondaryDNS:             x.Ipv4SecondaryDNS,
+		Ipv4SubnetMask:               x.Ipv4SubnetMask,
+		Ipv6Duid:                     x.Ipv6Duid,
+		MaxMemBusFreqMHz:             x.MaxMemBusFreqMHz,
+		MaxPcieSpeed:                 x.MaxPcieSpeed,
+		MemFastTraining:              x.MemFastTraining,
+		MinProcIdlePkgState:          x.MinProcIdlePkgState,
+		MinProcIdlePower:             x.MinProcIdlePower,
+		MixedPowerSupplyReporting:    x.MixedPowerSupplyReporting,
+		Modified:                     x.Modified,
+		Name:                         x.Name,
+		NetworkBootRetry:             x.NetworkBootRetry,
+		NicBoot1:                     x.NicBoot1,
+		NicBoot2:                     x.NicBoot2,
+		NicBoot3:                     x.NicBoot3,
+		NicBoot4:                     x.NicBoot4,
+		NmiDebugButton:               x.NmiDebugButton,
+		NodeInterleaving:             x.NodeInterleaving,
+		NumaGroupSizeOpt:             x.NumaGroupSizeOpt,
+		PciBusPadding:                x.PciBusPadding,
+		PciSlot3Enable:               x.PciSlot3Enable,
+		PciSlot4Enable:               x.PciSlot4Enable,
+		PciSlot6Enable:               x.PciSlot6Enable,
+		PcieExpressEcrcSupport:       x.PcieExpressEcrcSupport,
+		PostF1Prompt:                 x.PostF1Prompt,
+		PowerButton:                  x.PowerButton,
+		PowerOnDelay:                 x.PowerOnDelay,
+		PowerOnLogo:                  x.PowerOnLogo,
+		PowerProfile:                 x.PowerProfile,
+		PowerRegulator:               x.PowerRegulator,
+		PreBootNetwork:               x.PreBootNetwork,
+		ProcAes:                      x.ProcAes,
+		ProcCoreDisable:              x.ProcCoreDisable,
+		ProcHyperthreading:           x.ProcHyperthreading,
+		ProcNoExecute:                x.ProcNoExecute,
+		ProcTurbo:                    x.ProcTurbo,
+		ProcVirtualization:           x.ProcVirtualization,
+		ProcX2Apic:                   x.ProcX2Apic,
+		ProductID:                    x.ProductID,
+		QpiBandwidthOpt:              x.QpiBandwidthOpt,
+		QpiSnoopConfig:               x.QpiSnoopConfig,
+		RedundantPowerSupply:         x.RedundantPowerSupply,
+		RemovableFlashBootSeq:        x.RemovableFlashBootSeq,
+		RestoreDefaults:              x.RestoreDefaults,
+		RestoreManufacturingDefaults: x.RestoreManufacturingDefaults,
+		RomSelection:                 x.RomSelection,
+		SataSecureErase:              x.SataSecureErase,
+		SaveUserDefaults:             x.SaveUserDefaults,
+		SecureBootStatus:             x.SecureBootStatus,
+		SerialConsoleBaudRate:        x.SerialConsoleBaudRate,
+		SerialConsoleEmulation:       x.SerialConsoleEmulation,
+		SerialConsolePort:            x.SerialConsolePort,
+		SerialNumber:                 x.SerialNumber,
+		ServerAssetTag:               x.ServerAssetTag,
+		ServerName:                   x.ServerName,
+		ServerOtherInfo:              x.ServerOtherInfo,
+		ServerPrimaryOs:              x.ServerPrimaryOs,
+		ServiceEmail:                 x.ServiceEmail,
+		ServiceName:                  x.ServiceName,
+		ServiceOtherInfo:             x.ServiceOtherInfo,
+		ServicePhone:                 x.ServicePhone,
+		Slot3NicBoot1:                x.Slot3NicBoot1,
+		Slot3NicBoot2:                x.Slot3NicBoot2,
+		Slot4NicBoot1:                x.Slot4NicBoot1,
+		Slot4NicBoot2:                x.Slot4NicBoot2,
+		Slot6NicBoot1:                x.Slot6NicBoot1,
+		Slot6NicBoot2:                x.Slot6NicBoot2,
+		Sriov:                        x.Sriov,
+		ThermalConfig:                x.ThermalConfig,
+		ThermalShutdown:              x.ThermalShutdown,
+		TimeFormat:                   x.TimeFormat,
+		TimeZone:                     x.TimeZone,
+		TpmState:                     x.TpmState,
+		TpmType:                      x.TpmType,
+		Type:                         x.Type,
+		UefiOptimizedBoot:            x.UefiOptimizedBoot,
+		UefiPxeBoot:                  x.UefiPxeBoot,
+		UefiShellBootOrder:           x.UefiShellBootOrder,
+		UefiShellStartup:             x.UefiShellStartup,
+		UefiShellStartupLocation:     x.UefiShellStartupLocation,
+		UefiShellStartupURL:          x.UefiShellStartupURL,
+		URLBootFile:                  x.URLBootFile,
+		Usb3Mode:                     x.Usb3Mode,
+		UsbBoot:                      x.UsbBoot,
+		UsbControl:                   x.UsbControl,
+		UtilityLang:                  x.UtilityLang,
+		VirtualInstallDisk:           x.VirtualInstallDisk,
+		VirtualSerialPort:            x.VirtualSerialPort,
+		VlanControl:                  x.VlanControl,
+		VlanID:                       x.VlanID,
+		VlanPriority:                 x.VlanPriority,
+		WakeOnLan:                    x.WakeOnLan,
+	}
+
+	return _BiosData, nil
 }

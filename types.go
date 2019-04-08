@@ -2,7 +2,7 @@ package redfishapi
 
 //Dell Based Structs
 
-//SysAttrDell ...
+//SysAttrDell ... System Attributes from the Redfish API
 type SysAttrDell struct {
 	_Redfish_Settings struct {
 		_odata_context string
@@ -211,18 +211,18 @@ type SysAttrDell struct {
 	Name        string `json:"Name"`
 }
 
-//IDRACAttrDell ...
+//IDRACAttrDell ... IDRAC Attributes from the Redfish API
 type IDRACAttrDell struct {
-	_Redfish_Settings struct {
-		_odata_context string `json:"@odata.context"`
-		_odata_type    string `json:"@odata.type"`
+	RedfishSettings struct {
+		_odata_context string
+		_odata_type    string
 		SettingsObject struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"SettingsObject"`
 	} `json:"@Redfish.Settings"`
-	_odata_context    string `json:"@odata.context"`
-	_odata_id         string `json:"@odata.id"`
-	_odata_type       string `json:"@odata.type"`
+	_odata_context    string
+	_odata_id         string
+	_odata_type       string
 	AttributeRegistry string `json:"AttributeRegistry"`
 	Attributes        struct {
 		ADGroup_1_Domain                                                     string      `json:"ADGroup.1.Domain"`
@@ -977,18 +977,18 @@ type IDRACAttrDell struct {
 	Name        string `json:"Name"`
 }
 
-//LifeCycleAttrDell ...
+//LifeCycleAttrDell ... LifeCycle Controller Attributes from the Redfish API
 type LifeCycleAttrDell struct {
-	_Redfish_Settings struct {
-		_odata_context string `json:"@odata.context"`
-		_odata_type    string `json:"@odata.type"`
+	RedfishSettings struct {
+		_odata_context string
+		_odata_type    string
 		SettingsObject struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"SettingsObject"`
 	} `json:"@Redfish.Settings"`
-	_odata_context    string `json:"@odata.context"`
-	_odata_id         string `json:"@odata.id"`
-	_odata_type       string `json:"@odata.type"`
+	_odata_context    string
+	_odata_id         string
+	_odata_type       string
 	AttributeRegistry string `json:"AttributeRegistry"`
 	Attributes        struct {
 		LCAttributes_1_AutoBackup                          string      `json:"LCAttributes.1.AutoBackup"`
@@ -1019,18 +1019,18 @@ type LifeCycleAttrDell struct {
 	Name        string `json:"Name"`
 }
 
-//BiosDell ...
-type BiosDell struct {
-	_Redfish_Settings struct {
-		_odata_context string `json:"@odata.context"`
-		_odata_type    string `json:"@odata.type"`
+//BiosDell ... Bios Settings from the Redfish API
+type BiosAttrDell struct {
+	RedfishSettings struct {
+		_odata_context string
+		_odata_type    string
 		SettingsObject struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"SettingsObject"`
 	} `json:"@Redfish.Settings"`
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Actions        struct {
 		Bios_ChangePassword struct {
 			Target string `json:"target"`
@@ -1262,11 +1262,11 @@ type BiosDell struct {
 	Name        string `json:"Name"`
 }
 
-//GetMacAddressDell ...
+//GetMacAddressDell ... Fetch the Mac Address Info from the Redfish API
 type GetMacAddressDell struct {
-	_odata_context                     string        `json:"@odata.context"`
-	_odata_id                          string        `json:"@odata.id"`
-	_odata_type                        string        `json:"@odata.type"`
+	_odata_context                     string
+	_odata_id                          string
+	_odata_type                        string
 	AutoNeg                            bool          `json:"AutoNeg"`
 	Description                        string        `json:"Description"`
 	FQDN                               interface{}   `json:"FQDN"`
@@ -1299,16 +1299,16 @@ type GetMacAddressDell struct {
 	VLAN           string `json:"VLAN"`
 }
 
-//SystemViewDell ...
+//SystemViewDell ... Fetch the System View Attributes from the Redfish API
 type SystemViewDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Actions        struct {
 		_ComputerSystem_Reset struct {
 			ResetType_Redfish_AllowableValues []string `json:"ResetType@Redfish.AllowableValues"`
 			Target                            string   `json:"target"`
-		} `json:"#ComputerSystem.Reset"`
+		}
 	} `json:"Actions"`
 	AssetTag string `json:"AssetTag"`
 	Bios     struct {
@@ -1331,22 +1331,22 @@ type SystemViewDell struct {
 	IndicatorLED string `json:"IndicatorLED"`
 	Links        struct {
 		Chassis []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"Chassis"`
 		Chassis_odata_count int `json:"Chassis@odata.count"`
 		CooledBy            []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"CooledBy"`
 		CooledBy_odata_count int `json:"CooledBy@odata.count"`
 		ManagedBy            []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"ManagedBy"`
 		ManagedBy_odata_count int `json:"ManagedBy@odata.count"`
 		Oem                   struct {
 			Dell struct {
-				_odata_type string `json:"@odata.type"`
+				_odata_type string
 				BootOrder   struct {
-					_odata_id string `json:"@odata.id"`
+					_odata_id string
 				} `json:"BootOrder"`
 			} `json:"Dell"`
 		} `json:"Oem"`
@@ -1379,15 +1379,15 @@ type SystemViewDell struct {
 		} `json:"Status"`
 	} `json:"ProcessorSummary"`
 	Processors struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"Processors"`
 	SKU        string `json:"SKU"`
 	SecureBoot struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"SecureBoot"`
 	SerialNumber  string `json:"SerialNumber"`
 	SimpleStorage struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"SimpleStorage"`
 	Status struct {
 		Health       string `json:"Health"`
@@ -1404,13 +1404,13 @@ type SystemViewDell struct {
 	UUID string `json:"UUID"`
 }
 
-//BootOrderDell ...
+//BootOrderDell ... Fetch the Boot Order Info from the Refish API
 type BootOrderDell struct {
-	_Redfish_Settings struct {
-		_odata_context string `json:"@odata.context"`
-		_odata_type    string `json:"@odata.type"`
+	RedfishSettings struct {
+		_odata_context string
+		_odata_type    string
 		SettingsObject struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"SettingsObject"`
 	} `json:"@Redfish.Settings"`
 	_odata_context    string `json:"@odata.context"`
@@ -1437,9 +1437,9 @@ type BootOrderDell struct {
 
 //FirmwareDataDell ...
 type FirmwareDataDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	ID             string `json:"Id"`
 	Name           string `json:"Name"`
@@ -1453,14 +1453,14 @@ type FirmwareDataDell struct {
 
 //PowerDataDell ...
 type PowerDataDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	ID             string `json:"Id"`
 	Name           string `json:"Name"`
 	PowerControl   []struct {
-		_odata_id           string `json:"@odata.id"`
+		_odata_id           string
 		MemberID            string `json:"MemberId"`
 		Name                string `json:"Name"`
 		PowerAllocatedWatts int    `json:"PowerAllocatedWatts"`
@@ -1480,13 +1480,13 @@ type PowerDataDell struct {
 		} `json:"PowerMetrics"`
 		PowerRequestedWatts int `json:"PowerRequestedWatts"`
 		RelatedItem         []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"RelatedItem"`
 		RelatedItem_odata_count int `json:"RelatedItem@odata.count"`
 	} `json:"PowerControl"`
 	PowerControlcount int `json:"PowerControl@odata.count"`
 	PowerSupplies     []struct {
-		_odata_id       string `json:"@odata.id"`
+		_odata_id       string
 		FirmwareVersion string `json:"FirmwareVersion"`
 		InputRanges     []struct {
 			InputType          string `json:"InputType"`
@@ -1508,7 +1508,7 @@ type PowerDataDell struct {
 		PowerCapacityWatts      int    `json:"PowerCapacityWatts"`
 		PowerSupplyType         string `json:"PowerSupplyType"`
 		Redundancy              []struct {
-			_odata_id       string `json:"@odata.id"`
+			_odata_id       string
 			MaxNumSupported int    `json:"MaxNumSupported"`
 			MemberID        string `json:"MemberId"`
 			MinNumNeeded    int    `json:"MinNumNeeded"`
@@ -1517,7 +1517,7 @@ type PowerDataDell struct {
 			} `json:"Mode"`
 			Name          string `json:"Name"`
 			RedundancySet []struct {
-				_odata_id string `json:"@odata.id"`
+				_odata_id string
 			} `json:"RedundancySet"`
 			RedundancySet_odata_count int `json:"RedundancySet@odata.count"`
 			Status                    struct {
@@ -1527,7 +1527,7 @@ type PowerDataDell struct {
 		} `json:"Redundancy"`
 		Redundancycount int `json:"Redundancy@odata.count"`
 		RelatedItem     []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"RelatedItem"`
 		RelatedItem_odata_count int    `json:"RelatedItem@odata.count"`
 		SerialNumber            string `json:"SerialNumber"`
@@ -1539,7 +1539,7 @@ type PowerDataDell struct {
 	} `json:"PowerSupplies"`
 	PowerSuppliescount int `json:"PowerSupplies@odata.count"`
 	Redundancy         []struct {
-		_odata_id       string `json:"@odata.id"`
+		_odata_id       string
 		MaxNumSupported int    `json:"MaxNumSupported"`
 		MemberID        string `json:"MemberId"`
 		MinNumNeeded    int    `json:"MinNumNeeded"`
@@ -1548,7 +1548,7 @@ type PowerDataDell struct {
 		} `json:"Mode"`
 		Name          string `json:"Name"`
 		RedundancySet []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"RedundancySet"`
 		RedundancySet_odata_count int `json:"RedundancySet@odata.count"`
 		Status                    struct {
@@ -1558,7 +1558,7 @@ type PowerDataDell struct {
 	} `json:"Redundancy"`
 	Redundancycount int `json:"Redundancy@odata.count"`
 	Voltages        []struct {
-		_odata_id                 string      `json:"@odata.id"`
+		_odata_id                 string
 		LowerThresholdCritical    interface{} `json:"LowerThresholdCritical"`
 		LowerThresholdFatal       interface{} `json:"LowerThresholdFatal"`
 		LowerThresholdNonCritical interface{} `json:"LowerThresholdNonCritical"`
@@ -1569,7 +1569,7 @@ type PowerDataDell struct {
 		PhysicalContext           string      `json:"PhysicalContext"`
 		ReadingVolts              int         `json:"ReadingVolts"`
 		RelatedItem               []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"RelatedItem"`
 		RelatedItem_odata_count int `json:"RelatedItem@odata.count"`
 		SensorNumber            int `json:"SensorNumber"`
@@ -1586,15 +1586,15 @@ type PowerDataDell struct {
 
 //AccountsInfoDell ...
 type AccountsInfoDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	Enabled        bool   `json:"Enabled"`
 	ID             string `json:"Id"`
 	Links          struct {
 		Role struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"Role"`
 	} `json:"Links"`
 	Locked   bool        `json:"Locked"`
@@ -1606,13 +1606,13 @@ type AccountsInfoDell struct {
 
 //SystemEventLogsV1Dell ...
 type SystemEventLogsV1Dell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	Members        []struct {
-		_odata_id   string `json:"@odata.id"`
-		_odata_type string `json:"@odata.type"`
+		_odata_id   string
+		_odata_type string
 		Created     string `json:"Created"`
 		Description string `json:"Description"`
 		EntryCode   []struct {
@@ -1638,13 +1638,13 @@ type SystemEventLogsV1Dell struct {
 
 //SystemEventLogsV2Dell ...
 type SystemEventLogsV2Dell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	Members        []struct {
-		_odata_id               string        `json:"@odata.id"`
-		_odata_type             string        `json:"@odata.type"`
+		_odata_id               string
+		_odata_type             string
 		Created                 string        `json:"Created"`
 		Description             string        `json:"Description"`
 		EntryCode               string        `json:"EntryCode"`
@@ -1666,12 +1666,12 @@ type SystemEventLogsV2Dell struct {
 
 //ThermalHealthListDell ...
 type ThermalHealthListDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	Fans           []struct {
-		_odata_id                 string        `json:"@odata.id"`
+		_odata_id                 string
 		FanName                   string        `json:"FanName"`
 		LowerThresholdCritical    int           `json:"LowerThresholdCritical"`
 		LowerThresholdFatal       int           `json:"LowerThresholdFatal"`
@@ -1686,7 +1686,7 @@ type ThermalHealthListDell struct {
 		Redundancy                []interface{} `json:"Redundancy"`
 		Redundancy_odata_count    int           `json:"Redundancy@odata.count"`
 		RelatedItem               []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"RelatedItem"`
 		RelatedItem_odata_count int `json:"RelatedItem@odata.count"`
 		Status                  struct {
@@ -1701,7 +1701,7 @@ type ThermalHealthListDell struct {
 	ID         string `json:"Id"`
 	Name       string `json:"Name"`
 	Redundancy []struct {
-		_odata_id       string      `json:"@odata.id"`
+		_odata_id       string
 		MaxNumSupported interface{} `json:"MaxNumSupported"`
 		MemberID        string      `json:"MemberId"`
 		MinNumNeeded    interface{} `json:"MinNumNeeded"`
@@ -1718,7 +1718,7 @@ type ThermalHealthListDell struct {
 	} `json:"Redundancy"`
 	Redundancycount int `json:"Redundancy@odata.count"`
 	Temperatures    []struct {
-		_odata_id                 string      `json:"@odata.id"`
+		_odata_id                 string
 		LowerThresholdCritical    int         `json:"LowerThresholdCritical"`
 		LowerThresholdFatal       int         `json:"LowerThresholdFatal"`
 		LowerThresholdNonCritical interface{} `json:"LowerThresholdNonCritical"`
@@ -1729,7 +1729,7 @@ type ThermalHealthListDell struct {
 		PhysicalContext           string      `json:"PhysicalContext"`
 		ReadingCelsius            int         `json:"ReadingCelsius"`
 		RelatedItem               []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"RelatedItem"`
 		RelatedItem_odata_count int `json:"RelatedItem@odata.count"`
 		SensorNumber            int `json:"SensorNumber"`
@@ -1759,9 +1759,9 @@ type MemberCountDell struct {
 
 //ProcessorDataDell ...
 type ProcessorDataDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	ID             string `json:"Id"`
 	InstructionSet []struct {
@@ -1794,9 +1794,9 @@ type ProcessorDataDell struct {
 
 //ProcessorsListDataDell ...
 type ProcessorsListDataDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	Members        []struct {
 		OdataId string `json:"@odata.id"`
@@ -1807,9 +1807,9 @@ type ProcessorsListDataDell struct {
 
 //StorageCollectionDell ...
 type StorageCollectionDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	Members        []struct {
 		OdataId string `json:"@odata.id"`
@@ -1820,9 +1820,9 @@ type StorageCollectionDell struct {
 
 //StorageDetailsDell ...
 type StorageDetailsDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	Devices        []struct {
 		CapacityBytes int    `json:"CapacityBytes"`
@@ -2188,7 +2188,7 @@ type MemberCountHP struct {
 	Description  string `json:"Description"`
 	MemberType   string `json:"MemberType"`
 	Members      []struct {
-		_odata_id string `json:"@odata.id"`
+		OdataID string
 	} `json:"Members"`
 	Members_odata_count int    `json:"Members@odata.count"`
 	Name                string `json:"Name"`
@@ -2214,7 +2214,7 @@ type ThermalHealthListHP struct {
 		FanName        string `json:"FanName"`
 		Oem            struct {
 			Hp struct {
-				_odata_type string `json:"@odata.type"`
+				_odata_type string
 				Location    string `json:"Location"`
 				Type        string `json:"Type"`
 			} `json:"Hp"`
@@ -2233,7 +2233,7 @@ type ThermalHealthListHP struct {
 		Number         int    `json:"Number"`
 		Oem            struct {
 			Hp struct {
-				_odata_type string `json:"@odata.type"`
+				_odata_type string
 				LocationXmm int    `json:"LocationXmm"`
 				LocationYmm int    `json:"LocationYmm"`
 				Type        string `json:"Type"`
@@ -2266,7 +2266,7 @@ type PowerDataHP struct {
 	Name         string `json:"Name"`
 	Oem          struct {
 		Hp struct {
-			_odata_type             string `json:"@odata.type"`
+			_odata_type             string
 			SNMPPowerThresholdAlert struct {
 				DurationInMin  int    `json:"DurationInMin"`
 				ThresholdWatts int    `json:"ThresholdWatts"`
@@ -2319,12 +2319,12 @@ type PowerDataHP struct {
 		Name                 string `json:"Name"`
 		Oem                  struct {
 			Hp struct {
-				_odata_type             string `json:"@odata.type"`
-				AveragePowerOutputWatts int    `json:"AveragePowerOutputWatts"`
-				BayNumber               int    `json:"BayNumber"`
-				HotplugCapable          bool   `json:"HotplugCapable"`
-				MaxPowerOutputWatts     int    `json:"MaxPowerOutputWatts"`
-				Mismatched              bool   `json:"Mismatched"`
+				_odata_type             string
+				AveragePowerOutputWatts int  `json:"AveragePowerOutputWatts"`
+				BayNumber               int  `json:"BayNumber"`
+				HotplugCapable          bool `json:"HotplugCapable"`
+				MaxPowerOutputWatts     int  `json:"MaxPowerOutputWatts"`
+				Mismatched              bool `json:"Mismatched"`
 				PowerSupplyStatus       struct {
 					State string `json:"State"`
 				} `json:"PowerSupplyStatus"`
@@ -2348,7 +2348,7 @@ type PowerDataHP struct {
 		Mode            string `json:"Mode"`
 		Name            string `json:"Name"`
 		RedundancySet   []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"RedundancySet"`
 	} `json:"Redundancy"`
 	Type  string `json:"Type"`
@@ -2366,9 +2366,9 @@ type EthernetInterfacesHealthHP struct {
 	OdataType    string `json:"@odata.type"`
 	Description  string `json:"Description"`
 	Items        []struct {
-		_odata_context    string `json:"@odata.context"`
-		_odata_id         string `json:"@odata.id"`
-		_odata_type       string `json:"@odata.type"`
+		_odata_context    string
+		_odata_id         string
+		_odata_type       string
 		AutoNeg           bool   `json:"AutoNeg"`
 		Autosense         bool   `json:"Autosense"`
 		Description       string `json:"Description"`
@@ -2405,7 +2405,7 @@ type EthernetInterfacesHealthHP struct {
 		Name                   string `json:"Name"`
 		Oem                    struct {
 			Hp struct {
-				_odata_type           string `json:"@odata.type"`
+				_odata_type           string
 				ConfigurationSettings string `json:"ConfigurationSettings"`
 				DHCPv4                struct {
 					Enabled         bool `json:"Enabled"`
@@ -2478,7 +2478,7 @@ type EthernetInterfacesHealthHP struct {
 	} `json:"Items"`
 	MemberType string `json:"MemberType"`
 	Members    []struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"Members"`
 	Members_odata_count int    `json:"Members@odata.count"`
 	Name                string `json:"Name"`
@@ -2494,22 +2494,94 @@ type EthernetInterfacesHealthHP struct {
 	} `json:"links"`
 }
 
+//ProcessorInfoHP ...
+type ProcessorInfoHP struct {
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
+	ID             string `json:"Id"`
+	InstructionSet string `json:"InstructionSet"`
+	Manufacturer   string `json:"Manufacturer"`
+	MaxSpeedMHz    int    `json:"MaxSpeedMHz"`
+	Model          string `json:"Model"`
+	Name           string `json:"Name"`
+	Oem            struct {
+		Hp struct {
+			_odata_type string
+			AssetTag    string `json:"AssetTag"`
+			Cache       []struct {
+				Associativity     string   `json:"Associativity"`
+				CacheSpeedns      int      `json:"CacheSpeedns"`
+				CurrentSRAMType   []string `json:"CurrentSRAMType"`
+				EccType           string   `json:"EccType"`
+				InstalledSizeKB   int      `json:"InstalledSizeKB"`
+				Location          string   `json:"Location"`
+				MaximumSizeKB     int      `json:"MaximumSizeKB"`
+				Name              string   `json:"Name"`
+				Policy            string   `json:"Policy"`
+				Socketed          bool     `json:"Socketed"`
+				SupportedSRAMType []string `json:"SupportedSRAMType"`
+				SystemCacheType   string   `json:"SystemCacheType"`
+			} `json:"Cache"`
+			Characteristics []string `json:"Characteristics"`
+			ConfigStatus    struct {
+				Populated bool   `json:"Populated"`
+				State     string `json:"State"`
+			} `json:"ConfigStatus"`
+			CoresEnabled     int `json:"CoresEnabled"`
+			ExternalClockMHz int `json:"ExternalClockMHz"`
+			MicrocodePatches []struct {
+				CPUID   string `json:"CpuId"`
+				Date    string `json:"Date"`
+				PatchID string `json:"PatchId"`
+			} `json:"MicrocodePatches"`
+			PartNumber      string `json:"PartNumber"`
+			RatedSpeedMHz   int    `json:"RatedSpeedMHz"`
+			SerialNumber    string `json:"SerialNumber"`
+			Type            string `json:"Type"`
+			VoltageVoltsX10 int    `json:"VoltageVoltsX10"`
+		} `json:"Hp"`
+	} `json:"Oem"`
+	ProcessorArchitecture string `json:"ProcessorArchitecture"`
+	ProcessorID           struct {
+		EffectiveFamily         string      `json:"EffectiveFamily"`
+		EffectiveModel          string      `json:"EffectiveModel"`
+		IdentificationRegisters string      `json:"IdentificationRegisters"`
+		MicrocodeInfo           interface{} `json:"MicrocodeInfo"`
+		Step                    string      `json:"Step"`
+		VendorID                string      `json:"VendorId"`
+	} `json:"ProcessorId"`
+	ProcessorType string `json:"ProcessorType"`
+	Socket        string `json:"Socket"`
+	Status        struct {
+		Health string `json:"Health"`
+	} `json:"Status"`
+	TotalCores   int    `json:"TotalCores"`
+	TotalThreads int    `json:"TotalThreads"`
+	Type         string `json:"Type"`
+	Links        struct {
+		Self struct {
+			Href string `json:"href"`
+		} `json:"self"`
+	} `json:"links"`
+}
+
 //AccountsInfoHP ...
 type AccountsInfoHP struct {
-	OdataContext string `json:"@odata.context"`
-	OdataID      string `json:"@odata.id"`
-	OdataType    string `json:"@odata.type"`
+	OdataContext string
+	OdataID      string
+	OdataType    string
 	Description  string `json:"Description"`
 	Items        []struct {
-		_odata_context string `json:"@odata.context"`
-		_odata_id      string `json:"@odata.id"`
-		_odata_type    string `json:"@odata.type"`
+		_odata_context string
+		_odata_id      string
+		_odata_type    string
 		Description    string `json:"Description"`
 		ID             string `json:"Id"`
 		Name           string `json:"Name"`
 		Oem            struct {
 			Hp struct {
-				_odata_type string `json:"@odata.type"`
+				_odata_type string
 				LoginName   string `json:"LoginName"`
 				Privileges  struct {
 					LoginPriv                bool `json:"LoginPriv"`
@@ -2533,7 +2605,7 @@ type AccountsInfoHP struct {
 	} `json:"Items"`
 	MemberType string `json:"MemberType"`
 	Members    []struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"Members"`
 	Members_odata_count int    `json:"Members@odata.count"`
 	Name                string `json:"Name"`
@@ -2551,14 +2623,14 @@ type AccountsInfoHP struct {
 
 //SystemEventLogsHP ...
 type SystemEventLogsHP struct {
-	OdataContext string `json:"@odata.context"`
-	OdataID      string `json:"@odata.id"`
-	OdataType    string `json:"@odata.type"`
+	OdataContext string
+	OdataID      string
+	OdataType    string
 	Description  string `json:"Description"`
 	Items        []struct {
-		_odata_context string `json:"@odata.context"`
-		_odata_id      string `json:"@odata.id"`
-		_odata_type    string `json:"@odata.type"`
+		_odata_context string
+		_odata_id      string
+		_odata_type    string
 		Created        string `json:"Created"`
 		EntryType      string `json:"EntryType"`
 		ID             string `json:"Id"`
@@ -2567,7 +2639,7 @@ type SystemEventLogsHP struct {
 		Number         int    `json:"Number"`
 		Oem            struct {
 			Hp struct {
-				_odata_type string `json:"@odata.type"`
+				_odata_type string
 				EventNumber int    `json:"EventNumber"`
 				Type        string `json:"Type"`
 				Updated     string `json:"Updated"`
@@ -2585,7 +2657,7 @@ type SystemEventLogsHP struct {
 	} `json:"Items"`
 	MemberType string `json:"MemberType"`
 	Members    []struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"Members"`
 	Members_odata_count int    `json:"Members@odata.count"`
 	Name                string `json:"Name"`
@@ -2599,6 +2671,172 @@ type SystemEventLogsHP struct {
 			Count int `json:"count"`
 			Page  int `json:"page"`
 		} `json:"NextPage"`
+		Self struct {
+			Href string `json:"href"`
+		} `json:"self"`
+	} `json:"links"`
+}
+
+//BiosAttrHP ... Bios Settings from the Redfish API
+type BiosAttrHP struct {
+	AcpiRootBridgePxm            string      `json:"AcpiRootBridgePxm"`
+	AcpiSlit                     string      `json:"AcpiSlit"`
+	AdjSecPrefetch               string      `json:"AdjSecPrefetch"`
+	AdminEmail                   string      `json:"AdminEmail"`
+	AdminName                    string      `json:"AdminName"`
+	AdminOtherInfo               string      `json:"AdminOtherInfo"`
+	AdminPassword                interface{} `json:"AdminPassword"`
+	AdminPhone                   string      `json:"AdminPhone"`
+	AdvancedMemProtection        string      `json:"AdvancedMemProtection"`
+	AsrStatus                    string      `json:"AsrStatus"`
+	AsrTimeoutMinutes            string      `json:"AsrTimeoutMinutes"`
+	AssetTagProtection           string      `json:"AssetTagProtection"`
+	AutoPowerOn                  string      `json:"AutoPowerOn"`
+	BootMode                     string      `json:"BootMode"`
+	BootOrderPolicy              string      `json:"BootOrderPolicy"`
+	ChannelInterleaving          string      `json:"ChannelInterleaving"`
+	CollabPowerControl           string      `json:"CollabPowerControl"`
+	ConsistentDevNaming          string      `json:"ConsistentDevNaming"`
+	CustomPostMessage            string      `json:"CustomPostMessage"`
+	DaylightSavingsTime          string      `json:"DaylightSavingsTime"`
+	DcuIPPrefetcher              string      `json:"DcuIpPrefetcher"`
+	DcuStreamPrefetcher          string      `json:"DcuStreamPrefetcher"`
+	Description                  string      `json:"Description"`
+	Dhcpv4                       string      `json:"Dhcpv4"`
+	DynamicPowerCapping          string      `json:"DynamicPowerCapping"`
+	DynamicPowerResponse         string      `json:"DynamicPowerResponse"`
+	EmbNicEnable                 string      `json:"EmbNicEnable"`
+	EmbSas1Boot                  string      `json:"EmbSas1Boot"`
+	EmbSasEnable                 string      `json:"EmbSasEnable"`
+	EmbSata1Enable               string      `json:"EmbSata1Enable"`
+	EmbSata2Enable               string      `json:"EmbSata2Enable"`
+	EmbVideoConnection           string      `json:"EmbVideoConnection"`
+	EmbeddedDiagnostics          string      `json:"EmbeddedDiagnostics"`
+	EmbeddedDiagsMode            string      `json:"EmbeddedDiagsMode"`
+	EmbeddedSata                 string      `json:"EmbeddedSata"`
+	EmbeddedSerialPort           string      `json:"EmbeddedSerialPort"`
+	EmbeddedUefiShell            string      `json:"EmbeddedUefiShell"`
+	EmbeddedUserPartition        string      `json:"EmbeddedUserPartition"`
+	EmsConsole                   string      `json:"EmsConsole"`
+	EnergyPerfBias               string      `json:"EnergyPerfBias"`
+	EraseUserDefaults            string      `json:"EraseUserDefaults"`
+	ExtendedAmbientTemp          string      `json:"ExtendedAmbientTemp"`
+	ExtendedMemTest              string      `json:"ExtendedMemTest"`
+	F11BootMenu                  string      `json:"F11BootMenu"`
+	FCScanPolicy                 string      `json:"FCScanPolicy"`
+	FanFailPolicy                string      `json:"FanFailPolicy"`
+	FanInstallReq                string      `json:"FanInstallReq"`
+	FlexLom1Enable               string      `json:"FlexLom1Enable"`
+	HwPrefetcher                 string      `json:"HwPrefetcher"`
+	IntelDmiLinkFreq             string      `json:"IntelDmiLinkFreq"`
+	IntelNicDmaChannels          string      `json:"IntelNicDmaChannels"`
+	IntelPerfMonitoring          string      `json:"IntelPerfMonitoring"`
+	IntelProcVtd                 string      `json:"IntelProcVtd"`
+	IntelQpiFreq                 string      `json:"IntelQpiFreq"`
+	IntelQpiLinkEn               string      `json:"IntelQpiLinkEn"`
+	IntelQpiPowerManagement      string      `json:"IntelQpiPowerManagement"`
+	IntelligentProvisioning      string      `json:"IntelligentProvisioning"`
+	InternalSDCardSlot           string      `json:"InternalSDCardSlot"`
+	IoNonPostedPrefetching       string      `json:"IoNonPostedPrefetching"`
+	Ipv4Address                  string      `json:"Ipv4Address"`
+	Ipv4Gateway                  string      `json:"Ipv4Gateway"`
+	Ipv4PrimaryDNS               string      `json:"Ipv4PrimaryDNS"`
+	Ipv4SecondaryDNS             string      `json:"Ipv4SecondaryDNS"`
+	Ipv4SubnetMask               string      `json:"Ipv4SubnetMask"`
+	Ipv6Duid                     string      `json:"Ipv6Duid"`
+	MaxMemBusFreqMHz             string      `json:"MaxMemBusFreqMHz"`
+	MaxPcieSpeed                 string      `json:"MaxPcieSpeed"`
+	MemFastTraining              string      `json:"MemFastTraining"`
+	MinProcIdlePkgState          string      `json:"MinProcIdlePkgState"`
+	MinProcIdlePower             string      `json:"MinProcIdlePower"`
+	MixedPowerSupplyReporting    string      `json:"MixedPowerSupplyReporting"`
+	Modified                     string      `json:"Modified"`
+	Name                         string      `json:"Name"`
+	NetworkBootRetry             string      `json:"NetworkBootRetry"`
+	NicBoot1                     string      `json:"NicBoot1"`
+	NicBoot2                     string      `json:"NicBoot2"`
+	NicBoot3                     string      `json:"NicBoot3"`
+	NicBoot4                     string      `json:"NicBoot4"`
+	NmiDebugButton               string      `json:"NmiDebugButton"`
+	NodeInterleaving             string      `json:"NodeInterleaving"`
+	NumaGroupSizeOpt             string      `json:"NumaGroupSizeOpt"`
+	OldAdminPassword             interface{} `json:"OldAdminPassword"`
+	OldPowerOnPassword           interface{} `json:"OldPowerOnPassword"`
+	PciBusPadding                string      `json:"PciBusPadding"`
+	PciSlot3Enable               string      `json:"PciSlot3Enable"`
+	PciSlot4Enable               string      `json:"PciSlot4Enable"`
+	PciSlot6Enable               string      `json:"PciSlot6Enable"`
+	PcieExpressEcrcSupport       string      `json:"PcieExpressEcrcSupport"`
+	PostF1Prompt                 string      `json:"PostF1Prompt"`
+	PowerButton                  string      `json:"PowerButton"`
+	PowerOnDelay                 string      `json:"PowerOnDelay"`
+	PowerOnLogo                  string      `json:"PowerOnLogo"`
+	PowerOnPassword              interface{} `json:"PowerOnPassword"`
+	PowerProfile                 string      `json:"PowerProfile"`
+	PowerRegulator               string      `json:"PowerRegulator"`
+	PreBootNetwork               string      `json:"PreBootNetwork"`
+	ProcAes                      string      `json:"ProcAes"`
+	ProcCoreDisable              int         `json:"ProcCoreDisable"`
+	ProcHyperthreading           string      `json:"ProcHyperthreading"`
+	ProcNoExecute                string      `json:"ProcNoExecute"`
+	ProcTurbo                    string      `json:"ProcTurbo"`
+	ProcVirtualization           string      `json:"ProcVirtualization"`
+	ProcX2Apic                   string      `json:"ProcX2Apic"`
+	ProductID                    string      `json:"ProductId"`
+	QpiBandwidthOpt              string      `json:"QpiBandwidthOpt"`
+	QpiSnoopConfig               string      `json:"QpiSnoopConfig"`
+	RedundantPowerSupply         string      `json:"RedundantPowerSupply"`
+	RemovableFlashBootSeq        string      `json:"RemovableFlashBootSeq"`
+	RestoreDefaults              string      `json:"RestoreDefaults"`
+	RestoreManufacturingDefaults string      `json:"RestoreManufacturingDefaults"`
+	RomSelection                 string      `json:"RomSelection"`
+	SataSecureErase              string      `json:"SataSecureErase"`
+	SaveUserDefaults             string      `json:"SaveUserDefaults"`
+	SecureBootStatus             string      `json:"SecureBootStatus"`
+	SerialConsoleBaudRate        string      `json:"SerialConsoleBaudRate"`
+	SerialConsoleEmulation       string      `json:"SerialConsoleEmulation"`
+	SerialConsolePort            string      `json:"SerialConsolePort"`
+	SerialNumber                 string      `json:"SerialNumber"`
+	ServerAssetTag               string      `json:"ServerAssetTag"`
+	ServerName                   string      `json:"ServerName"`
+	ServerOtherInfo              string      `json:"ServerOtherInfo"`
+	ServerPrimaryOs              string      `json:"ServerPrimaryOs"`
+	ServiceEmail                 string      `json:"ServiceEmail"`
+	ServiceName                  string      `json:"ServiceName"`
+	ServiceOtherInfo             string      `json:"ServiceOtherInfo"`
+	ServicePhone                 string      `json:"ServicePhone"`
+	Slot3NicBoot1                string      `json:"Slot3NicBoot1"`
+	Slot3NicBoot2                string      `json:"Slot3NicBoot2"`
+	Slot4NicBoot1                string      `json:"Slot4NicBoot1"`
+	Slot4NicBoot2                string      `json:"Slot4NicBoot2"`
+	Slot6NicBoot1                string      `json:"Slot6NicBoot1"`
+	Slot6NicBoot2                string      `json:"Slot6NicBoot2"`
+	Sriov                        string      `json:"Sriov"`
+	ThermalConfig                string      `json:"ThermalConfig"`
+	ThermalShutdown              string      `json:"ThermalShutdown"`
+	TimeFormat                   string      `json:"TimeFormat"`
+	TimeZone                     string      `json:"TimeZone"`
+	TpmState                     string      `json:"TpmState"`
+	TpmType                      string      `json:"TpmType"`
+	Type                         string      `json:"Type"`
+	UefiOptimizedBoot            string      `json:"UefiOptimizedBoot"`
+	UefiPxeBoot                  string      `json:"UefiPxeBoot"`
+	UefiShellBootOrder           string      `json:"UefiShellBootOrder"`
+	UefiShellStartup             string      `json:"UefiShellStartup"`
+	UefiShellStartupLocation     string      `json:"UefiShellStartupLocation"`
+	UefiShellStartupURL          string      `json:"UefiShellStartupUrl"`
+	URLBootFile                  string      `json:"UrlBootFile"`
+	Usb3Mode                     string      `json:"Usb3Mode"`
+	UsbBoot                      string      `json:"UsbBoot"`
+	UsbControl                   string      `json:"UsbControl"`
+	UtilityLang                  string      `json:"UtilityLang"`
+	VirtualInstallDisk           string      `json:"VirtualInstallDisk"`
+	VirtualSerialPort            string      `json:"VirtualSerialPort"`
+	VlanControl                  string      `json:"VlanControl"`
+	VlanID                       int         `json:"VlanId"`
+	VlanPriority                 int         `json:"VlanPriority"`
+	WakeOnLan                    string      `json:"WakeOnLan"`
+	Links                        struct {
 		Self struct {
 			Href string `json:"href"`
 		} `json:"self"`
@@ -2668,7 +2906,7 @@ type IDRACData struct {
 	SnmpAgentCommunity        string `json:"snmp_agent_community,omitempty"`
 }
 
-//BiosData ...
+//BiosData ... Return Response for Bios Data for Dell
 type BiosData struct {
 	BootMode          string `json:"bootmode,omitempty"`
 	BootSeqRetry      string `json:"boot_sequence_retry,omitempty"`
@@ -2680,7 +2918,164 @@ type BiosData struct {
 	Serial            string `json:"serial,omitempty"`
 }
 
-//SysAttrData ...
+// BiosDataHP ... ... Return Response for Bios Data for HP
+type BiosDataHP struct {
+	AcpiRootBridgePxm            string `json:"AcpiRootBridgePxm"`
+	AcpiSlit                     string `json:"AcpiSlit"`
+	AdjSecPrefetch               string `json:"AdjSecPrefetch"`
+	AdminEmail                   string `json:"AdminEmail"`
+	AdminName                    string `json:"AdminName"`
+	AdminOtherInfo               string `json:"AdminOtherInfo"`
+	AdminPhone                   string `json:"AdminPhone"`
+	AdvancedMemProtection        string `json:"AdvancedMemProtection"`
+	AsrStatus                    string `json:"AsrStatus"`
+	AsrTimeoutMinutes            string `json:"AsrTimeoutMinutes"`
+	AssetTagProtection           string `json:"AssetTagProtection"`
+	AutoPowerOn                  string `json:"AutoPowerOn"`
+	BootMode                     string `json:"BootMode"`
+	BootOrderPolicy              string `json:"BootOrderPolicy"`
+	ChannelInterleaving          string `json:"ChannelInterleaving"`
+	CollabPowerControl           string `json:"CollabPowerControl"`
+	ConsistentDevNaming          string `json:"ConsistentDevNaming"`
+	CustomPostMessage            string `json:"CustomPostMessage"`
+	DaylightSavingsTime          string `json:"DaylightSavingsTime"`
+	DcuIPPrefetcher              string `json:"DcuIpPrefetcher"`
+	DcuStreamPrefetcher          string `json:"DcuStreamPrefetcher"`
+	Description                  string `json:"Description"`
+	Dhcpv4                       string `json:"Dhcpv4"`
+	DynamicPowerCapping          string `json:"DynamicPowerCapping"`
+	DynamicPowerResponse         string `json:"DynamicPowerResponse"`
+	EmbNicEnable                 string `json:"EmbNicEnable"`
+	EmbSas1Boot                  string `json:"EmbSas1Boot"`
+	EmbSasEnable                 string `json:"EmbSasEnable"`
+	EmbSata1Enable               string `json:"EmbSata1Enable"`
+	EmbSata2Enable               string `json:"EmbSata2Enable"`
+	EmbVideoConnection           string `json:"EmbVideoConnection"`
+	EmbeddedDiagnostics          string `json:"EmbeddedDiagnostics"`
+	EmbeddedDiagsMode            string `json:"EmbeddedDiagsMode"`
+	EmbeddedSata                 string `json:"EmbeddedSata"`
+	EmbeddedSerialPort           string `json:"EmbeddedSerialPort"`
+	EmbeddedUefiShell            string `json:"EmbeddedUefiShell"`
+	EmbeddedUserPartition        string `json:"EmbeddedUserPartition"`
+	EmsConsole                   string `json:"EmsConsole"`
+	EnergyPerfBias               string `json:"EnergyPerfBias"`
+	EraseUserDefaults            string `json:"EraseUserDefaults"`
+	ExtendedAmbientTemp          string `json:"ExtendedAmbientTemp"`
+	ExtendedMemTest              string `json:"ExtendedMemTest"`
+	F11BootMenu                  string `json:"F11BootMenu"`
+	FCScanPolicy                 string `json:"FCScanPolicy"`
+	FanFailPolicy                string `json:"FanFailPolicy"`
+	FanInstallReq                string `json:"FanInstallReq"`
+	FlexLom1Enable               string `json:"FlexLom1Enable"`
+	HwPrefetcher                 string `json:"HwPrefetcher"`
+	IntelDmiLinkFreq             string `json:"IntelDmiLinkFreq"`
+	IntelNicDmaChannels          string `json:"IntelNicDmaChannels"`
+	IntelPerfMonitoring          string `json:"IntelPerfMonitoring"`
+	IntelProcVtd                 string `json:"IntelProcVtd"`
+	IntelQpiFreq                 string `json:"IntelQpiFreq"`
+	IntelQpiLinkEn               string `json:"IntelQpiLinkEn"`
+	IntelQpiPowerManagement      string `json:"IntelQpiPowerManagement"`
+	IntelligentProvisioning      string `json:"IntelligentProvisioning"`
+	InternalSDCardSlot           string `json:"InternalSDCardSlot"`
+	IoNonPostedPrefetching       string `json:"IoNonPostedPrefetching"`
+	Ipv4Address                  string `json:"Ipv4Address"`
+	Ipv4Gateway                  string `json:"Ipv4Gateway"`
+	Ipv4PrimaryDNS               string `json:"Ipv4PrimaryDNS"`
+	Ipv4SecondaryDNS             string `json:"Ipv4SecondaryDNS"`
+	Ipv4SubnetMask               string `json:"Ipv4SubnetMask"`
+	Ipv6Duid                     string `json:"Ipv6Duid"`
+	MaxMemBusFreqMHz             string `json:"MaxMemBusFreqMHz"`
+	MaxPcieSpeed                 string `json:"MaxPcieSpeed"`
+	MemFastTraining              string `json:"MemFastTraining"`
+	MinProcIdlePkgState          string `json:"MinProcIdlePkgState"`
+	MinProcIdlePower             string `json:"MinProcIdlePower"`
+	MixedPowerSupplyReporting    string `json:"MixedPowerSupplyReporting"`
+	Modified                     string `json:"Modified"`
+	Name                         string `json:"Name"`
+	NetworkBootRetry             string `json:"NetworkBootRetry"`
+	NicBoot1                     string `json:"NicBoot1"`
+	NicBoot2                     string `json:"NicBoot2"`
+	NicBoot3                     string `json:"NicBoot3"`
+	NicBoot4                     string `json:"NicBoot4"`
+	NmiDebugButton               string `json:"NmiDebugButton"`
+	NodeInterleaving             string `json:"NodeInterleaving"`
+	NumaGroupSizeOpt             string `json:"NumaGroupSizeOpt"`
+	PciBusPadding                string `json:"PciBusPadding"`
+	PciSlot3Enable               string `json:"PciSlot3Enable"`
+	PciSlot4Enable               string `json:"PciSlot4Enable"`
+	PciSlot6Enable               string `json:"PciSlot6Enable"`
+	PcieExpressEcrcSupport       string `json:"PcieExpressEcrcSupport"`
+	PostF1Prompt                 string `json:"PostF1Prompt"`
+	PowerButton                  string `json:"PowerButton"`
+	PowerOnDelay                 string `json:"PowerOnDelay"`
+	PowerOnLogo                  string `json:"PowerOnLogo"`
+	PowerProfile                 string `json:"PowerProfile"`
+	PowerRegulator               string `json:"PowerRegulator"`
+	PreBootNetwork               string `json:"PreBootNetwork"`
+	ProcAes                      string `json:"ProcAes"`
+	ProcCoreDisable              int    `json:"ProcCoreDisable"`
+	ProcHyperthreading           string `json:"ProcHyperthreading"`
+	ProcNoExecute                string `json:"ProcNoExecute"`
+	ProcTurbo                    string `json:"ProcTurbo"`
+	ProcVirtualization           string `json:"ProcVirtualization"`
+	ProcX2Apic                   string `json:"ProcX2Apic"`
+	ProductID                    string `json:"ProductId"`
+	QpiBandwidthOpt              string `json:"QpiBandwidthOpt"`
+	QpiSnoopConfig               string `json:"QpiSnoopConfig"`
+	RedundantPowerSupply         string `json:"RedundantPowerSupply"`
+	RemovableFlashBootSeq        string `json:"RemovableFlashBootSeq"`
+	RestoreDefaults              string `json:"RestoreDefaults"`
+	RestoreManufacturingDefaults string `json:"RestoreManufacturingDefaults"`
+	RomSelection                 string `json:"RomSelection"`
+	SataSecureErase              string `json:"SataSecureErase"`
+	SaveUserDefaults             string `json:"SaveUserDefaults"`
+	SecureBootStatus             string `json:"SecureBootStatus"`
+	SerialConsoleBaudRate        string `json:"SerialConsoleBaudRate"`
+	SerialConsoleEmulation       string `json:"SerialConsoleEmulation"`
+	SerialConsolePort            string `json:"SerialConsolePort"`
+	SerialNumber                 string `json:"SerialNumber"`
+	ServerAssetTag               string `json:"ServerAssetTag"`
+	ServerName                   string `json:"ServerName"`
+	ServerOtherInfo              string `json:"ServerOtherInfo"`
+	ServerPrimaryOs              string `json:"ServerPrimaryOs"`
+	ServiceEmail                 string `json:"ServiceEmail"`
+	ServiceName                  string `json:"ServiceName"`
+	ServiceOtherInfo             string `json:"ServiceOtherInfo"`
+	ServicePhone                 string `json:"ServicePhone"`
+	Slot3NicBoot1                string `json:"Slot3NicBoot1"`
+	Slot3NicBoot2                string `json:"Slot3NicBoot2"`
+	Slot4NicBoot1                string `json:"Slot4NicBoot1"`
+	Slot4NicBoot2                string `json:"Slot4NicBoot2"`
+	Slot6NicBoot1                string `json:"Slot6NicBoot1"`
+	Slot6NicBoot2                string `json:"Slot6NicBoot2"`
+	Sriov                        string `json:"Sriov"`
+	ThermalConfig                string `json:"ThermalConfig"`
+	ThermalShutdown              string `json:"ThermalShutdown"`
+	TimeFormat                   string `json:"TimeFormat"`
+	TimeZone                     string `json:"TimeZone"`
+	TpmState                     string `json:"TpmState"`
+	TpmType                      string `json:"TpmType"`
+	Type                         string `json:"Type"`
+	UefiOptimizedBoot            string `json:"UefiOptimizedBoot"`
+	UefiPxeBoot                  string `json:"UefiPxeBoot"`
+	UefiShellBootOrder           string `json:"UefiShellBootOrder"`
+	UefiShellStartup             string `json:"UefiShellStartup"`
+	UefiShellStartupLocation     string `json:"UefiShellStartupLocation"`
+	UefiShellStartupURL          string `json:"UefiShellStartupUrl"`
+	URLBootFile                  string `json:"UrlBootFile"`
+	Usb3Mode                     string `json:"Usb3Mode"`
+	UsbBoot                      string `json:"UsbBoot"`
+	UsbControl                   string `json:"UsbControl"`
+	UtilityLang                  string `json:"UtilityLang"`
+	VirtualInstallDisk           string `json:"VirtualInstallDisk"`
+	VirtualSerialPort            string `json:"VirtualSerialPort"`
+	VlanControl                  string `json:"VlanControl"`
+	VlanID                       int    `json:"VlanId"`
+	VlanPriority                 int    `json:"VlanPriority"`
+	WakeOnLan                    string `json:"WakeOnLan"`
+}
+
+//SysAttrData ... Return Response for System Attribute Data
 type SysAttrData struct {
 	ServerPwrPSRedPolicy string `json:"redundancy_policy,omitempty"`
 	ServerPwrPSRapidOn   string `json:"hot_spare,omitempty"`
