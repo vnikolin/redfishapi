@@ -1312,7 +1312,7 @@ type SystemViewDell struct {
 	} `json:"Actions"`
 	AssetTag string `json:"AssetTag"`
 	Bios     struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"Bios"`
 	BiosVersion string `json:"BiosVersion"`
 	Boot        struct {
@@ -1324,7 +1324,7 @@ type SystemViewDell struct {
 	} `json:"Boot"`
 	Description        string `json:"Description"`
 	EthernetInterfaces struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"EthernetInterfaces"`
 	HostName     string `json:"HostName"`
 	ID           string `json:"Id"`
@@ -1413,9 +1413,9 @@ type BootOrderDell struct {
 			_odata_id string
 		} `json:"SettingsObject"`
 	} `json:"@Redfish.Settings"`
-	_odata_context    string `json:"@odata.context"`
-	_odata_id         string `json:"@odata.id"`
-	_odata_type       string `json:"@odata.type"`
+	_odata_context    string
+	_odata_id         string
+	_odata_type       string
 	AttributeRegistry string `json:"AttributeRegistry"`
 	Attributes        struct {
 		BootSeq []struct {
