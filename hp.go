@@ -2,7 +2,8 @@ package redfishapi
 
 import (
 	"encoding/json"
-	"fmt"
+  "fmt"
+  "strconv"
 )
 
 //StartServerHP ...
@@ -238,14 +239,14 @@ func (c *IloClient) GetPowerHealthHP() ([]HealthList, error) {
 
 //GetInterfaceHealthHP ... will fetch the Interface Health
 func (c *IloClient) GetInterfaceHealthHP() ([]HealthList, error) {
-	url := c.Hostname + "/redfish/v1/Managers/1/EthernetInterfaces"
+	url := c.Hostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
 	resp, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	var (
-		x       EthernetInterfacesHealthHP
+		x       EthernetInterfacesHP
 		_health []HealthList
 	)
 
@@ -545,4 +546,86 @@ func (c *IloClient) GetBiosDataHP() (BiosDataHP, error) {
 	}
 
 	return _BiosData, nil
+}
+
+//GetLicenseInfoHP ... will fetch the current License Details
+func (c *IloClient) GetLicenseInfoHP() (LicenseInfo, error) {
+
+	url := c.Hostname + "/redfish/v1/Managers/1/LicenseService/"
+
+	resp, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return LicenseInfo{}, err
+	}
+
+	var x LicenseInfoHP
+
+	json.Unmarshal(resp, &x)
+
+	_result = LicenseInfo{
+		Name:        x.Name,
+		LicenseKey:  x.Items[0].LicenseKey,
+		LicenseType: x.Items[0].LicenseType,
+	}
+
+	return _result, nil
+}
+
+//GetPCISlotsHp ... will fetch the PCI Slots Details
+func (c *IloClient) GetPCISlotsHp() ([]PCISlotsInfo, error) {
+
+	url := c.Hostname + "/redfish/v1/Systems/1/PCISlots/"
+
+	resp, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var x PCISlotsInfoHP
+
+  json.Unmarshal(resp, &x)
+
+  var _pciSlots []PCISlotsInfo
+
+	for i := range x.Items {
+    _ result  = PCISlotsInfo {
+      Name: x.Items[i].Name,
+      Status: x.Items[i].Status.OperationalStatus[0].Status
+    }
+    _pciSlots = append(_pciSlots, _result)
+  }
+
+  return _pciSlots, nil
+
+}
+
+//GetEthernetInterfacesHP ... will fetch the EthernetInterfaces Details
+func (c *IloClient) GetEthernetInterfacesHP() ([]MACData, error) {
+
+  url := c.Hostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
+	resp, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		x       EthernetInterfacesHP
+		_macData []MACData
+	)
+
+	json.Unmarshal(resp, &x)
+
+	for i := range x.Items {
+    _result = MACData{
+      Name: x.Items[i].Name,
+      Description: x.Items[i].Description,
+      MacAddress: x.Items[i].MacAddress,
+      State: strconv.FormatBool(x.Items[i].Oem[0].Status.State),
+      Status: strconv.FormatBool(x.Items[i].Oem[0].NICEnabled),
+      Vlan: "Null"
+    }
+    _macData = append(_macData, _result)
+  }
+  return _macData, nil
+
 }

@@ -2360,7 +2360,7 @@ type PowerDataHP struct {
 }
 
 //EthernetInterfacesHealthHP ...
-type EthernetInterfacesHealthHP struct {
+type EthernetInterfacesHP struct {
 	OdataContext string `json:"@odata.context"`
 	OdataID      string `json:"@odata.id"`
 	OdataType    string `json:"@odata.type"`
@@ -2843,6 +2843,94 @@ type BiosAttrHP struct {
 	} `json:"links"`
 }
 
+//LicenseInfoHP ... License Details from the Redfish API
+type LicenseInfoHP struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	Items          []struct {
+		_odata_context string `json:"@odata.context"`
+		_odata_id      string `json:"@odata.id"`
+		_odata_type    string `json:"@odata.type"`
+		Description    string `json:"Description"`
+		ID             string `json:"Id"`
+		License        string `json:"License"`
+		LicenseKey     string `json:"LicenseKey"`
+		LicenseType    string `json:"LicenseType"`
+		Name           string `json:"Name"`
+		Type           string `json:"Type"`
+		Links          struct {
+			Self struct {
+				Href string `json:"href"`
+			} `json:"self"`
+		} `json:"links"`
+	} `json:"Items"`
+	MemberType string `json:"MemberType"`
+	Members    []struct {
+		_odata_id string `json:"@odata.id"`
+	} `json:"Members"`
+	Members_odata_count int    `json:"Members@odata.count"`
+	Name                string `json:"Name"`
+	Total               int    `json:"Total"`
+	Type                string `json:"Type"`
+	Links               struct {
+		Member []struct {
+			Href string `json:"href"`
+		} `json:"Member"`
+		Self struct {
+			Href string `json:"href"`
+		} `json:"self"`
+	} `json:"links"`
+}
+
+//PCISlotsInfoHp ... PCI Slots Details from the Redfish API
+type PCISlotsInfoHP struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	Items          []struct {
+		_odata_context string `json:"@odata.context"`
+		_odata_id      string `json:"@odata.id"`
+		_odata_type    string `json:"@odata.type"`
+		ID             string `json:"Id"`
+		Length         string `json:"Length"`
+		LinkLanes      string `json:"LinkLanes"`
+		Name           string `json:"Name"`
+		Status         struct {
+			OperationalStatus []struct {
+				Status string `json:"Status"`
+			} `json:"OperationalStatus"`
+		} `json:"Status"`
+		SupportsHotPlug bool   `json:"SupportsHotPlug"`
+		Technology      string `json:"Technology"`
+		Type            string `json:"Type"`
+		UEFIDevicePath  string `json:"UEFIDevicePath"`
+		Links           struct {
+			Self struct {
+				Href string `json:"href"`
+			} `json:"self"`
+		} `json:"links"`
+	} `json:"Items"`
+	MemberType string `json:"MemberType"`
+	Members    []struct {
+		_odata_id string `json:"@odata.id"`
+	} `json:"Members"`
+	Members_odata_count int    `json:"Members@odata.count"`
+	Name                string `json:"Name"`
+	Total               int    `json:"Total"`
+	Type                string `json:"Type"`
+	Links               struct {
+		Member []struct {
+			Href string `json:"href"`
+		} `json:"Member"`
+		Self struct {
+			Href string `json:"href"`
+		} `json:"self"`
+	} `json:"links"`
+}
+
 //Custom Structs
 
 //HealthList ...
@@ -3124,4 +3212,19 @@ type FirmwareData struct {
 	Id         string `json:"id,omitempty"`
 	Version    string `json:"version,omitempty"`
 	Updateable bool   `json:"updateable,omitempty"`
+}
+
+//LicenseInfo ...
+type LicenseInfo struct {
+	Name        string `json:"name,omitempty"`
+	LicenseKey  string `json:"license_key,omitempty"`
+	LicenseType string `json:"license_type,omitempty"`
+}
+
+//PCISlotsInfo ...
+type PCISlotsInfo struct {
+	Name       string `json:"name,omitempty"`
+	Status     string `json:"status,omitempty"`
+	Technology string `json:"technology,omitempty"`
+	Type       string `json:"type,omitempty"`
 }
