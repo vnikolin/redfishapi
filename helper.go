@@ -28,14 +28,17 @@ func queryData(c *IloClient, call string, link string, data []byte) ([]byte, err
 		r, _ := regexp.Compile("dial tcp")
 		if r.MatchString(err.Error()) == true {
 			err := errors.New(StatusInternalServerError)
-			return nil, err
+			return nil, nil, err
 		}
-		return nil, err
+		return nil, nil, err
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 401 {
 			err := errors.New(StatusUnauthorized)
-			return nil, err
+			return nil, nil, err
+		} else if resp.StatusCode == 400 {
+			err := errors.New(StatusBadRequest)
+			return nil, nil, err
 		}
 
 	}
@@ -43,7 +46,7 @@ func queryData(c *IloClient, call string, link string, data []byte) ([]byte, err
 
 	_body, _ := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return _body, nil
+	return nil, _body, nil
 }

@@ -17,7 +17,7 @@ import (
 func (c *IloClient) StartServerHP() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/1/Actions/ComputerSystem.Reset/"
 	var jsonStr = []byte(`{"ResetType": "On"}`)
-	_, err := queryData(c, "POST", url, jsonStr)
+	_, _, err := queryData(c, "POST", url, jsonStr)
 	if err != nil {
 		return "", err
 	}
@@ -29,7 +29,7 @@ func (c *IloClient) StartServerHP() (string, error) {
 func (c *IloClient) StopServerHP() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/1/Actions/ComputerSystem.Reset/"
 	var jsonStr = []byte(`{"ResetType": "ForceOff"}`)
-	_, err := queryData(c, "POST", url, jsonStr)
+	_, _, err := queryData(c, "POST", url, jsonStr)
 	if err != nil {
 		return "", err
 	}
@@ -42,7 +42,7 @@ func (c *IloClient) GetSystemInfoHP() (SystemData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1"
 
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return SystemData{}, err
 	}
@@ -67,7 +67,7 @@ func (c *IloClient) GetSystemInfoHP() (SystemData, error) {
 //GetServerPowerStateHP ... Will fetch the current state of the Server
 func (c *IloClient) GetServerPowerStateHP() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/1"
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return "", err
 	}
@@ -83,7 +83,7 @@ func (c *IloClient) GetServerPowerStateHP() (string, error) {
 //CheckLoginHP ... Will check the credentials of the Server
 func (c *IloClient) CheckLoginHP() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/1"
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return "", err
 	}
@@ -96,7 +96,7 @@ func (c *IloClient) CheckLoginHP() (string, error) {
 func (c *IloClient) GetFirmwareHP() ([]FirmwareData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1/FirmwareInventory/"
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -182,7 +182,7 @@ func (c *IloClient) GetFirmwareHP() ([]FirmwareData, error) {
 //GetThermalHealthHP ... will fetch the Thermal Health
 func (c *IloClient) GetThermalHealthHP() ([]HealthList, error) {
 	url := c.Hostname + "/redfish/v1/Chassis/1/Thermal/"
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +214,7 @@ func (c *IloClient) GetThermalHealthHP() ([]HealthList, error) {
 //GetPowerHealthHP ... will fetch the Power Health
 func (c *IloClient) GetPowerHealthHP() ([]HealthList, error) {
 	url := c.Hostname + "/redfish/v1/Chassis/1/Power/"
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -240,7 +240,7 @@ func (c *IloClient) GetPowerHealthHP() ([]HealthList, error) {
 //GetInterfaceHealthHP ... will fetch the Interface Health
 func (c *IloClient) GetInterfaceHealthHP() ([]HealthList, error) {
 	url := c.Hostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -266,7 +266,7 @@ func (c *IloClient) GetInterfaceHealthHP() ([]HealthList, error) {
 func (c *IloClient) GetProcessorHealthHP() ([]HealthList, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1/Processors/"
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -280,7 +280,7 @@ func (c *IloClient) GetProcessorHealthHP() ([]HealthList, error) {
 
 	for i := range x.Members {
 		_url := c.Hostname + x.Members[i].OdataID
-		resp, err := queryData(c, "GET", _url, nil)
+		resp, _, err := queryData(c, "GET", _url, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -306,7 +306,7 @@ func (c *IloClient) GetUserAccountsHP() ([]Accounts, error) {
 
 	url := c.Hostname + "/redfish/v1/AccountService/Accounts"
 
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -347,7 +347,7 @@ func (c *IloClient) GetSystemEventLogsHP() ([]SystemEventLogRes, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/1/LogServices/IEL/Entries/"
 
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -380,7 +380,7 @@ func (c *IloClient) GetBiosDataHP() (BiosDataHP, error) {
 
 	url := c.Hostname + "/redfish/v1/systems/1/bios/settings/"
 
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return BiosDataHP{}, err
 	}
@@ -553,7 +553,7 @@ func (c *IloClient) GetLicenseInfoHP() (LicenseInfo, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/1/LicenseService/"
 
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return LicenseInfo{}, err
 	}
@@ -576,7 +576,7 @@ func (c *IloClient) GetPCISlotsHp() ([]PCISlotsInfo, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1/PCISlots/"
 
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -603,7 +603,7 @@ func (c *IloClient) GetPCISlotsHp() ([]PCISlotsInfo, error) {
 func (c *IloClient) GetEthernetInterfacesHP() ([]MACData, error) {
 
   url := c.Hostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
-	resp, err := queryData(c, "GET", url, nil)
+	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}

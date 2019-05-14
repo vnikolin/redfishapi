@@ -3228,3 +3228,62 @@ type PCISlotsInfo struct {
 	Technology string `json:"technology,omitempty"`
 	Type       string `json:"type,omitempty"`
 }
+
+//
+type ExportConfigStatus struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	EndTime        string `json:"EndTime"`
+	ID             string `json:"Id"`
+	Messages       []struct {
+		Message                 string        `json:"Message"`
+		MessageArgs             []interface{} `json:"MessageArgs"`
+		MessageArgs_odata_count int           `json:"MessageArgs@odata.count"`
+		MessageID               string        `json:"MessageId"`
+	} `json:"Messages"`
+	Messages_odata_count int    `json:"Messages@odata.count"`
+	Name                 string `json:"Name"`
+	Oem                  struct {
+		Dell struct {
+			_odata_type       string        `json:"@odata.type"`
+			CompletionTime    interface{}   `json:"CompletionTime"`
+			Description       string        `json:"Description"`
+			EndTime           interface{}   `json:"EndTime"`
+			ID                string        `json:"Id"`
+			JobState          string        `json:"JobState"`
+			JobType           string        `json:"JobType"`
+			Message           string        `json:"Message"`
+			MessageArgs       []interface{} `json:"MessageArgs"`
+			MessageID         string        `json:"MessageId"`
+			Name              string        `json:"Name"`
+			PercentComplete   int           `json:"PercentComplete"`
+			StartTime         string        `json:"StartTime"`
+			TargetSettingsURI interface{}   `json:"TargetSettingsURI"`
+		} `json:"Dell"`
+	} `json:"Oem"`
+	StartTime  string `json:"StartTime"`
+	TaskState  string `json:"TaskState"`
+	TaskStatus string `json:"TaskStatus"`
+}
+
+type ExportConfigResponse struct {
+	SystemConfiguration struct {
+		Comments []struct {
+			Comment string `json:"Comment"`
+		} `json:"Comments"`
+		Components []struct {
+			Attributes []struct {
+				Comment       string `json:"Comment"`
+				Name          string `json:"Name"`
+				Set_On_Import string `json:"Set On Import"`
+				Value         string `json:"Value"`
+			} `json:"Attributes"`
+			FQDD string `json:"FQDD"`
+		} `json:"Components"`
+		Model      string `json:"Model"`
+		ServiceTag string `json:"ServiceTag"`
+		TimeStamp  string `json:"TimeStamp"`
+	} `json:"SystemConfiguration"`
+}
