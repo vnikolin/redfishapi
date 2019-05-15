@@ -721,7 +721,7 @@ func (c *IloClient) GetSystemInfoDell() (SystemData, error) {
 func (c *IloClient) GetComponentAttr(comp string) (ExportConfigResponse, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Actions/Oem/EID_674_Manager.ExportSystemConfiguration"
-	data, err := json.Marshal(map[string]interface{}{
+	data, _ := json.Marshal(map[string]interface{}{
 		"ExportFormat": "JSON",
 		"ShareParameters": map[string]interface{}{
 			"Target": comp,
