@@ -17,7 +17,7 @@ func basicAuth(username, password string) string {
 }
 
 //queryData ... will make REST verbs based on the url
-func queryData(c *IloClient, call string, link string, data []byte) ([]byte, error) {
+func queryData(c *IloClient, call string, link string, data []byte) ([]byte, http.Header, error) {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	req, err := http.NewRequest(call, link, bytes.NewBuffer(data))
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
@@ -48,5 +48,5 @@ func queryData(c *IloClient, call string, link string, data []byte) ([]byte, err
 	if err != nil {
 		return nil, nil, err
 	}
-	return nil, _body, nil
+	return _body, resp.Header, nil
 }
