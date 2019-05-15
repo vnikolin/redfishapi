@@ -759,8 +759,8 @@ func (c *IloClient) GetComponentAttr(comp string) (ExportConfigResponse, error) 
 		} else {
 			var y ExportConfigResponse
 			json.Unmarshal(resp, &y)
-			return y, nil
 			break
+			return y, nil
 		}
 	}
 

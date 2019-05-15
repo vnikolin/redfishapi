@@ -2845,22 +2845,22 @@ type BiosAttrHP struct {
 
 //LicenseInfoHP ... License Details from the Redfish API
 type LicenseInfoHP struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
-	Description    string `json:"Description"`
-	Items          []struct {
-		_odata_context string `json:"@odata.context"`
-		_odata_id      string `json:"@odata.id"`
-		_odata_type    string `json:"@odata.type"`
-		Description    string `json:"Description"`
-		ID             string `json:"Id"`
-		License        string `json:"License"`
-		LicenseKey     string `json:"LicenseKey"`
-		LicenseType    string `json:"LicenseType"`
-		Name           string `json:"Name"`
-		Type           string `json:"Type"`
-		Links          struct {
+	OdataContext string `json:"@odata.context"`
+	OdataID      string `json:"@odata.id"`
+	OdataType    string `json:"@odata.type"`
+	Description  string `json:"Description"`
+	Items        []struct {
+		OdataContext string `json:"@odata.context"`
+		OdataID      string `json:"@odata.id"`
+		OdataType    string `json:"@odata.type"`
+		Description  string `json:"Description"`
+		ID           string `json:"Id"`
+		License      string `json:"License"`
+		LicenseKey   string `json:"LicenseKey"`
+		LicenseType  string `json:"LicenseType"`
+		Name         string `json:"Name"`
+		Type         string `json:"Type"`
+		Links        struct {
 			Self struct {
 				Href string `json:"href"`
 			} `json:"self"`
@@ -2868,7 +2868,7 @@ type LicenseInfoHP struct {
 	} `json:"Items"`
 	MemberType string `json:"MemberType"`
 	Members    []struct {
-		_odata_id string `json:"@odata.id"`
+		OdataID string `json:"@odata.id"`
 	} `json:"Members"`
 	Members_odata_count int    `json:"Members@odata.count"`
 	Name                string `json:"Name"`
@@ -2886,19 +2886,19 @@ type LicenseInfoHP struct {
 
 //PCISlotsInfoHp ... PCI Slots Details from the Redfish API
 type PCISlotsInfoHP struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
-	Description    string `json:"Description"`
-	Items          []struct {
-		_odata_context string `json:"@odata.context"`
-		_odata_id      string `json:"@odata.id"`
-		_odata_type    string `json:"@odata.type"`
-		ID             string `json:"Id"`
-		Length         string `json:"Length"`
-		LinkLanes      string `json:"LinkLanes"`
-		Name           string `json:"Name"`
-		Status         struct {
+	OdataContext string
+	OdataID      string
+	OdataType    string
+	Description  string `json:"Description"`
+	Items        []struct {
+		OdataContext string `json:"@odata.context"`
+		OdataID      string `json:"@odata.id"`
+		OdataType    string `json:"@odata.type"`
+		ID           string `json:"Id"`
+		Length       string `json:"Length"`
+		LinkLanes    string `json:"LinkLanes"`
+		Name         string `json:"Name"`
+		Status       struct {
 			OperationalStatus []struct {
 				Status string `json:"Status"`
 			} `json:"OperationalStatus"`
@@ -2915,7 +2915,7 @@ type PCISlotsInfoHP struct {
 	} `json:"Items"`
 	MemberType string `json:"MemberType"`
 	Members    []struct {
-		_odata_id string `json:"@odata.id"`
+		OdataID string
 	} `json:"Members"`
 	Members_odata_count int    `json:"Members@odata.count"`
 	Name                string `json:"Name"`
@@ -3231,13 +3231,13 @@ type PCISlotsInfo struct {
 
 //
 type ExportConfigStatus struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
-	Description    string `json:"Description"`
-	EndTime        string `json:"EndTime"`
-	ID             string `json:"Id"`
-	Messages       []struct {
+	OdataContext string
+	OdataID      string
+	OdataType    string
+	Description  string `json:"Description"`
+	EndTime      string `json:"EndTime"`
+	ID           string `json:"Id"`
+	Messages     []struct {
 		Message                 string        `json:"Message"`
 		MessageArgs             []interface{} `json:"MessageArgs"`
 		MessageArgs_odata_count int           `json:"MessageArgs@odata.count"`
@@ -3247,7 +3247,7 @@ type ExportConfigStatus struct {
 	Name                 string `json:"Name"`
 	Oem                  struct {
 		Dell struct {
-			_odata_type       string        `json:"@odata.type"`
+			_odata_type       string
 			CompletionTime    interface{}   `json:"CompletionTime"`
 			Description       string        `json:"Description"`
 			EndTime           interface{}   `json:"EndTime"`
