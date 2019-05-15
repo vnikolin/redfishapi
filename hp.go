@@ -2,8 +2,8 @@ package redfishapi
 
 import (
 	"encoding/json"
-  "fmt"
-  "strconv"
+	"fmt"
+	"strconv"
 )
 
 //StartServerHP ...
@@ -583,49 +583,49 @@ func (c *IloClient) GetPCISlotsHp() ([]PCISlotsInfo, error) {
 
 	var x PCISlotsInfoHP
 
-  json.Unmarshal(resp, &x)
+	json.Unmarshal(resp, &x)
 
-  var _pciSlots []PCISlotsInfo
+	var _pciSlots []PCISlotsInfo
 
 	for i := range x.Items {
-    _ result  = PCISlotsInfo {
-      Name: x.Items[i].Name,
-      Status: x.Items[i].Status.OperationalStatus[0].Status
-    }
-    _pciSlots = append(_pciSlots, _result)
-  }
+		_result = PCISlotsInfo{
+			Name:   x.Items[i].Name,
+			Status: x.Items[i].Status.OperationalStatus[0].Status,
+		}
+		_pciSlots = append(_pciSlots, _result)
+	}
 
-  return _pciSlots, nil
+	return _pciSlots, nil
 
 }
 
 //GetEthernetInterfacesHP ... will fetch the EthernetInterfaces Details
 func (c *IloClient) GetEthernetInterfacesHP() ([]MACData, error) {
 
-  url := c.Hostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
+	url := c.Hostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
 	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	var (
-		x       EthernetInterfacesHP
+		x        EthernetInterfacesHP
 		_macData []MACData
 	)
 
 	json.Unmarshal(resp, &x)
 
 	for i := range x.Items {
-    _result = MACData{
-      Name: x.Items[i].Name,
-      Description: x.Items[i].Description,
-      MacAddress: x.Items[i].MacAddress,
-      State: strconv.FormatBool(x.Items[i].Oem[0].Status.State),
-      Status: strconv.FormatBool(x.Items[i].Oem[0].NICEnabled),
-      Vlan: "Null"
-    }
-    _macData = append(_macData, _result)
-  }
-  return _macData, nil
+		_result = MACData{
+			Name:        x.Items[i].Name,
+			Description: x.Items[i].Description,
+			MacAddress:  x.Items[i].MacAddress,
+			State:       strconv.FormatBool(x.Items[i].Oem[0].Status.State),
+			Status:      strconv.FormatBool(x.Items[i].Oem[0].NICEnabled),
+			Vlan:        "Null",
+		}
+		_macData = append(_macData, _result)
+	}
+	return _macData, nil
 
 }
