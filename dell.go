@@ -13,6 +13,7 @@ import (
 const (
 	StatusUnauthorized        = "Unauthorized"
 	StatusInternalServerError = "Server Error"
+	StatusBadRequest          = "Bad Request"
 )
 
 //StartServerDell ...
@@ -373,7 +374,7 @@ func (c *IloClient) GetAggHealthDataDell(model string) ([]HealthList, error) {
 
 		return _healthdata, nil
 	}
-
+	return nil, nil
 }
 
 //GetFirmwareDell ... will fetch the Firmware details
@@ -423,33 +424,20 @@ func (c *IloClient) GetFirmwareDell() ([]FirmwareData, error) {
 }
 
 //GetBiosDataDell ... will fetch the Bios Details
-func (c *IloClient) GetBiosDataDell() (BiosData, error) {
+func (c *IloClient) GetBiosDataDell() (BiosAttributesData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios"
 
 	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return BiosData{}, err
+		return BiosAttributesData{}, err
 	}
 
 	var x BiosAttrDell
 
 	json.Unmarshal(resp, &x)
 
-	_data := x.Attributes
-
-	_BiosData := BiosData{
-		BootMode:          _data.BootMode,
-		BootSeqRetry:      _data.BootSeqRetry,
-		InternalUsb:       _data.InternalUsb,
-		SriovGlobalEnable: _data.SriovGlobalEnable,
-		SysProfile:        _data.SysProfile,
-		AcPwrRcvry:        _data.AcPwrRcvry,
-		AcPwrRcvryDelay:   _data.AcPwrRcvryDelay,
-		Serial:            _data.SystemServiceTag,
-	}
-
-	return _BiosData, nil
+	return x.Attributes, nil
 
 }
 
@@ -472,6 +460,7 @@ func (c *IloClient) GetLifecycleAttrDell() (LifeCycleData, error) {
 	_LfcycleDat := LifeCycleData{
 		AutoBackup:                          _data.LCAttributes_1_AutoBackup,
 		AutoDiscovery:                       _data.LCAttributes_1_AutoDiscovery,
+		AutoUpdate:                          _data.LCAttributes_1_AutoUpdate,
 		BIOSRTDRequested:                    _data.LCAttributes_1_BIOSRTDRequested,
 		CollectSystemInventoryOnRestart:     _data.LCAttributes_1_CollectSystemInventoryOnRestart,
 		DiscoveryFactoryDefaults:            _data.LCAttributes_1_DiscoveryFactoryDefaults,
@@ -498,57 +487,38 @@ func (c *IloClient) GetLifecycleAttrDell() (LifeCycleData, error) {
 }
 
 //GetIDRACAttrDell ... will fetch the Idrac attributes
-func (c *IloClient) GetIDRACAttrDell() (IDRACData, error) {
+func (c *IloClient) GetIDRACAttrDell() (IDRACAttributesData, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Attributes"
 
 	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return IDRACData{}, err
+		return IDRACAttributesData{}, err
 	}
 
 	var x IDRACAttrDell
 
 	json.Unmarshal(resp, &x)
 
-	_data := x.Attributes
-
-	_idracData := IDRACData{
-		VirtualConsoleMaxSessions: _data.VirtualConsole_1_MaxSessions,
-		VirtualConsolePluginType:  _data.VirtualConsole_1_PluginType,
-		WebServerSSLEncryption:    _data.WebServer_1_SSLEncryptionBitLength,
-		IPMILanEnable:             _data.IPMILan_1_Enable,
-		DNSDomainName:             _data.NIC_1_DNSDomainName,
-		SnmpAgentStatus:           _data.SNMP_1_AgentEnable,
-		SnmpAgentCommunity:        _data.SNMP_1_AgentCommunity,
-	}
-
-	return _idracData, nil
+	return x.Attributes, nil
 
 }
 
 //GetSysAttrDell ... will fetch the System Attributes
-func (c *IloClient) GetSysAttrDell() (SysAttrData, error) {
+func (c *IloClient) GetSysAttrDell() (SysAttributesData, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/System.Embedded.1/Attributes"
 
 	resp, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return SysAttrData{}, err
+		return SysAttributesData{}, err
 	}
 
 	var x SysAttrDell
 
 	json.Unmarshal(resp, &x)
 
-	_data := x.Attributes
-
-	_sysData := SysAttrData{
-		ServerPwrPSRedPolicy: _data.ServerPwr_1_PSRedPolicy,
-		ServerPwrPSRapidOn:   _data.ServerPwr_1_PSRapidOn,
-	}
-
-	return _sysData, nil
+	return x.Attributes, nil
 
 }
 
