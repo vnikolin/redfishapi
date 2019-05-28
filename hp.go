@@ -562,7 +562,7 @@ func (c *IloClient) GetLicenseInfoHP() (LicenseInfo, error) {
 
 	json.Unmarshal(resp, &x)
 
-	_result = LicenseInfo{
+	_result := LicenseInfo{
 		Name:        x.Name,
 		LicenseKey:  x.Items[0].LicenseKey,
 		LicenseType: x.Items[0].LicenseType,
@@ -588,7 +588,7 @@ func (c *IloClient) GetPCISlotsHp() ([]PCISlotsInfo, error) {
 	var _pciSlots []PCISlotsInfo
 
 	for i := range x.Items {
-		_result = PCISlotsInfo{
+		_result := PCISlotsInfo{
 			Name:   x.Items[i].Name,
 			Status: x.Items[i].Status.OperationalStatus[0].Status,
 		}
@@ -616,12 +616,12 @@ func (c *IloClient) GetEthernetInterfacesHP() ([]MACData, error) {
 	json.Unmarshal(resp, &x)
 
 	for i := range x.Items {
-		_result = MACData{
+		_result := MACData{
 			Name:        x.Items[i].Name,
 			Description: x.Items[i].Description,
 			MacAddress:  x.Items[i].MacAddress,
-			State:       strconv.FormatBool(x.Items[i].Oem[0].Status.State),
-			Status:      strconv.FormatBool(x.Items[i].Oem[0].NICEnabled),
+			State:       strconv.FormatBool(x.Items[i].Status.State),
+			Status:      strconv.FormatBool(x.Items[i].Oem.Hp.NICEnabled),
 			Vlan:        "Null",
 		}
 		_macData = append(_macData, _result)
