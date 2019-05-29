@@ -733,5 +733,5 @@ func (c *IloClient) GetComponentAttr(comp string) (ExportConfigResponse, error) 
 		}
 	}
 
-	return ExportConfigResponse{}, nil
+	return
 }
