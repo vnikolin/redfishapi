@@ -995,28 +995,28 @@ type LifeCycleAttrDell struct {
 	_odata_type       string
 	AttributeRegistry string `json:"AttributeRegistry"`
 	Attributes        struct {
-		LCAttributes_1_AutoBackup                          string      `json:"LCAttributes.1.AutoBackup"`
-		LCAttributes_1_AutoDiscovery                       string      `json:"LCAttributes.1.AutoDiscovery"`
-		LCAttributes_1_AutoUpdate                          string      `json:"LCAttributes.1.AutoUpdate"`
-		LCAttributes_1_BIOSRTDRequested                    string      `json:"LCAttributes.1.BIOSRTDRequested"`
-		LCAttributes_1_CollectSystemInventoryOnRestart     string      `json:"LCAttributes.1.CollectSystemInventoryOnRestart"`
-		LCAttributes_1_DiscoveryFactoryDefaults            string      `json:"LCAttributes.1.DiscoveryFactoryDefaults"`
-		LCAttributes_1_IPAddress                           string      `json:"LCAttributes.1.IPAddress"`
-		LCAttributes_1_IPChangeNotifyPS                    string      `json:"LCAttributes.1.IPChangeNotifyPS"`
-		LCAttributes_1_IgnoreCertWarning                   string      `json:"LCAttributes.1.IgnoreCertWarning"`
-		LCAttributes_1_Licensed                            string      `json:"LCAttributes.1.Licensed"`
-		LCAttributes_1_LifecycleControllerState            string      `json:"LCAttributes.1.LifecycleControllerState"`
-		LCAttributes_1_PartConfigurationUpdate             string      `json:"LCAttributes.1.PartConfigurationUpdate"`
-		LCAttributes_1_PartFirmwareUpdate                  string      `json:"LCAttributes.1.PartFirmwareUpdate"`
-		LCAttributes_1_ProvisioningServer                  string      `json:"LCAttributes.1.ProvisioningServer"`
-		LCAttributes_1_StorageHealthRollupStatus           int         `json:"LCAttributes.1.StorageHealthRollupStatus"`
-		LCAttributes_1_SystemID                            string      `json:"LCAttributes.1.SystemID"`
-		LCAttributes_1_UserProxyPassword                   interface{} `json:"LCAttributes.1.UserProxyPassword"`
-		LCAttributes_1_UserProxyPort                       string      `json:"LCAttributes.1.UserProxyPort"`
-		LCAttributes_1_UserProxyServer                     string      `json:"LCAttributes.1.UserProxyServer"`
-		LCAttributes_1_UserProxyType                       string      `json:"LCAttributes.1.UserProxyType"`
-		LCAttributes_1_UserProxyUserName                   string      `json:"LCAttributes.1.UserProxyUserName"`
-		LCAttributes_1_VirtualAddressManagementApplication string      `json:"LCAttributes.1.VirtualAddressManagementApplication"`
+		AutoBackup                          string      `json:"LCAttributes.1.AutoBackup"`
+		AutoDiscovery                       string      `json:"LCAttributes.1.AutoDiscovery"`
+		AutoUpdate                          string      `json:"LCAttributes.1.AutoUpdate"`
+		BIOSRTDRequested                    string      `json:"LCAttributes.1.BIOSRTDRequested"`
+		CollectSystemInventoryOnRestart     string      `json:"LCAttributes.1.CollectSystemInventoryOnRestart"`
+		DiscoveryFactoryDefaults            string      `json:"LCAttributes.1.DiscoveryFactoryDefaults"`
+		IPAddress                           string      `json:"LCAttributes.1.IPAddress"`
+		IPChangeNotifyPS                    string      `json:"LCAttributes.1.IPChangeNotifyPS"`
+		IgnoreCertWarning                   string      `json:"LCAttributes.1.IgnoreCertWarning"`
+		Licensed                            string      `json:"LCAttributes.1.Licensed"`
+		LifecycleControllerState            string      `json:"LCAttributes.1.LifecycleControllerState"`
+		PartConfigurationUpdate             string      `json:"LCAttributes.1.PartConfigurationUpdate"`
+		PartFirmwareUpdate                  string      `json:"LCAttributes.1.PartFirmwareUpdate"`
+		ProvisioningServer                  string      `json:"LCAttributes.1.ProvisioningServer"`
+		StorageHealthRollupStatus           int         `json:"LCAttributes.1.StorageHealthRollupStatus"`
+		SystemID                            string      `json:"LCAttributes.1.SystemID"`
+		UserProxyPassword                   interface{} `json:"LCAttributes.1.UserProxyPassword"`
+		UserProxyPort                       string      `json:"LCAttributes.1.UserProxyPort"`
+		UserProxyServer                     string      `json:"LCAttributes.1.UserProxyServer"`
+		UserProxyType                       string      `json:"LCAttributes.1.UserProxyType"`
+		UserProxyUserName                   string      `json:"LCAttributes.1.UserProxyUserName"`
+		VirtualAddressManagementApplication string      `json:"LCAttributes.1.VirtualAddressManagementApplication"`
 	} `json:"Attributes"`
 	Description string `json:"Description"`
 	ID          string `json:"Id"`
@@ -1026,15 +1026,15 @@ type LifeCycleAttrDell struct {
 //BiosDell ... Bios Settings from the Redfish API
 type BiosAttrDell struct {
 	Redfish_Settings struct {
-		_odata_context string `json:"@odata.context"`
-		_odata_type    string `json:"@odata.type"`
+		_odata_context string
+		_odata_type    string
 		SettingsObject struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"SettingsObject"`
 	} `json:"@Redfish.Settings"`
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Actions        struct {
 		Bios_ChangePassword struct {
 			Target string `json:"target"`
