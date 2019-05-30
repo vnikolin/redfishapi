@@ -458,28 +458,28 @@ func (c *IloClient) GetLifecycleAttrDell() (LifeCycleData, error) {
 	_data := x.Attributes
 
 	_LfcycleDat := LifeCycleData{
-		AutoBackup:                          _data.LCAttributes_1_AutoBackup,
-		AutoDiscovery:                       _data.LCAttributes_1_AutoDiscovery,
-		AutoUpdate:                          _data.LCAttributes_1_AutoUpdate,
-		BIOSRTDRequested:                    _data.LCAttributes_1_BIOSRTDRequested,
-		CollectSystemInventoryOnRestart:     _data.LCAttributes_1_CollectSystemInventoryOnRestart,
-		DiscoveryFactoryDefaults:            _data.LCAttributes_1_DiscoveryFactoryDefaults,
-		IPAddress:                           _data.LCAttributes_1_IPAddress,
-		IPChangeNotifyPS:                    _data.LCAttributes_1_IPChangeNotifyPS,
-		IgnoreCertWarning:                   _data.LCAttributes_1_IgnoreCertWarning,
-		Licensed:                            _data.LCAttributes_1_Licensed,
-		LifecycleControllerState:            _data.LCAttributes_1_LifecycleControllerState,
-		PartConfigurationUpdate:             _data.LCAttributes_1_PartConfigurationUpdate,
-		PartFirmwareUpdate:                  _data.LCAttributes_1_PartFirmwareUpdate,
-		ProvisioningServer:                  _data.LCAttributes_1_ProvisioningServer,
-		StorageHealthRollupStatus:           _data.LCAttributes_1_StorageHealthRollupStatus,
-		SystemID:                            _data.LCAttributes_1_SystemID,
-		UserProxyPassword:                   _data.LCAttributes_1_UserProxyPassword,
-		UserProxyPort:                       _data.LCAttributes_1_UserProxyPort,
-		UserProxyServer:                     _data.LCAttributes_1_UserProxyServer,
-		UserProxyType:                       _data.LCAttributes_1_UserProxyType,
-		UserProxyUserName:                   _data.LCAttributes_1_UserProxyUserName,
-		VirtualAddressManagementApplication: _data.LCAttributes_1_VirtualAddressManagementApplication,
+		AutoBackup:                          _data.AutoBackup,
+		AutoDiscovery:                       _data.AutoDiscovery,
+		AutoUpdate:                          _data.AutoUpdate,
+		BIOSRTDRequested:                    _data.BIOSRTDRequested,
+		CollectSystemInventoryOnRestart:     _data.CollectSystemInventoryOnRestart,
+		DiscoveryFactoryDefaults:            _data.DiscoveryFactoryDefaults,
+		IPAddress:                           _data.IPAddress,
+		IPChangeNotifyPS:                    _data.IPChangeNotifyPS,
+		IgnoreCertWarning:                   _data.IgnoreCertWarning,
+		Licensed:                            _data.Licensed,
+		LifecycleControllerState:            _data.LifecycleControllerState,
+		PartConfigurationUpdate:             _data.PartConfigurationUpdate,
+		PartFirmwareUpdate:                  _data.PartFirmwareUpdate,
+		ProvisioningServer:                  _data.ProvisioningServer,
+		StorageHealthRollupStatus:           _data.StorageHealthRollupStatus,
+		SystemID:                            _data.SystemID,
+		UserProxyPassword:                   _data.UserProxyPassword,
+		UserProxyPort:                       _data.UserProxyPort,
+		UserProxyServer:                     _data.UserProxyServer,
+		UserProxyType:                       _data.UserProxyType,
+		UserProxyUserName:                   _data.UserProxyUserName,
+		VirtualAddressManagementApplication: _data.VirtualAddressManagementApplication,
 	}
 
 	return _LfcycleDat, nil
@@ -733,5 +733,5 @@ func (c *IloClient) GetComponentAttr(comp string) (ExportConfigResponse, error) 
 		}
 	}
 
-	return
+	return ExportConfigResponse{}, nil
 }
