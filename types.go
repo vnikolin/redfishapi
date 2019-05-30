@@ -3179,6 +3179,7 @@ type SysAttrData struct {
 type LifeCycleData struct {
 	AutoBackup                          string      `json:"autobackup,omitempty"`
 	AutoDiscovery                       string      `json:"autodiscovery,omitempty"`
+	AutoUpdate                          string      `json:"autoupdate,omitempty"`
 	BIOSRTDRequested                    string      `json:"bios_rtd,omitempty"`
 	CollectSystemInventoryOnRestart     string      `json:"collect_system_inventory_on_restart,omitempty"`
 	DiscoveryFactoryDefaults            string      `json:"discovery_factory_defaults,omitempty"`
