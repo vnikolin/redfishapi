@@ -21,6 +21,7 @@ func queryData(c *IloClient, call string, link string, data []byte) ([]byte, htt
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	req, err := http.NewRequest(call, link, bytes.NewBuffer(data))
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+	req.Header.Add("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 	client := &http.Client{}
 	resp, err := client.Do(req)
