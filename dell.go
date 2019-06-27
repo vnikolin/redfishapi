@@ -253,7 +253,7 @@ func (c *IloClient) GetSensorsHealthDell() ([]HealthList, error) {
 		}
 	}
 
-	if x.Temperaturesount != 0 {
+	if x.Temperaturescount != 0 {
 		for i := range x.Temperatures {
 			tempData := HealthList{
 				Name:   x.Temperatures[i].Name,
@@ -306,13 +306,22 @@ func (c *IloClient) GetStorageHealthDell() ([]StorageHealthList, error) {
 		}
 		_healthdata = append(_healthdata, storageHealth)
 
-		if y.Devicescount != 0 {
-			for k := range y.Devices {
+		if y.Drivescount != 0 {
+			for k := range y.Drives {
+				_url := c.Hostname + y.Drives[k].OdataId
+				resp, _, err := queryData(c, "GET", _url, nil)
+				if err != nil {
+					return nil, err
+				}
+				var z StorageDriveDetailsDell
+
+				json.Unmarshal(resp, &z)
+
 				storageHealth := StorageHealthList{
-					Name:   y.Devices[k].Name,
-					Health: y.Devices[k].Status.Health,
-					State:  y.Devices[k].Status.State,
-					Space:  y.Devices[k].CapacityBytes,
+					Name:   z.Name,
+					Health: z.Status.Health,
+					State:  z.Status.State,
+					Space:  z.CapacityBytes,
 				}
 				_healthdata = append(_healthdata, storageHealth)
 			}
