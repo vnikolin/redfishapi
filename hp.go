@@ -620,7 +620,7 @@ func (c *IloClient) GetEthernetInterfacesHP() ([]MACData, error) {
 			Name:        x.Items[i].Name,
 			Description: x.Items[i].Description,
 			MacAddress:  x.Items[i].MacAddress,
-			State:       strconv.FormatBool(x.Items[i].Status.State),
+			State:       x.Items[i].Status.State,
 			Status:      strconv.FormatBool(x.Items[i].Oem.Hp.NICEnabled),
 			Vlan:        "Null",
 		}

@@ -1558,9 +1558,9 @@ type BiosAttributesData struct {
 
 //GetMacAddressDell ... Fetch the Mac Address Info from the Redfish API
 type GetMacAddressDell struct {
-	_odata_context                     string        `json:"@odata.context"`
-	_odata_id                          string        `json:"@odata.id"`
-	_odata_type                        string        `json:"@odata.type"`
+	_odata_context                     string
+	_odata_id                          string
+	_odata_type                        string
 	AutoNeg                            bool          `json:"AutoNeg"`
 	Description                        string        `json:"Description"`
 	FQDN                               interface{}   `json:"FQDN"`
@@ -1580,7 +1580,7 @@ type GetMacAddressDell struct {
 	LinkStatus                         string        `json:"LinkStatus"`
 	Links                              struct {
 		Chassis struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"Chassis"`
 	} `json:"Links"`
 	MACAddress              string        `json:"MACAddress"`
@@ -1601,23 +1601,23 @@ type GetMacAddressDell struct {
 
 //SystemViewDell ... Fetch the System View Attributes from the Redfish API
 type SystemViewDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Actions        struct {
 		_ComputerSystem_Reset struct {
 			ResetType_Redfish_AllowableValues []string `json:"ResetType@Redfish.AllowableValues"`
 			Target                            string   `json:"target"`
-		} `json:"#ComputerSystem.Reset"`
+		}
 	} `json:"Actions"`
 	AssetTag string `json:"AssetTag"`
 	Bios     struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"Bios"`
 	BiosVersion string `json:"BiosVersion"`
 	Boot        struct {
 		BootOptions struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"BootOptions"`
 		BootOrder                                        []string `json:"BootOrder"`
 		BootOrder_odata_count                            int      `json:"BootOrder@odata.count"`
@@ -1629,7 +1629,7 @@ type SystemViewDell struct {
 	} `json:"Boot"`
 	Description        string `json:"Description"`
 	EthernetInterfaces struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"EthernetInterfaces"`
 	HostName          string `json:"HostName"`
 	HostWatchdogTimer struct {
@@ -1645,48 +1645,48 @@ type SystemViewDell struct {
 	IndicatorLED             string        `json:"IndicatorLED"`
 	Links                    struct {
 		Chassis []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"Chassis"`
 		Chassis_odata_count  int           `json:"Chassis@odata.count"`
 		CooledBy             []interface{} `json:"CooledBy"`
 		CooledBy_odata_count int           `json:"CooledBy@odata.count"`
 		ManagedBy            []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"ManagedBy"`
 		ManagedBy_odata_count int `json:"ManagedBy@odata.count"`
 		Oem                   struct {
 			Dell struct {
 				BootOrder struct {
-					_odata_id string `json:"@odata.id"`
+					_odata_id string
 				} `json:"BootOrder"`
 				DellNumericSensorCollection struct {
-					_odata_id string `json:"@odata.id"`
+					_odata_id string
 				} `json:"DellNumericSensorCollection"`
 				DellOSDeploymentService struct {
-					_odata_id string `json:"@odata.id"`
+					_odata_id string
 				} `json:"DellOSDeploymentService"`
 				DellPresenceAndStatusSensorCollection struct {
-					_odata_id string `json:"@odata.id"`
+					_odata_id string
 				} `json:"DellPresenceAndStatusSensorCollection"`
 				DellRaidService struct {
-					_odata_id string `json:"@odata.id"`
+					_odata_id string
 				} `json:"DellRaidService"`
 				DellSensorCollection struct {
-					_odata_id string `json:"@odata.id"`
+					_odata_id string
 				} `json:"DellSensorCollection"`
 				DellSoftwareInstallationService struct {
-					_odata_id string `json:"@odata.id"`
+					_odata_id string
 				} `json:"DellSoftwareInstallationService"`
 			} `json:"Dell"`
 		} `json:"Oem"`
 		PoweredBy []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"PoweredBy"`
 		PoweredBy_odata_count int `json:"PoweredBy@odata.count"`
 	} `json:"Links"`
 	Manufacturer string `json:"Manufacturer"`
 	Memory       struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"Memory"`
 	MemorySummary struct {
 		MemoryMirroring string `json:"MemoryMirroring"`
@@ -1695,19 +1695,19 @@ type SystemViewDell struct {
 			HealthRollup interface{} `json:"HealthRollup"`
 			State        string      `json:"State"`
 		} `json:"Status"`
-		TotalSystemMemoryGiB float64 `json:"TotalSystemMemoryGiB"`
+		TotalSystemMemoryGiB float32 `json:"TotalSystemMemoryGiB"`
 	} `json:"MemorySummary"`
 	Model             string `json:"Model"`
 	Name              string `json:"Name"`
 	NetworkInterfaces struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"NetworkInterfaces"`
 	Oem struct {
 		Dell struct {
 			DellSystem struct {
-				_odata_context        string      `json:"@odata.context"`
-				_odata_id             string      `json:"@odata.id"`
-				_odata_type           string      `json:"@odata.type"`
+				_odata_context        string
+				_odata_id             string
+				_odata_type           string
 				BIOSReleaseDate       string      `json:"BIOSReleaseDate"`
 				BaseBoardChassisSlot  string      `json:"BaseBoardChassisSlot"`
 				BatteryRollupStatus   string      `json:"BatteryRollupStatus"`
@@ -1735,11 +1735,11 @@ type SystemViewDell struct {
 		} `json:"Dell"`
 	} `json:"Oem"`
 	PCIeDevices []struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"PCIeDevices"`
 	PCIeDevices_odata_count int `json:"PCIeDevices@odata.count"`
 	PCIeFunctions           []struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"PCIeFunctions"`
 	PCIeFunctions_odata_count int    `json:"PCIeFunctions@odata.count"`
 	PartNumber                string `json:"PartNumber"`
@@ -1755,15 +1755,15 @@ type SystemViewDell struct {
 		} `json:"Status"`
 	} `json:"ProcessorSummary"`
 	Processors struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"Processors"`
 	SKU        string `json:"SKU"`
 	SecureBoot struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"SecureBoot"`
 	SerialNumber  string `json:"SerialNumber"`
 	SimpleStorage struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"SimpleStorage"`
 	Status struct {
 		Health       string `json:"Health"`
@@ -1771,7 +1771,7 @@ type SystemViewDell struct {
 		State        string `json:"State"`
 	} `json:"Status"`
 	Storage struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"Storage"`
 	SystemType     string `json:"SystemType"`
 	TrustedModules []struct {
@@ -1786,16 +1786,16 @@ type SystemViewDell struct {
 //BootOrderDell ... Fetch the Boot Order Info from the Refish API
 type BootOrderDell struct {
 	_Redfish_Settings struct {
-		_odata_context string `json:"@odata.context"`
-		_odata_type    string `json:"@odata.type"`
+		_odata_context string
+		_odata_type    string
 		SettingsObject struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"SettingsObject"`
 		SupportedApplyTimes []string `json:"SupportedApplyTimes"`
 	} `json:"@Redfish.Settings"`
-	_odata_context    string `json:"@odata.context"`
-	_odata_id         string `json:"@odata.id"`
-	_odata_type       string `json:"@odata.type"`
+	_odata_context    string
+	_odata_id         string
+	_odata_type       string
 	AttributeRegistry string `json:"AttributeRegistry"`
 	Attributes        struct {
 		BootSeq []struct {
@@ -1812,18 +1812,18 @@ type BootOrderDell struct {
 
 //FirmwareDataDell ...
 type FirmwareDataDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	ID             string `json:"Id"`
 	Name           string `json:"Name"`
 	Oem            struct {
 		Dell struct {
 			DellSoftwareInventory struct {
-				_odata_context   string      `json:"@odata.context"`
-				_odata_id        string      `json:"@odata.id"`
-				_odata_type      string      `json:"@odata.type"`
+				_odata_context   string
+				_odata_id        string
+				_odata_type      string
 				ComponentID      string      `json:"ComponentID"`
 				ComponentType    string      `json:"ComponentType"`
 				DeviceID         string      `json:"DeviceID"`
@@ -1879,17 +1879,17 @@ type PowerDataDell struct {
 		} `json:"PowerMetrics"`
 		PowerRequestedWatts int `json:"PowerRequestedWatts"`
 		RelatedItem         []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"RelatedItem"`
 		RelatedItem_odata_count int `json:"RelatedItem@odata.count"`
 	} `json:"PowerControl"`
 	PowerControl_odata_count int `json:"PowerControl@odata.count"`
 	PowerSupplies            []struct {
-		_odata_context string `json:"@odata.context"`
-		_odata_id      string `json:"@odata.id"`
-		_odata_type    string `json:"@odata.type"`
+		_odata_context string
+		_odata_id      string
+		_odata_type    string
 		Assembly       struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"Assembly"`
 		EfficiencyPercent float64 `json:"EfficiencyPercent"`
 		FirmwareVersion   string  `json:"FirmwareVersion"`
@@ -1913,20 +1913,20 @@ type PowerDataDell struct {
 		Oem                     struct {
 			Dell struct {
 				DellPowerSupply struct {
-					_odata_context    string `json:"@odata.context"`
-					_odata_id         string `json:"@odata.id"`
-					_odata_type       string `json:"@odata.type"`
-					IsSwitchingSupply bool   `json:"IsSwitchingSupply"`
+					_odata_context    string
+					_odata_id         string
+					_odata_type       string
+					IsSwitchingSupply bool `json:"IsSwitchingSupply"`
 					Links             struct {
 						DellPSNumericSensorCollection []struct {
-							_odata_id string `json:"@odata.id"`
+							_odata_id string
 						} `json:"DellPSNumericSensorCollection"`
 					} `json:"Links"`
 				} `json:"DellPowerSupply"`
 				DellPowerSupplyView struct {
-					_odata_context           string `json:"@odata.context"`
-					_odata_id                string `json:"@odata.id"`
-					_odata_type              string `json:"@odata.type"`
+					_odata_context           string
+					_odata_id                string
+					_odata_type              string
 					DetailedState            string `json:"DetailedState"`
 					Range1MaxInputPowerWatts int    `json:"Range1MaxInputPowerWatts"`
 				} `json:"DellPowerSupplyView"`
@@ -1938,16 +1938,16 @@ type PowerDataDell struct {
 		PowerOutputWatts   int    `json:"PowerOutputWatts"`
 		PowerSupplyType    string `json:"PowerSupplyType"`
 		Redundancy         []struct {
-			_odata_context  string `json:"@odata.context"`
-			_odata_id       string `json:"@odata.id"`
-			_odata_type     string `json:"@odata.type"`
+			_odata_context  string
+			_odata_id       string
+			_odata_type     string
 			MaxNumSupported int    `json:"MaxNumSupported"`
 			MemberID        string `json:"MemberId"`
 			MinNumNeeded    int    `json:"MinNumNeeded"`
 			Mode            string `json:"Mode"`
 			Name            string `json:"Name"`
 			RedundancySet   []struct {
-				_odata_id string `json:"@odata.id"`
+				_odata_id string
 			} `json:"RedundancySet"`
 			RedundancySet_odata_count int `json:"RedundancySet@odata.count"`
 			Status                    struct {
@@ -1957,7 +1957,7 @@ type PowerDataDell struct {
 		} `json:"Redundancy"`
 		Redundancycount int `json:"Redundancy@odata.count"`
 		RelatedItem     []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"RelatedItem"`
 		RelatedItem_odata_count int    `json:"RelatedItem@odata.count"`
 		SerialNumber            string `json:"SerialNumber"`
@@ -1969,16 +1969,16 @@ type PowerDataDell struct {
 	} `json:"PowerSupplies"`
 	PowerSuppliescount int `json:"PowerSupplies@odata.count"`
 	Redundancy         []struct {
-		_odata_context  string `json:"@odata.context"`
-		_odata_id       string `json:"@odata.id"`
-		_odata_type     string `json:"@odata.type"`
+		_odata_context  string
+		_odata_id       string
+		_odata_type     string
 		MaxNumSupported int    `json:"MaxNumSupported"`
 		MemberID        string `json:"MemberId"`
 		MinNumNeeded    int    `json:"MinNumNeeded"`
 		Mode            string `json:"Mode"`
 		Name            string `json:"Name"`
 		RedundancySet   []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"RedundancySet"`
 		Redundancycount int `json:"RedundancySet@odata.count"`
 		Status          struct {
@@ -1988,9 +1988,9 @@ type PowerDataDell struct {
 	} `json:"Redundancy"`
 	Redundancycount int `json:"Redundancy@odata.count"`
 	Voltages        []struct {
-		_odata_context            string      `json:"@odata.context"`
-		_odata_id                 string      `json:"@odata.id"`
-		_odata_type               string      `json:"@odata.type"`
+		_odata_context            string
+		_odata_id                 string
+		_odata_type               string
 		LowerThresholdCritical    interface{} `json:"LowerThresholdCritical"`
 		LowerThresholdFatal       interface{} `json:"LowerThresholdFatal"`
 		LowerThresholdNonCritical interface{} `json:"LowerThresholdNonCritical"`
@@ -2001,7 +2001,7 @@ type PowerDataDell struct {
 		PhysicalContext           string      `json:"PhysicalContext"`
 		ReadingVolts              int         `json:"ReadingVolts"`
 		RelatedItem               []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"RelatedItem"`
 		RelatedItem_odata_count int `json:"RelatedItem@odata.count"`
 		SensorNumber            int `json:"SensorNumber"`
@@ -2070,13 +2070,13 @@ type SystemEventLogsV1Dell struct {
 
 //SystemEventLogsV2Dell ...
 type SystemEventLogsV2Dell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	Members        []struct {
-		_odata_id               string        `json:"@odata.id"`
-		_odata_type             string        `json:"@odata.type"`
+		_odata_id               string
+		_odata_type             string
 		Created                 string        `json:"Created"`
 		Description             string        `json:"Description"`
 		EntryCode               string        `json:"EntryCode"`
@@ -2098,15 +2098,15 @@ type SystemEventLogsV2Dell struct {
 
 //ThermalHealthListDell ...
 type ThermalHealthListDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	Fans           []struct {
-		_odata_id   string `json:"@odata.id"`
-		_odata_type string `json:"@odata.type"`
+		_odata_id   string
+		_odata_type string
 		Assembly    struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"Assembly"`
 		FanName                   string        `json:"FanName"`
 		LowerThresholdCritical    int           `json:"LowerThresholdCritical"`
@@ -2122,7 +2122,7 @@ type ThermalHealthListDell struct {
 		Redundancy                []interface{} `json:"Redundancy"`
 		Redundancy_odata_count    int           `json:"Redundancy@odata.count"`
 		RelatedItem               []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"RelatedItem"`
 		RelatedItem_odata_count int `json:"RelatedItem@odata.count"`
 		Status                  struct {
@@ -2137,8 +2137,8 @@ type ThermalHealthListDell struct {
 	ID         string `json:"Id"`
 	Name       string `json:"Name"`
 	Redundancy []struct {
-		_odata_id                 string        `json:"@odata.id"`
-		_odata_type               string        `json:"@odata.type"`
+		_odata_id                 string
+		_odata_type               string
 		MaxNumSupported           int           `json:"MaxNumSupported"`
 		MemberID                  string        `json:"MemberId"`
 		MinNumNeeded              int           `json:"MinNumNeeded"`
@@ -2154,9 +2154,9 @@ type ThermalHealthListDell struct {
 	} `json:"Redundancy"`
 	Redundancycount int `json:"Redundancy@odata.count"`
 	Temperatures    []struct {
-		_odata_context            string      `json:"@odata.context"`
-		_odata_id                 string      `json:"@odata.id"`
-		_odata_type               string      `json:"@odata.type"`
+		_odata_context            string
+		_odata_id                 string
+		_odata_type               string
 		LowerThresholdCritical    int         `json:"LowerThresholdCritical"`
 		LowerThresholdFatal       int         `json:"LowerThresholdFatal"`
 		LowerThresholdNonCritical interface{} `json:"LowerThresholdNonCritical"`
@@ -2167,7 +2167,7 @@ type ThermalHealthListDell struct {
 		PhysicalContext           string      `json:"PhysicalContext"`
 		ReadingCelsius            int         `json:"ReadingCelsius"`
 		RelatedItem               []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"RelatedItem"`
 		RelatedItem_odata_count int `json:"RelatedItem@odata.count"`
 		SensorNumber            int `json:"SensorNumber"`
@@ -2201,14 +2201,14 @@ type ProcessorDataDell struct {
 	_odata_id      string
 	_odata_type    string
 	Assembly       struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"Assembly"`
 	Description    string `json:"Description"`
 	ID             string `json:"Id"`
 	InstructionSet string `json:"InstructionSet"`
 	Links          struct {
 		Chassis struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"Chassis"`
 	} `json:"Links"`
 	Manufacturer string `json:"Manufacturer"`
@@ -2218,9 +2218,9 @@ type ProcessorDataDell struct {
 	Oem          struct {
 		Dell struct {
 			DellProcessor struct {
-				_odata_context                  string `json:"@odata.context"`
-				_odata_id                       string `json:"@odata.id"`
-				_odata_type                     string `json:"@odata.type"`
+				_odata_context                  string
+				_odata_id                       string
+				_odata_type                     string
 				CurrentClockSpeedMhz            int    `json:"CurrentClockSpeedMhz"`
 				HyperThreadingCapable           string `json:"HyperThreadingCapable"`
 				HyperThreadingEnabled           string `json:"HyperThreadingEnabled"`
@@ -2265,9 +2265,9 @@ type ProcessorsListDataDell struct {
 
 //StorageCollectionDell ...
 type StorageCollectionDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	Members        []struct {
 		OdataId string `json:"@odata.id"`
@@ -2277,9 +2277,9 @@ type StorageCollectionDell struct {
 }
 
 type StorageDetailsDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Description    string `json:"Description"`
 	Drives         []struct {
 		OdataId string `json:"@odata.id"`
@@ -2288,7 +2288,7 @@ type StorageDetailsDell struct {
 	ID          string `json:"Id"`
 	Links       struct {
 		Enclosures []struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"Enclosures"`
 		Enclosures_odata_count int `json:"Enclosures@odata.count"`
 	} `json:"Links"`
@@ -2296,9 +2296,9 @@ type StorageDetailsDell struct {
 	Oem  struct {
 		Dell struct {
 			DellController struct {
-				_odata_context            string      `json:"@odata.context"`
-				_odata_id                 string      `json:"@odata.id"`
-				_odata_type               string      `json:"@odata.type"`
+				_odata_context            string
+				_odata_id                 string
+				_odata_type               string
 				CacheSizeInMB             int         `json:"CacheSizeInMB"`
 				CachecadeCapability       string      `json:"CachecadeCapability"`
 				ControllerFirmwareVersion string      `json:"ControllerFirmwareVersion"`
@@ -2320,10 +2320,10 @@ type StorageDetailsDell struct {
 		State        string `json:"State"`
 	} `json:"Status"`
 	StorageControllers []struct {
-		_odata_id   string `json:"@odata.id"`
-		_odata_type string `json:"@odata.type"`
+		_odata_id   string
+		_odata_type string
 		Assembly    struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"Assembly"`
 		FirmwareVersion string `json:"FirmwareVersion"`
 		Identifiers     []struct {
@@ -2346,21 +2346,21 @@ type StorageDetailsDell struct {
 	} `json:"StorageControllers"`
 	StorageControllers_odata_count int `json:"StorageControllers@odata.count"`
 	Volumes                        struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"Volumes"`
 }
 
 type StorageDriveDetailsDell struct {
-	_odata_context string `json:"@odata.context"`
-	_odata_id      string `json:"@odata.id"`
-	_odata_type    string `json:"@odata.type"`
+	_odata_context string
+	_odata_id      string
+	_odata_type    string
 	Actions        struct {
 		_Drive_SecureErase struct {
 			Target string `json:"target"`
-		} `json:"#Drive.SecureErase"`
+		}
 	} `json:"Actions"`
 	Assembly struct {
-		_odata_id string `json:"@odata.id"`
+		_odata_id string
 	} `json:"Assembly"`
 	BlockSizeBytes    int    `json:"BlockSizeBytes"`
 	CapableSpeedGbs   int    `json:"CapableSpeedGbs"`
@@ -2377,7 +2377,7 @@ type StorageDriveDetailsDell struct {
 	} `json:"Identifiers"`
 	Links struct {
 		Chassis struct {
-			_odata_id string `json:"@odata.id"`
+			_odata_id string
 		} `json:"Chassis"`
 		Volumes             []interface{} `json:"Volumes"`
 		Volumes_odata_count int           `json:"Volumes@odata.count"`
@@ -2391,9 +2391,9 @@ type StorageDriveDetailsDell struct {
 	Oem                struct {
 		Dell struct {
 			DellPhysicalDisk struct {
-				_odata_context         string `json:"@odata.context"`
-				_odata_id              string `json:"@odata.id"`
-				_odata_type            string `json:"@odata.type"`
+				_odata_context         string
+				_odata_id              string
+				_odata_type            string
 				Connector              int    `json:"Connector"`
 				DriveFormFactor        string `json:"DriveFormFactor"`
 				FreeSizeInBytes        int    `json:"FreeSizeInBytes"`
