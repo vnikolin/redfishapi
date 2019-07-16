@@ -4,16 +4,16 @@ package redfishapi
 
 //SysAttrDell ... System Attributes from the Redfish API
 type SysAttrDell struct {
-	_Redfish_Settings struct {
-		_odata_context string
-		_odata_type    string
+	RedfishSettings struct {
+		odataContext   string
+		odataType      string
 		SettingsObject struct {
-			_odata_id string
+			odataID string
 		} `json:"SettingsObject"`
 	}
-	_odata_context    string
-	_odata_id         string
-	_odata_type       string
+	odataContext      string
+	odataID           string
+	odataType         string
 	AttributeRegistry string            `json:"AttributeRegistry"`
 	Attributes        SysAttributesData `json:"Attributes"`
 	Description       string            `json:"Description"`
@@ -360,15 +360,15 @@ type SysAttributesData struct {
 //IDRACAttrDell ... IDRAC Attributes from the Redfish API
 type IDRACAttrDell struct {
 	RedfishSettings struct {
-		_odata_context string
-		_odata_type    string
+		odataContext   string
+		odataType      string
 		SettingsObject struct {
 			_odata_id string
 		} `json:"SettingsObject"`
-	} `json:"@Redfish.Settings"`
-	_odata_context    string
-	_odata_id         string
-	_odata_type       string
+	}
+	odataContext      string
+	odataID           string
+	odataType         string
 	AttributeRegistry string              `json:"AttributeRegistry"`
 	Attributes        IDRACAttributesData `json:"Attributes"`
 	Description       string              `json:"Description"`
@@ -1792,7 +1792,7 @@ type BootOrderDell struct {
 			_odata_id string
 		} `json:"SettingsObject"`
 		SupportedApplyTimes []string `json:"SupportedApplyTimes"`
-	} `json:"@Redfish.Settings"`
+	}
 	_odata_context    string
 	_odata_id         string
 	_odata_type       string
@@ -3512,75 +3512,75 @@ type PCISlotsInfoHP struct {
 
 //HealthList ...
 type HealthList struct {
-	Name   string `json:"name,omitempty"`
-	Health string `json:"health,omitempty"`
-	State  string `json:"state,omitempty"`
+	Name   string `json:"name"`
+	Health string `json:"health"`
+	State  string `json:"state"`
 }
 
 //StorageHealthList ...
 type StorageHealthList struct {
-	Name   string `json:"name,omitempty"`
-	Health string `json:"health,omitempty"`
-	State  string `json:"state,omitempty"`
-	Space  int    `json:"space,omitempty"`
+	Name   string `json:"name"`
+	Health string `json:"health"`
+	State  string `json:"state"`
+	Space  int    `json:"space"`
 }
 
 //SystemEventLogRes ...
 type SystemEventLogRes struct {
-	EntryCode  string `json:"entry_code,omitempty"`
-	Message    string `json:"message,omitempty"`
-	Name       string `json:"name,omitempty"`
-	SensorType string `json:"sensor_type,omitempty"`
-	Severity   string `json:"severity,omitempty"`
+	EntryCode  string `json:"entry_code"`
+	Message    string `json:"message"`
+	Name       string `json:"name"`
+	SensorType string `json:"sensor_type"`
+	Severity   string `json:"severity"`
 }
 
 //Accounts ...
 type Accounts struct {
-	Enabled  bool   `json:"enabled,omitempty"`
-	Locked   bool   `json:"locked,omitempty"`
-	Name     string `json:"name,omitempty"`
-	RoleId   string `json:"role_id,omitempty"`
-	Username string `json:"username,omitempty"`
+	Enabled  bool   `json:"enabled"`
+	Locked   bool   `json:"locked"`
+	Name     string `json:"name"`
+	RoleId   string `json:"role_id"`
+	Username string `json:"username"`
 }
 
 //MACData ...
 type MACData struct {
-	MacAddress  string `json:"macaddress,omitempty"`
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
-	Status      string `json:"status,omitempty"`
-	State       string `json:"state,omitempty"`
-	Vlan        string `json:"vlan,omitempty"`
+	MacAddress  string `json:"macaddress"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Status      string `json:"status"`
+	State       string `json:"state"`
+	Vlan        string `json:"vlan"`
 }
 
 //BootOrderData ...
 type BootOrderData struct {
-	Enabled bool   `json:"enabled,omitempty"`
-	Index   int    `json:"index,omitempty"`
-	Name    string `json:"name,omitempty"`
+	Enabled bool   `json:"enabled"`
+	Index   int    `json:"index"`
+	Name    string `json:"name"`
 }
 
 //IDRACData ...
 type IDRACData struct {
-	VirtualConsoleMaxSessions int    `json:"virtualconsole_maxsessions,omitempty"`
-	VirtualConsolePluginType  string `json:"virtualconsole_plugintype,omitempty"`
-	WebServerSSLEncryption    string `json:"webserver_ssl_encryption,omitempty"`
-	IPMILanEnable             string `json:"ipmi_lan_enable,omitempty"`
-	DNSDomainName             string `json:"dns_domainname,omitempty"`
-	SnmpAgentStatus           string `json:"snmp_agent_status,omitempty"`
-	SnmpAgentCommunity        string `json:"snmp_agent_community,omitempty"`
+	VirtualConsoleMaxSessions int    `json:"virtualconsole_maxsessions"`
+	VirtualConsolePluginType  string `json:"virtualconsole_plugintype"`
+	WebServerSSLEncryption    string `json:"webserver_ssl_encryption"`
+	IPMILanEnable             string `json:"ipmi_lan_enable"`
+	DNSDomainName             string `json:"dns_domainname"`
+	SnmpAgentStatus           string `json:"snmp_agent_status"`
+	SnmpAgentCommunity        string `json:"snmp_agent_community"`
 }
 
 //BiosData ... Return Response for Bios Data for Dell
 type BiosData struct {
-	BootMode          string `json:"bootmode,omitempty"`
-	BootSeqRetry      string `json:"boot_sequence_retry,omitempty"`
-	InternalUsb       string `json:"internal_usb,omitempty"`
-	SriovGlobalEnable string `json:"sriov_enable,omitempty"`
-	SysProfile        string `json:"sys_profile,omitempty"`
-	AcPwrRcvry        string `json:"pwr_rcvry,omitempty"`
-	AcPwrRcvryDelay   string `json:"pwr_rcvry_delay,omitempty"`
-	Serial            string `json:"serial,omitempty"`
+	BootMode          string `json:"bootmode"`
+	BootSeqRetry      string `json:"boot_sequence_retry"`
+	InternalUsb       string `json:"internal_usb"`
+	SriovGlobalEnable string `json:"sriov_enable"`
+	SysProfile        string `json:"sys_profile"`
+	AcPwrRcvry        string `json:"pwr_rcvry"`
+	AcPwrRcvryDelay   string `json:"pwr_rcvry_delay"`
+	Serial            string `json:"serial"`
 }
 
 // BiosDataHP ... ... Return Response for Bios Data for HP
@@ -3742,69 +3742,69 @@ type BiosDataHP struct {
 
 //SysAttrData ... Return Response for System Attribute Data
 type SysAttrData struct {
-	ServerPwrPSRedPolicy string `json:"redundancy_policy,omitempty"`
-	ServerPwrPSRapidOn   string `json:"hot_spare,omitempty"`
+	ServerPwrPSRedPolicy string `json:"redundancy_policy"`
+	ServerPwrPSRapidOn   string `json:"hot_spare"`
 }
 
 //LifeCycleData ...
 type LifeCycleData struct {
-	AutoBackup                          string      `json:"autobackup,omitempty"`
-	AutoDiscovery                       string      `json:"autodiscovery,omitempty"`
-	AutoUpdate                          string      `json:"autoupdate,omitempty"`
-	BIOSRTDRequested                    string      `json:"bios_rtd,omitempty"`
-	CollectSystemInventoryOnRestart     string      `json:"collect_system_inventory_on_restart,omitempty"`
-	DiscoveryFactoryDefaults            string      `json:"discovery_factory_defaults,omitempty"`
-	IPAddress                           string      `json:"ipaddress,omitempty"`
-	IPChangeNotifyPS                    string      `json:"ip_change_notify,omitempty"`
-	IgnoreCertWarning                   string      `json:"ignore_cert_warning,omitempty"`
-	Licensed                            string      `json:"licensed,omitempty"`
-	LifecycleControllerState            string      `json:"lifecycle_controller_state,omitempty"`
-	PartConfigurationUpdate             string      `json:"part_config_update,omitempty"`
-	PartFirmwareUpdate                  string      `json:"part_firmware_update,omitempty"`
-	ProvisioningServer                  string      `json:"provisioning_server,omitempty"`
-	StorageHealthRollupStatus           int         `json:"storage_health_rollup_status,omitempty"`
-	SystemID                            string      `json:"systemid,omitempty"`
-	UserProxyPassword                   interface{} `json:"user_proxy_password,omitempty"`
-	UserProxyPort                       string      `json:"user_proxy_port,omitempty"`
-	UserProxyServer                     string      `json:"user_proxy_server,omitempty"`
-	UserProxyType                       string      `json:"user_proxy_type,omitempty"`
-	UserProxyUserName                   string      `json:"user_proxy_username,omitempty"`
-	VirtualAddressManagementApplication string      `json:"virtual_addr_mgmt_application,omitempty"`
+	AutoBackup                          string      `json:"autobackup"`
+	AutoDiscovery                       string      `json:"autodiscovery"`
+	AutoUpdate                          string      `json:"autoupdate"`
+	BIOSRTDRequested                    string      `json:"bios_rtd"`
+	CollectSystemInventoryOnRestart     string      `json:"collect_system_inventory_on_restart"`
+	DiscoveryFactoryDefaults            string      `json:"discovery_factory_defaults"`
+	IPAddress                           string      `json:"ipaddress"`
+	IPChangeNotifyPS                    string      `json:"ip_change_notify"`
+	IgnoreCertWarning                   string      `json:"ignore_cert_warning"`
+	Licensed                            string      `json:"licensed"`
+	LifecycleControllerState            string      `json:"lifecycle_controller_state"`
+	PartConfigurationUpdate             string      `json:"part_config_update"`
+	PartFirmwareUpdate                  string      `json:"part_firmware_update"`
+	ProvisioningServer                  string      `json:"provisioning_server"`
+	StorageHealthRollupStatus           int         `json:"storage_health_rollup_status"`
+	SystemID                            string      `json:"systemid"`
+	UserProxyPassword                   interface{} `json:"user_proxy_password"`
+	UserProxyPort                       string      `json:"user_proxy_port"`
+	UserProxyServer                     string      `json:"user_proxy_server"`
+	UserProxyType                       string      `json:"user_proxy_type"`
+	UserProxyUserName                   string      `json:"user_proxy_username"`
+	VirtualAddressManagementApplication string      `json:"virtual_addr_mgmt_application"`
 }
 
 //SystemData ...
 type SystemData struct {
-	PowerState      string  `json:"power_state,omitempty"`
-	SerialNumber    string  `json:"serial_number,omitempty"`
-	Health          string  `json:"health,omitempty"`
-	SystemType      string  `json:"system_type,omitempty"`
-	Model           string  `json:"model,omitempty"`
-	Memory          float32 `json:"memory,omitempty"`
-	Processors      int     `json:"processors,omitempty"`
-	ProcessorFamily string  `json:"processor_family,omitempty"`
+	PowerState      string  `json:"power_state"`
+	SerialNumber    string  `json:"serial_number"`
+	Health          string  `json:"health"`
+	SystemType      string  `json:"system_type"`
+	Model           string  `json:"model"`
+	Memory          float32 `json:"memory"`
+	Processors      int     `json:"processors"`
+	ProcessorFamily string  `json:"processor_family"`
 }
 
 //FirmwareData ...
 type FirmwareData struct {
-	Name       string `json:"name,omitempty"`
-	Id         string `json:"id,omitempty"`
-	Version    string `json:"version,omitempty"`
-	Updateable bool   `json:"updateable,omitempty"`
+	Name       string `json:"name"`
+	Id         string `json:"id"`
+	Version    string `json:"version"`
+	Updateable bool   `json:"updateable"`
 }
 
 //LicenseInfo ...
 type LicenseInfo struct {
-	Name        string `json:"name,omitempty"`
-	LicenseKey  string `json:"license_key,omitempty"`
-	LicenseType string `json:"license_type,omitempty"`
+	Name        string `json:"name"`
+	LicenseKey  string `json:"license_key"`
+	LicenseType string `json:"license_type"`
 }
 
 //PCISlotsInfo ...
 type PCISlotsInfo struct {
-	Name       string `json:"name,omitempty"`
-	Status     string `json:"status,omitempty"`
-	Technology string `json:"technology,omitempty"`
-	Type       string `json:"type,omitempty"`
+	Name       string `json:"name"`
+	Status     string `json:"status"`
+	Technology string `json:"technology"`
+	Type       string `json:"type"`
 }
 
 //
