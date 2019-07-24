@@ -103,7 +103,7 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 		var y GetMacAddressDell
 		json.Unmarshal(resp, &y)
 		macData := MACData{
-			Name:        y.Name,
+			Name:        y.ID,
 			Description: y.Description,
 			MacAddress:  y.MACAddress,
 			Status:      y.Status.Health,
