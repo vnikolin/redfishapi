@@ -268,6 +268,58 @@ func (c *IloClient) GetSensorsHealthDell() ([]HealthList, error) {
 
 }
 
+//
+func (c *IloClient) GetStorageDriveDetailsDell() ([]StorageDriveDetailsDell, error) {
+
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Storage"
+
+	resp, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		x          StorageCollectionDell
+		_drivedata []StorageDriveDetailsDell
+	)
+
+	json.Unmarshal(resp, &x)
+
+	for i := range x.Members {
+
+		_url := c.Hostname + x.Members[i].OdataId
+		resp, _, err := queryData(c, "GET", _url, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		var y StorageDetailsDell
+
+		json.Unmarshal(resp, &y)
+
+		if y.Drivescount != 0 {
+			for k := range y.Drives {
+				_url := c.Hostname + y.Drives[k].OdataId
+				resp, _, err := queryData(c, "GET", _url, nil)
+				if err != nil {
+					return nil, err
+				}
+				var z StorageDriveDetailsDell
+
+				json.Unmarshal(resp, &z)
+
+				_drivedata = append(_drivedata, z)
+			}
+
+		} else {
+			continue
+		}
+
+	}
+	return _drivedata, nil
+
+}
+
 //GetStorageHealthDell ... Will Fetch the Storage Health Details
 // works: R730xd,R740xd
 func (c *IloClient) GetStorageHealthDell() ([]StorageHealthList, error) {
