@@ -2351,11 +2351,8 @@ type StorageDetailsDell struct {
 }
 
 type StorageDriveDetailsDell struct {
-	_odata_context string
-	_odata_id      string
-	_odata_type    string
-	Actions        struct {
-		_Drive_SecureErase struct {
+	Actions struct {
+		Drive_SecureErase struct {
 			Target string `json:"target"`
 		}
 	} `json:"Actions"`
