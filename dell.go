@@ -69,8 +69,6 @@ func (c *IloClient) GetServerPowerStateDell() (string, error) {
 
 }
 
-// func (c *IloClient) SetBiosAttributes() (string, error) {}
-
 //CheckLoginDell ... Will check the credentials of the Server
 // works: R730xd,R740xd
 func (c *IloClient) CheckLoginDell() (string, error) {
@@ -82,6 +80,77 @@ func (c *IloClient) CheckLoginDell() (string, error) {
 	var data SystemViewDell
 	json.Unmarshal(resp, &data)
 	return string(data.Status.Health), nil
+}
+
+//CreateJobDell ... Create a Job based on the changed bios settings
+/* Payload
+   {"TargetSettingsURI":"/redfish/v1/Systems/System.Embedded.1/Bios/Settings"}
+*/
+func (c *IloClient) CreateJobDell(jsonData []byte) (string, error) {
+	url = c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs"
+	resp, _, err := queryData(c, "POST", url, jsonData)
+	if err != nil {
+		return "", err
+	}
+	var k JobResponseDell
+	json.Unmarshal(resp, &k)
+	return k.MessageExtendedInfo[0].Message, nil
+}
+
+//SetBiosSettingsDell ... Set Bios Settings
+/* Payload
+{"Attributes":{"BootMode": "Bios"}}
+*/
+func (c *IloClient) SetBiosSettingsDell(jsonData []byte) (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios/Settings"
+	resp, _, err := queryData(c, "PATCH", url, jsonData)
+	if err != nil {
+		return "", err
+	}
+	var k JobResponseDell
+	json.Unmarshal(resp, &k)
+	return k.MessageExtendedInfo[0].Message, nil
+}
+
+//ClearJobsDell ... Deletes all the Jobs in the jobs queue
+func (c *IloClient) ClearJobsDell() (string, error) {
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs"
+	resp, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return "", err
+	}
+	var k MemberCount
+	json.Unmarshal(resp, &k)
+	for i := range k.Members {
+		_url := c.Hostname + k.Members[i].OdataId
+		_, _, err := queryData(c, "DELETE", _url, nil)
+		if err != nil {
+			return "", err
+		}
+	}
+	return "Jobs Deleted", nil
+}
+
+//SetAttributesDell ... Will set the Attributes for IDRAC,Lifecycle Attributes and System
+/* Payload
+{"Attributes":{"LCAttributes.1.AutoUpdate": "1"}}
+*/
+func (c *IloClient) SetAttributesDell(service string, jsonData []byte) (string, error) {
+	var url string
+	if service == "idrac" {
+		url = c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Attributes"
+	} else if service == "lc" {
+		url = c.Hostname + "/redfish/v1/Managers/LifecycleController.Embedded.1/Attributes"
+	} else if service == "system" {
+		url = c.Hostname + "/redfish/v1/Managers/System.Embedded.1/Attributes"
+	}
+	resp, _, err := queryData(c, "PATCH", url, jsonData)
+	if err != nil {
+		return "", err
+	}
+	var k JobResponseDell
+	json.Unmarshal(resp, &k)
+	return k.MessageExtendedInfo[0].Message, nil
 }
 
 //GetMacAddressDell ... Will fetch all the mac address of a particular Server

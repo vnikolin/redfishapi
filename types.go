@@ -3862,3 +3862,16 @@ type ExportConfigResponse struct {
 		TimeStamp  string `json:"TimeStamp"`
 	} `json:"SystemConfiguration"`
 }
+
+type JobResponseDell struct {
+	MessageExtendedInfo []struct {
+		Message                       string        `json:"Message"`
+		MessageArgs                   []interface{} `json:"MessageArgs"`
+		MessageArgs_odata_count       int           `json:"MessageArgs@odata.count"`
+		MessageID                     string        `json:"MessageId"`
+		RelatedProperties             []interface{} `json:"RelatedProperties"`
+		RelatedProperties_odata_count int           `json:"RelatedProperties@odata.count"`
+		Resolution                    string        `json:"Resolution"`
+		Severity                      string        `json:"Severity"`
+	} `json:"@Message.ExtendedInfo"`
+}
