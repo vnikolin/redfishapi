@@ -87,7 +87,7 @@ func (c *IloClient) CheckLoginDell() (string, error) {
    {"TargetSettingsURI":"/redfish/v1/Systems/System.Embedded.1/Bios/Settings"}
 */
 func (c *IloClient) CreateJobDell(jsonData []byte) (string, error) {
-	url = c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs"
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs"
 	resp, _, err := queryData(c, "POST", url, jsonData)
 	if err != nil {
 		return "", err
@@ -119,7 +119,7 @@ func (c *IloClient) ClearJobsDell() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var k MemberCount
+	var k MemberCountDell
 	json.Unmarshal(resp, &k)
 	for i := range k.Members {
 		_url := c.Hostname + k.Members[i].OdataId
