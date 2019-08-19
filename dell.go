@@ -52,6 +52,20 @@ func (c *IloClient) StopServerDell() (string, error) {
 	return "Server Stopped", nil
 }
 
+//GracefulRestartDell ... Will Reset Idrac and will take some time to come up
+func (c *IloClient) GracefulRestartDell() (string, error) {
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Actions/Manager.Reset"
+
+	var jsonStr = []byte(`{"ResetType": "GracefulRestart"}`)
+	_, _, err := queryData(c, "POST", url, jsonStr)
+	if err != nil {
+		return "", err
+	}
+
+	return "Idrac Reset", nil
+
+}
+
 //GetServerPowerStateDell ... Will fetch the current state of the Server
 // works: R730xd,R740xd
 func (c *IloClient) GetServerPowerStateDell() (string, error) {
@@ -95,6 +109,28 @@ func (c *IloClient) CreateJobDell(jsonData []byte) (string, error) {
 	var k JobResponseDell
 	json.Unmarshal(resp, &k)
 	return k.MessageExtendedInfo[0].Message, nil
+}
+
+func (c *IloClient) GetJobsStatusDell() ([]JobStatusDell, error) {
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs"
+	var jobs []JobStatusDell
+	resp, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return jobs, err
+	}
+	var k MemberCountDell
+	json.Unmarshal(resp, &k)
+	for i := range k.Members {
+		_url := c.Hostname + k.Members[i].OdataId
+		resp, _, err := queryData(c, "GET", _url, nil)
+		if err != nil {
+			return jobs, err
+		}
+		var output JobStatusDell
+		json.Unmarshal(resp, &output)
+		jobs = append(jobs, output)
+	}
+	return jobs, nil
 }
 
 //SetBiosSettingsDell ... Set Bios Settings

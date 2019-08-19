@@ -3875,3 +3875,22 @@ type JobResponseDell struct {
 		Severity                      string        `json:"Severity"`
 	} `json:"@Message.ExtendedInfo"`
 }
+
+type JobStatusDell struct {
+	OdataContext      string
+	OdataID           string
+	OdataType         string
+	CompletionTime    string        `json:"CompletionTime"`
+	Description       string        `json:"Description"`
+	EndTime           string        `json:"EndTime"`
+	ID                string        `json:"Id"`
+	JobState          string        `json:"JobState"`
+	JobType           string        `json:"JobType"`
+	Message           string        `json:"Message"`
+	MessageArgs       []interface{} `json:"MessageArgs"`
+	MessageID         string        `json:"MessageId"`
+	Name              string        `json:"Name"`
+	PercentComplete   int           `json:"PercentComplete"`
+	StartTime         string        `json:"StartTime"`
+	TargetSettingsURI interface{}   `json:"TargetSettingsURI"`
+}
