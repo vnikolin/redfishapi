@@ -720,9 +720,8 @@ func (c *IloClient) GetBootOrderDell() ([]BootOrderData, error) {
 }
 
 //SetBootOrderDell ... Set the Boot Order f
-func (c *IloClient) SetBootOrderDell(options []string) (string, error) {
+func (c *IloClient) SetBootOrderDell(jsonData []byte) (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
-	jsonData := []byte(`{"Boot":{"BootOrder":` + options + `}}`)
 	resp, _, err := queryData(c, "PATCH", url, jsonData)
 	if err != nil {
 		return "", err
