@@ -719,6 +719,20 @@ func (c *IloClient) GetBootOrderDell() ([]BootOrderData, error) {
 
 }
 
+//SetBootOrderDell ... Set the Boot Order f
+func (c *IloClient) SetBootOrderDell(options []string) (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
+	jsonData := []byte(`{"Boot":{"BootOrder":` + options + `}}`)
+	resp, _, err := queryData(c, "PATCH", url, jsonData)
+	if err != nil {
+		return "", err
+	}
+
+	var k JobResponseDell
+	json.Unmarshal(resp, &k)
+	return k.MessageExtendedInfo[0].Message, nil
+}
+
 //GetSystemEventLogsDell ... Fetch the System Event Logs from the Idrac
 func (c *IloClient) GetSystemEventLogsDell(version string) ([]SystemEventLogRes, error) {
 
