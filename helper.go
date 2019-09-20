@@ -17,7 +17,7 @@ func basicAuth(username, password string) string {
 }
 
 //queryData ... will make REST verbs based on the url
-func queryData(c *IloClient, call string, link string, data []byte) ([]byte, http.Header, error) {
+func queryData(c *IloClient, call string, link string, data []byte) ([]byte, http.Header, int, error) {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	req, err := http.NewRequest(call, link, bytes.NewBuffer(data))
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
@@ -29,17 +29,17 @@ func queryData(c *IloClient, call string, link string, data []byte) ([]byte, htt
 		r, _ := regexp.Compile("dial tcp")
 		if r.MatchString(err.Error()) == true {
 			err := errors.New(StatusInternalServerError)
-			return nil, nil, err
+			return nil, nil, resp.StatusCode, err
 		}
-		return nil, nil, err
+		return nil, nil, resp.StatusCode, err
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 401 {
 			err := errors.New(StatusUnauthorized)
-			return nil, nil, err
+			return nil, nil, resp.StatusCode, err
 		} else if resp.StatusCode == 400 {
 			err := errors.New(StatusBadRequest)
-			return nil, nil, err
+			return nil, nil, resp.StatusCode, err
 		}
 
 	}
@@ -47,7 +47,7 @@ func queryData(c *IloClient, call string, link string, data []byte) ([]byte, htt
 
 	_body, _ := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, resp.StatusCode, err
 	}
-	return _body, resp.Header, nil
+	return _body, resp.Header, resp.StatusCode, nil
 }
