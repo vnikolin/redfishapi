@@ -2184,15 +2184,17 @@ type ThermalHealthListDell struct {
 
 //MemberCountDell ...
 type MemberCountDell struct {
-	OdataContext string `json:"@odata.context"`
-	OdataId      string `json:"@odata.id"`
-	OdataType    string `json:"@odata.type"`
-	Description  string `json:"Description"`
-	Members      []struct {
-		OdataId string `json:"@odata.id"`
-	} `json:"Members"`
-	Members_odata_count int    `json:"Members@odata.count"`
-	Name                string `json:"Name"`
+	OdataContext        string    `json:"@odata.context"`
+	OdataId             string    `json:"@odata.id"`
+	OdataType           string    `json:"@odata.type"`
+	Description         string    `json:"Description"`
+	Members             []Members `json:"Members"`
+	Members_odata_count int       `json:"Members@odata.count"`
+	Name                string    `json:"Name"`
+}
+
+type Members struct {
+	OdataId string `json:"@odata.id"`
 }
 
 //ProcessorDataDell ...

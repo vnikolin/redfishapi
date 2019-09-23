@@ -155,6 +155,17 @@ func (c *IloClient) GetJobsStatusDell() ([]JobStatusDell, error) {
 	return jobs, nil
 }
 
+func (c *IloClient) GetAllJobsDell() ([]Members, error) {
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs"
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	var k MemberCountDell
+	json.Unmarshal(resp, &k)
+	return k.Members, nil
+}
+
 //SetBiosSettingsDell ... Set Bios Settings
 /* Payload
 {"Attributes":{"BootMode": "Bios"}}
@@ -899,7 +910,7 @@ func (c *IloClient) GetComponentAttr(comp string) (ExportConfigResponse, error) 
 		},
 	})
 
-	_, header, err := queryData(c, "POST", url, []byte(data))
+	_, header, _, err := queryData(c, "POST", url, []byte(data))
 	if err != nil {
 		return ExportConfigResponse{}, err
 	}
