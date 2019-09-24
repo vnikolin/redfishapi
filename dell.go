@@ -743,6 +743,7 @@ func (c *IloClient) GetBootOrderDell() ([]BootOrderData, error) {
 			Enabled: x.Attributes.BootSeq[i].Enabled,
 			Index:   x.Attributes.BootSeq[i].Index,
 			Name:    x.Attributes.BootSeq[i].Name,
+			ID:      x.Attributes.BootSeq[i].ID,
 		}
 
 		_bootOrder = append(_bootOrder, _result)

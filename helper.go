@@ -25,26 +25,30 @@ func queryData(c *IloClient, call string, link string, data []byte) ([]byte, htt
 	req.Header.Set("Content-Type", "application/json")
 	client := &http.Client{}
 	resp, err := client.Do(req)
-	_body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		r, _ := regexp.Compile("dial tcp")
 		if r.MatchString(err.Error()) == true {
 			err := errors.New(StatusInternalServerError)
-			return _body, resp.Header, resp.StatusCode, err
+			return nil, resp.Header, resp.StatusCode, err
 		}
-		return _body, resp.Header, resp.StatusCode, err
+		return nil, resp.Header, resp.StatusCode, err
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 401 {
 			err := errors.New(StatusUnauthorized)
-			return _body, resp.Header, resp.StatusCode, err
+			return nil, resp.Header, resp.StatusCode, err
 		} else if resp.StatusCode == 400 {
 			err := errors.New(StatusBadRequest)
-			return _body, resp.Header, resp.StatusCode, err
+			return nil, resp.Header, resp.StatusCode, err
 		}
 
 	}
 	defer resp.Body.Close()
+
+	_body, _ := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, nil, resp.StatusCode, err
+	}
 
 	return _body, resp.Header, resp.StatusCode, nil
 }

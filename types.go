@@ -3557,6 +3557,7 @@ type BootOrderData struct {
 	Enabled bool   `json:"enabled"`
 	Index   int    `json:"index"`
 	Name    string `json:"name"`
+	ID      string `json:"id"`
 }
 
 //IDRACData ...
