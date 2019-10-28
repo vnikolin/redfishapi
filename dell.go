@@ -763,7 +763,12 @@ func (c *IloClient) SetBootOrderDell(jsonData []byte) (string, error) {
 
 	var k JobResponseDell
 	json.Unmarshal(resp, &k)
-	return k.MessageExtendedInfo[0].Message, nil
+	if len(k.MessageExtendedInfo) > 0 {
+		return k.MessageExtendedInfo[0].Message, nil
+	} else {
+		return "", nil
+	}
+
 }
 
 //GetSystemEventLogsDell ... Fetch the System Event Logs from the Idrac

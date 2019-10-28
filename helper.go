@@ -6,8 +6,10 @@ import (
 	"encoding/base64"
 	"errors"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"regexp"
+	"time"
 )
 
 //basicAuth ... will create the basicauth encoded string for the credentials
@@ -23,13 +25,23 @@ func queryData(c *IloClient, call string, link string, data []byte) ([]byte, htt
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
 	req.Header.Add("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
-	client := &http.Client{}
+	client := &http.Client{
+		Transport: &http.Transport{
+			Dial: (&net.Dialer{
+				Timeout:   300 * time.Second,
+				KeepAlive: 30 * time.Second,
+			}).Dial,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ResponseHeaderTimeout: 10 * time.Second,
+			ExpectContinueTimeout: 1 * time.Second,
+		},
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		r, _ := regexp.Compile("dial tcp")
 		if r.MatchString(err.Error()) == true {
 			err := errors.New(StatusInternalServerError)
-			return nil, resp.Header, resp.StatusCode, err
+			return nil, nil, 0, err
 		}
 		return nil, resp.Header, resp.StatusCode, err
 	}
