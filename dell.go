@@ -254,6 +254,40 @@ func (c *IloClient) GetMacAddressDell() (string, error) {
 	return string(output), nil
 }
 
+// GetMacAddressModelDell ... Will fetch the Nic Model
+func (c *IloClient) GetMacAddressModelDell() ([]MACModelDell, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/NetworkAdapters/"
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	var x MemberCountDell
+	var Macs []MACModelDell
+	json.Unmarshal(resp, &x)
+	for i := range x.Members {
+		_url := c.Hostname + x.Members[i].OdataId
+		resp, _, _, err := queryData(c, "GET", _url, nil)
+		if err != nil {
+			return nil, err
+		}
+		var y NetworkDeviceDell
+		json.Unmarshal(resp, &y)
+
+		for _, k := range y.Controllers {
+			for _, z := range k.Links.NetworkDeviceFunctions {
+				firmName := strings.Split(z.OdataId, "/")
+				result := MACModelDell{
+					MacName:  firmName[len(firmName)-1],
+					MacModel: y.Model,
+				}
+				Macs = append(Macs, result)
+			}
+		}
+	}
+	return Macs, nil
+
+}
+
 //GetProcessorHealthDell ... Will Fetch the Processor Health Details
 // works: R730xd,R740xd
 func (c *IloClient) GetProcessorHealthDell() ([]HealthList, error) {

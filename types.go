@@ -1599,6 +1599,71 @@ type GetMacAddressDell struct {
 	VLAN           string `json:"VLAN"`
 }
 
+// MACModelDell ...
+type MACModelDell struct {
+	MacName  string `json:"mac_name"`
+	MacModel string `json:"mac_model"`
+}
+
+// NetworkDeviceDell ...
+type NetworkDeviceDell struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Controllers    []struct {
+		ControllerCapabilities struct {
+			DataCenterBridging struct {
+				Capable bool `json:"Capable"`
+			} `json:"DataCenterBridging"`
+			NPIV struct {
+				MaxDeviceLogins int `json:"MaxDeviceLogins"`
+				MaxPortLogins   int `json:"MaxPortLogins"`
+			} `json:"NPIV"`
+			NetworkDeviceFunctionCount int `json:"NetworkDeviceFunctionCount"`
+			NetworkPortCount           int `json:"NetworkPortCount"`
+			VirtualizationOffload      struct {
+				SRIOV struct {
+					SRIOVVEPACapable bool `json:"SRIOVVEPACapable"`
+				} `json:"SRIOV"`
+				VirtualFunction struct {
+					DeviceMaxCount         int `json:"DeviceMaxCount"`
+					MinAssignmentGroupSize int `json:"MinAssignmentGroupSize"`
+					NetworkPortMaxCount    int `json:"NetworkPortMaxCount"`
+				} `json:"VirtualFunction"`
+			} `json:"VirtualizationOffload"`
+		} `json:"ControllerCapabilities"`
+		FirmwarePackageVersion string `json:"FirmwarePackageVersion"`
+		Links                  struct {
+			NetworkDeviceFunctions []struct {
+				OdataId string `json:"@odata.id"`
+			} `json:"NetworkDeviceFunctions"`
+			NetworkDeviceFunctions_odata_count int `json:"NetworkDeviceFunctions@odata.count"`
+			NetworkPorts                       []struct {
+				OdataId string `json:"@odata.id"`
+			} `json:"NetworkPorts"`
+			NetworkPorts_odata_count int `json:"NetworkPorts@odata.count"`
+		} `json:"Links"`
+	} `json:"Controllers"`
+	Description            string `json:"Description"`
+	ID                     string `json:"Id"`
+	Manufacturer           string `json:"Manufacturer"`
+	Model                  string `json:"Model"`
+	Name                   string `json:"Name"`
+	NetworkDeviceFunctions struct {
+		OdataId string `json:"@odata.id"`
+	} `json:"NetworkDeviceFunctions"`
+	NetworkPorts struct {
+		OdataId string `json:"@odata.id"`
+	} `json:"NetworkPorts"`
+	PartNumber   string `json:"PartNumber"`
+	SerialNumber string `json:"SerialNumber"`
+	Status       struct {
+		Health       interface{} `json:"Health"`
+		HealthRollup interface{} `json:"HealthRollup"`
+		State        string      `json:"State"`
+	} `json:"Status"`
+}
+
 //SystemViewDell ... Fetch the System View Attributes from the Redfish API
 type SystemViewDell struct {
 	_odata_context string
