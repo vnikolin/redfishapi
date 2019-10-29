@@ -622,6 +622,59 @@ func (c *IloClient) GetFirmwareDell() ([]FirmwareData, error) {
 
 }
 
+//FirmwareUpdateDell ... will create a job plan for firmware update
+func (c *IloClient) FirmwareUpdateDell() (string, error) {
+	url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
+
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return "", err
+	}
+
+	var (
+		x         MemberCountDell
+		firmLinks []string
+	)
+
+	json.Unmarshal(resp, &x)
+
+	for i := range x.Members {
+		r, _ := regexp.Compile("Available")
+		if r.MatchString(x.Members[i].OdataId) == true {
+
+			firmLinks = append(firmLinks, x.Members[i].OdataId)
+
+		}
+	}
+
+	data, _ := json.Marshal(map[string]interface{}{
+		"SoftwareIdentityURIs": firmLinks,
+		"InstallUpon":          "NowAndReboot",
+	})
+
+	firmUrl := c.Hostname + "/redfish/v1/UpdateService/Actions/Oem/DellUpdateService.Install"
+	_, header, _, errr := queryData(c, "POST", firmUrl, []byte(data))
+	if errr != nil {
+		return "", err
+	}
+
+	var taskURL string
+
+	for k, v := range header {
+		if k == "Location" {
+			taskURL = v[0]
+			break
+		}
+	}
+
+	if len(firmLinks) == 0 {
+		return "No Firmware Available", nil
+	} else {
+		return taskURL, nil
+	}
+
+}
+
 //GetBiosDataDell ... will fetch the Bios Details
 func (c *IloClient) GetBiosDataDell() (BiosAttributesData, error) {
 

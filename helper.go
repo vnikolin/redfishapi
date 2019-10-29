@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"io/ioutil"
-	"net"
 	"net/http"
 	"regexp"
 	"time"
@@ -26,15 +25,7 @@ func queryData(c *IloClient, call string, link string, data []byte) ([]byte, htt
 	req.Header.Add("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 	client := &http.Client{
-		Transport: &http.Transport{
-			Dial: (&net.Dialer{
-				Timeout:   300 * time.Second,
-				KeepAlive: 30 * time.Second,
-			}).Dial,
-			TLSHandshakeTimeout:   10 * time.Second,
-			ResponseHeaderTimeout: 10 * time.Second,
-			ExpectContinueTimeout: 1 * time.Second,
-		},
+		Timeout: time.Second * 300,
 	}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -43,7 +34,7 @@ func queryData(c *IloClient, call string, link string, data []byte) ([]byte, htt
 			err := errors.New(StatusInternalServerError)
 			return nil, nil, 0, err
 		}
-		return nil, resp.Header, resp.StatusCode, err
+		return nil, nil, 0, err
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 401 {
