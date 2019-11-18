@@ -709,6 +709,39 @@ func (c *IloClient) FirmwareUpdateDell() (string, error) {
 
 }
 
+//FirmwareUploadDell ... will fetch the payload from remote repo
+func (c *IloClient) FirmwareUploadDell(repoUrl string) (string, error) {
+
+	url := c.Hostname + "/redfish/v1/UpdateService/Actions/UpdateService.SimpleUpdate"
+
+	data, _ := json.Marshal(map[string]interface{}{
+		"ImageURI": repoUrl,
+	})
+
+	_, headers, _, err := queryData(c, "POST", url, []byte(data))
+	if err != nil {
+		return "", err
+	}
+
+	return headers["Location"][0], nil
+}
+
+func (c *IloClient) TaskStatusDell(taskUrl string) (ExportConfigStatus, error) {
+	url := c.Hostname + taskUrl
+
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return ExportConfigStatus{}, err
+	}
+
+	var x ExportConfigStatus
+
+	json.Unmarshal(resp, &x)
+
+	return x, nil
+
+}
+
 //GetBiosDataDell ... will fetch the Bios Details
 func (c *IloClient) GetBiosDataDell() (BiosAttributesData, error) {
 
