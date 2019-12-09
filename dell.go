@@ -2,6 +2,7 @@ package redfishapi
 
 import (
 	"encoding/json"
+	"fmt"
 	"regexp"
 	"strings"
 	"time"
@@ -803,6 +804,64 @@ func (c *IloClient) GetLifecycleAttrDell() (LifeCycleData, error) {
 
 	return _LfcycleDat, nil
 
+}
+
+//ListUsersDell ...
+func (c *IloClient) ListUsersDell() ([]UserListDell, error) {
+
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Accounts"
+
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		x         MemberCountDell
+		_userdata []UserListDell
+	)
+
+	json.Unmarshal(resp, &x)
+
+	for i := range x.Members {
+		_url := c.Hostname + x.Members[i].OdataId
+		resp, _, _, err := queryData(c, "GET", _url, nil)
+		if err != nil {
+			return nil, err
+		}
+		var y UserListResponseDell
+
+		json.Unmarshal(resp, &y)
+
+		userData := UserListDell{
+			UserName: y.UserName,
+			RoleID:   y.RoleID,
+			Enabled:  y.Enabled,
+			Locked:   y.Locked,
+		}
+
+		_userdata = append(_userdata, userData)
+	}
+	return _userdata, nil
+}
+
+//CreateUserDell ...
+func (c *IloClient) CreateUserDell(num int, username string, password string, role string, status bool) (string, error) {
+	url := fmt.Sprintf("%s/redfish/v1/Managers/iDRAC.Embedded.1/Accounts/%d", c.Hostname, num)
+	data, _ := json.Marshal(map[string]interface{}{
+		"UserName": username,
+		"Password": password,
+		"Enabled":  status,
+		"RoleId":   role,
+	})
+
+	resp, _, _, err := queryData(c, "PATCH", url, []byte(data))
+	if err != nil {
+		return "", err
+	}
+	var k JobResponseDell
+	json.Unmarshal(resp, &k)
+	return k.MessageExtendedInfo[0].Message, nil
 }
 
 //GetIDRACAttrDell ... will fetch the Idrac attributes

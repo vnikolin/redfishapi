@@ -3872,7 +3872,7 @@ type PCISlotsInfo struct {
 	Type       string `json:"type"`
 }
 
-//
+//ExportConfigStatus
 type ExportConfigStatus struct {
 	OdataContext string
 	OdataID      string
@@ -3961,4 +3961,30 @@ type JobStatusDell struct {
 	PercentComplete   int           `json:"PercentComplete"`
 	StartTime         string        `json:"StartTime"`
 	TargetSettingsURI interface{}   `json:"TargetSettingsURI"`
+}
+
+type UserListResponseDell struct {
+	_odata_context string `json:"@odata.context"`
+	_odata_id      string `json:"@odata.id"`
+	_odata_type    string `json:"@odata.type"`
+	Description    string `json:"Description"`
+	Enabled        bool   `json:"Enabled"`
+	ID             string `json:"Id"`
+	Links          struct {
+		Role struct {
+			_odata_id string `json:"@odata.id"`
+		} `json:"Role"`
+	} `json:"Links"`
+	Locked   bool        `json:"Locked"`
+	Name     string      `json:"Name"`
+	Password interface{} `json:"Password"`
+	RoleID   string      `json:"RoleId"`
+	UserName string      `json:"UserName"`
+}
+
+type UserListDell struct {
+	UserName string `json:"UserName"`
+	RoleID   string `json:"RoleId"`
+	Enabled  bool   `json:"Enabled"`
+	Locked   bool   `json:"Locked"`
 }
