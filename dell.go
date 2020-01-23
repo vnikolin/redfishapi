@@ -845,7 +845,7 @@ func (c *IloClient) ListUsersDell() ([]UserListDell, error) {
 	return _userdata, nil
 }
 
-//CreateUserDell ...
+//CreateUserDell ... will create a new user
 func (c *IloClient) CreateUserDell(num int, username string, password string, role string, status bool) (string, error) {
 	url := fmt.Sprintf("%s/redfish/v1/Managers/iDRAC.Embedded.1/Accounts/%d", c.Hostname, num)
 	data, _ := json.Marshal(map[string]interface{}{
@@ -853,6 +853,23 @@ func (c *IloClient) CreateUserDell(num int, username string, password string, ro
 		"Password": password,
 		"Enabled":  status,
 		"RoleId":   role,
+	})
+
+	resp, _, _, err := queryData(c, "PATCH", url, []byte(data))
+	if err != nil {
+		return "", err
+	}
+	var k JobResponseDell
+	json.Unmarshal(resp, &k)
+	return k.MessageExtendedInfo[0].Message, nil
+}
+
+//DeleteUserDell ... will delete a user
+func (c *IloClient) DeleteUserDell(num int, username string, password string, role string, status bool) (string, error) {
+	url := fmt.Sprintf("%s/redfish/v1/Managers/iDRAC.Embedded.1/Accounts/%d", c.Hostname, num)
+	data, _ := json.Marshal(map[string]interface{}{
+		"Enabled": status,
+		"RoleId":  role,
 	})
 
 	resp, _, _, err := queryData(c, "PATCH", url, []byte(data))
