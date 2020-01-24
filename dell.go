@@ -865,7 +865,7 @@ func (c *IloClient) CreateUserDell(num int, username string, password string, ro
 }
 
 //DeleteUserDell ... will delete a user
-func (c *IloClient) DeleteUserDell(num int, username string, password string, role string, status bool) (string, error) {
+func (c *IloClient) DeleteUserDell(num int, role string, status bool) (string, error) {
 	url := fmt.Sprintf("%s/redfish/v1/Managers/iDRAC.Embedded.1/Accounts/%d", c.Hostname, num)
 	data, _ := json.Marshal(map[string]interface{}{
 		"Enabled": status,
