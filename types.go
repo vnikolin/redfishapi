@@ -2827,22 +2827,11 @@ type MemberCountHP struct {
 	OdataID      string `json:"@odata.id"`
 	OdataType    string `json:"@odata.type"`
 	Description  string `json:"Description"`
-	MemberType   string `json:"MemberType"`
 	Members      []struct {
 		OdataID string
 	} `json:"Members"`
 	Members_odata_count int    `json:"Members@odata.count"`
 	Name                string `json:"Name"`
-	Total               int    `json:"Total"`
-	Type                string `json:"Type"`
-	Links               struct {
-		Member []struct {
-			Href string `json:"href"`
-		} `json:"Member"`
-		Self struct {
-			Href string `json:"href"`
-		} `json:"self"`
-	} `json:"links"`
 }
 
 //ThermalHealthListHP ...
@@ -3135,29 +3124,29 @@ type EthernetInterfacesHP struct {
 	} `json:"links"`
 }
 
-//ProcessorInfoHP ...
-type ProcessorInfoHP struct {
-	_odata_context string
-	_odata_id      string
-	_odata_type    string
+//ProcessorInfo4HP ...
+type ProcessorInfo4HP struct {
+	OdataContext   string `json:"@odata.context"`
+	OdataID        string `json:"@odata.id"`
+	OdataType      string `json:"@odata.type"`
 	ID             string `json:"Id"`
 	InstructionSet string `json:"InstructionSet"`
 	Manufacturer   string `json:"Manufacturer"`
-	MaxSpeedMHz    int    `json:"MaxSpeedMHz"`
+	MaxSpeedMHz    int64  `json:"MaxSpeedMHz"`
 	Model          string `json:"Model"`
 	Name           string `json:"Name"`
 	Oem            struct {
 		Hp struct {
-			_odata_type string
-			AssetTag    string `json:"AssetTag"`
-			Cache       []struct {
+			OdataType string `json:"@odata.type"`
+			AssetTag  string `json:"AssetTag"`
+			Cache     []struct {
 				Associativity     string   `json:"Associativity"`
-				CacheSpeedns      int      `json:"CacheSpeedns"`
+				CacheSpeedns      int64    `json:"CacheSpeedns"`
 				CurrentSRAMType   []string `json:"CurrentSRAMType"`
 				EccType           string   `json:"EccType"`
-				InstalledSizeKB   int      `json:"InstalledSizeKB"`
+				InstalledSizeKB   int64    `json:"InstalledSizeKB"`
 				Location          string   `json:"Location"`
-				MaximumSizeKB     int      `json:"MaximumSizeKB"`
+				MaximumSizeKB     int64    `json:"MaximumSizeKB"`
 				Name              string   `json:"Name"`
 				Policy            string   `json:"Policy"`
 				Socketed          bool     `json:"Socketed"`
@@ -3169,18 +3158,18 @@ type ProcessorInfoHP struct {
 				Populated bool   `json:"Populated"`
 				State     string `json:"State"`
 			} `json:"ConfigStatus"`
-			CoresEnabled     int `json:"CoresEnabled"`
-			ExternalClockMHz int `json:"ExternalClockMHz"`
+			CoresEnabled     int64 `json:"CoresEnabled"`
+			ExternalClockMHz int64 `json:"ExternalClockMHz"`
 			MicrocodePatches []struct {
 				CPUID   string `json:"CpuId"`
 				Date    string `json:"Date"`
 				PatchID string `json:"PatchId"`
 			} `json:"MicrocodePatches"`
 			PartNumber      string `json:"PartNumber"`
-			RatedSpeedMHz   int    `json:"RatedSpeedMHz"`
+			RatedSpeedMHz   int64  `json:"RatedSpeedMHz"`
 			SerialNumber    string `json:"SerialNumber"`
 			Type            string `json:"Type"`
-			VoltageVoltsX10 int    `json:"VoltageVoltsX10"`
+			VoltageVoltsX10 int64  `json:"VoltageVoltsX10"`
 		} `json:"Hp"`
 	} `json:"Oem"`
 	ProcessorArchitecture string `json:"ProcessorArchitecture"`
@@ -3197,14 +3186,81 @@ type ProcessorInfoHP struct {
 	Status        struct {
 		Health string `json:"Health"`
 	} `json:"Status"`
-	TotalCores   int    `json:"TotalCores"`
-	TotalThreads int    `json:"TotalThreads"`
+	TotalCores   int64  `json:"TotalCores"`
+	TotalThreads int64  `json:"TotalThreads"`
 	Type         string `json:"Type"`
 	Links        struct {
 		Self struct {
 			Href string `json:"href"`
 		} `json:"self"`
 	} `json:"links"`
+}
+
+//ProcessorInfo5HP ...
+type ProcessorInfo5HP struct {
+	OdataContext   string `json:"@odata.context"`
+	OdataEtag      string `json:"@odata.etag"`
+	OdataID        string `json:"@odata.id"`
+	OdataType      string `json:"@odata.type"`
+	ID             string `json:"Id"`
+	InstructionSet string `json:"InstructionSet"`
+	Manufacturer   string `json:"Manufacturer"`
+	MaxSpeedMHz    int64  `json:"MaxSpeedMHz"`
+	Model          string `json:"Model"`
+	Name           string `json:"Name"`
+	Oem            struct {
+		Hpe struct {
+			OdataContext string `json:"@odata.context"`
+			OdataType    string `json:"@odata.type"`
+			AssetTag     string `json:"AssetTag"`
+			Cache        []struct {
+				Associativity     string   `json:"Associativity"`
+				CacheSpeedns      int64    `json:"CacheSpeedns"`
+				CurrentSRAMType   []string `json:"CurrentSRAMType"`
+				EccType           string   `json:"EccType"`
+				InstalledSizeKB   int64    `json:"InstalledSizeKB"`
+				Location          string   `json:"Location"`
+				MaximumSizeKB     int64    `json:"MaximumSizeKB"`
+				Name              string   `json:"Name"`
+				Policy            string   `json:"Policy"`
+				Socketed          bool     `json:"Socketed"`
+				SupportedSRAMType []string `json:"SupportedSRAMType"`
+				SystemCacheType   string   `json:"SystemCacheType"`
+			} `json:"Cache"`
+			Characteristics []string `json:"Characteristics"`
+			ConfigStatus    struct {
+				Populated bool   `json:"Populated"`
+				State     string `json:"State"`
+			} `json:"ConfigStatus"`
+			CoresEnabled     int64 `json:"CoresEnabled"`
+			ExternalClockMHz int64 `json:"ExternalClockMHz"`
+			MicrocodePatches []struct {
+				CPUID   string `json:"CpuId"`
+				Date    string `json:"Date"`
+				PatchID string `json:"PatchId"`
+			} `json:"MicrocodePatches"`
+			PartNumber      string `json:"PartNumber"`
+			RatedSpeedMHz   int64  `json:"RatedSpeedMHz"`
+			SerialNumber    string `json:"SerialNumber"`
+			VoltageVoltsX10 int64  `json:"VoltageVoltsX10"`
+		} `json:"Hpe"`
+	} `json:"Oem"`
+	ProcessorArchitecture string `json:"ProcessorArchitecture"`
+	ProcessorID           struct {
+		EffectiveFamily         string      `json:"EffectiveFamily"`
+		EffectiveModel          string      `json:"EffectiveModel"`
+		IdentificationRegisters string      `json:"IdentificationRegisters"`
+		MicrocodeInfo           interface{} `json:"MicrocodeInfo"`
+		Step                    string      `json:"Step"`
+		VendorID                string      `json:"VendorId"`
+	} `json:"ProcessorId"`
+	ProcessorType string `json:"ProcessorType"`
+	Socket        string `json:"Socket"`
+	Status        struct {
+		Health string `json:"Health"`
+	} `json:"Status"`
+	TotalCores   int64 `json:"TotalCores"`
+	TotalThreads int64 `json:"TotalThreads"`
 }
 
 //AccountsInfoHP ...

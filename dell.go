@@ -978,10 +978,13 @@ func (c *IloClient) GetSystemEventLogsDell(version string) ([]SystemEventLogRes,
 	}
 
 	// v1, err := ver.NewVersion("3.15.17.15")
-	v1, _ := ver.NewConstraint("<= 3.15.17.15")
-	v2, _ := ver.NewConstraint("<= 3.21.26.22")
-	v3, _ := ver.NewConstraint("> 3.21.26.22")
-	v4, _ := ver.NewVersion(version)
+	v1, verErr := ver.NewConstraint("<= 3.15.17.15")
+	v2, verErr := ver.NewConstraint("<= 3.21.26.22")
+	v3, verErr := ver.NewConstraint("> 3.21.26.22")
+	v4, verErr := ver.NewVersion(version)
+	if verErr != nil {
+		return nil, verErr
+	}
 
 	if v1.Check(v4) {
 

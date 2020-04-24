@@ -263,6 +263,40 @@ func (c *IloClient) GetInterfaceHealthHP() ([]HealthList, error) {
 }
 
 //GetProcessorHealthHP ... will Fetch the Processor Health Details
+func (c *IloClient) GetProcessorInfoHP() ([]ProcessorInfoHP, error) {
+
+	url := c.Hostname + "/redfish/v1/Systems/1/Processors/"
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		x           MemberCountHP
+		processData []ProcessorInfoHP
+	)
+
+	json.Unmarshal(resp, &x)
+
+	for i := range x.Members {
+		_url := c.Hostname + x.Members[i].OdataID
+		resp, _, _, err := queryData(c, "GET", _url, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		var y ProcessorInfoHP
+
+		json.Unmarshal(resp, &y)
+
+		processData = append(processData, y)
+	}
+
+	return processData, nil
+
+}
+
+//GetProcessorHealthHP ... will Fetch the Processor Health Details
 func (c *IloClient) GetProcessorHealthHP() ([]HealthList, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1/Processors/"
