@@ -3125,7 +3125,7 @@ type EthernetInterfacesHP struct {
 }
 
 //ProcessorInfo4HP ...
-type ProcessorInfo4HP struct {
+type ProcessorInfoHP struct {
 	OdataContext   string `json:"@odata.context"`
 	OdataID        string `json:"@odata.id"`
 	OdataType      string `json:"@odata.type"`
