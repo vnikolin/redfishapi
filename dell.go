@@ -223,6 +223,50 @@ func (c *IloClient) SetAttributesDell(service string, jsonData []byte) (string, 
 	return k.MessageExtendedInfo[0].Message, nil
 }
 
+//GetNetworkPortsDell .... Will fetch network port info
+func (c *IloClient) GetNetworkPortsDell() ([]MACData, error) {
+	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/NetworkAdapters"
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	var x MemberCountDell
+	var Macs []MACData
+	json.Unmarshal(resp, &x)
+	for i := range x.Members {
+
+		_url := c.Hostname + x.Members[i].OdataId + "/NetworkPorts"
+		resp, _, _, err := queryData(c, "GET", _url, nil)
+		if err != nil {
+			return nil, err
+		}
+		var y MemberCountDell
+		json.Unmarshal(resp, &y)
+
+		for i := range y.Members {
+
+			_url := c.Hostname + y.Members[i].OdataId
+			resp, _, _, err := queryData(c, "GET", _url, nil)
+			if err != nil {
+				return nil, err
+			}
+			var z NetworkPortsDell
+			json.Unmarshal(resp, &z)
+			macData := MACData{
+				Name:        z.ID,
+				Description: z.Description,
+				MacAddress:  z.AssociatedNetworkAddresses[0],
+				Status:      z.Status.Health,
+				State:       z.LinkStatus,
+				Vlan:        "NULL",
+			}
+			Macs = append(Macs, macData)
+		}
+
+	}
+	return Macs, nil
+}
+
 //GetMacAddressDell ... Will fetch all the mac address of a particular Server
 func (c *IloClient) GetMacAddressDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/EthernetInterfaces/"

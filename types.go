@@ -1605,6 +1605,53 @@ type MACModelDell struct {
 	MacModel string `json:"mac_model"`
 }
 
+// NetworkPortsDell ...
+type NetworkPortsDell struct {
+	Odata_context              string      `json:"@odata.context"`
+	Odata_id                   string      `json:"@odata.id"`
+	Odata_type                 string      `json:"@odata.type"`
+	ActiveLinkTechnology       string      `json:"ActiveLinkTechnology"`
+	AssociatedNetworkAddresses []string    `json:"AssociatedNetworkAddresses"`
+	CurrentLinkSpeedMbps       int64       `json:"CurrentLinkSpeedMbps"`
+	Description                string      `json:"Description"`
+	EEEEnabled                 interface{} `json:"EEEEnabled"`
+	FlowControlConfiguration   string      `json:"FlowControlConfiguration"`
+	FlowControlStatus          string      `json:"FlowControlStatus"`
+	ID                         string      `json:"Id"`
+	LinkStatus                 string      `json:"LinkStatus"`
+	Name                       string      `json:"Name"`
+	NetDevFuncMaxBWAlloc       []struct {
+		MaxBWAllocPercent     interface{} `json:"MaxBWAllocPercent"`
+		NetworkDeviceFunction struct {
+			Odata_id string `json:"@odata.id"`
+		} `json:"NetworkDeviceFunction"`
+	} `json:"NetDevFuncMaxBWAlloc"`
+	NetDevFuncMaxBWAlloc_odata_count int64 `json:"NetDevFuncMaxBWAlloc@odata.count"`
+	NetDevFuncMinBWAlloc             []struct {
+		MinBWAllocPercent     interface{} `json:"MinBWAllocPercent"`
+		NetworkDeviceFunction struct {
+			Odata_id string `json:"@odata.id"`
+		} `json:"NetworkDeviceFunction"`
+	} `json:"NetDevFuncMinBWAlloc"`
+	NetDevFuncMinBWAlloc_odata_count int64  `json:"NetDevFuncMinBWAlloc@odata.count"`
+	PhysicalPortNumber               string `json:"PhysicalPortNumber"`
+	Status                           struct {
+		Health       string `json:"Health"`
+		HealthRollup string `json:"HealthRollup"`
+		State        string `json:"State"`
+	} `json:"Status"`
+	SupportedEthernetCapabilities             []string `json:"SupportedEthernetCapabilities"`
+	SupportedEthernetCapabilities_odata_count int64    `json:"SupportedEthernetCapabilities@odata.count"`
+	SupportedLinkCapabilities                 []struct {
+		AutoSpeedNegotiation  bool   `json:"AutoSpeedNegotiation"`
+		LinkNetworkTechnology string `json:"LinkNetworkTechnology"`
+		LinkSpeedMbps         int64  `json:"LinkSpeedMbps"`
+	} `json:"SupportedLinkCapabilities"`
+	SupportedLinkCapabilities_odata_count int64  `json:"SupportedLinkCapabilities@odata.count"`
+	VendorID                              string `json:"VendorId"`
+	WakeOnLANEnabled                      bool   `json:"WakeOnLANEnabled"`
+}
+
 // NetworkDeviceDell ...
 type NetworkDeviceDell struct {
 	_odata_context string `json:"@odata.context"`
