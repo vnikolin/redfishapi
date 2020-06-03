@@ -4091,3 +4091,28 @@ type UserListDell struct {
 	Enabled  bool   `json:"Enabled"`
 	Locked   bool   `json:"Locked"`
 }
+
+//ImageStatusDell ...
+type ImageStatusDell struct {
+	Odata_context string `json:"@odata.context"`
+	Odata_id      string `json:"@odata.id"`
+	Odata_type    string `json:"@odata.type"`
+	Actions       struct {
+		VirtualMedia_EjectMedia struct {
+			Target string `json:"target"`
+		} `json:"#VirtualMedia.EjectMedia"`
+		VirtualMedia_InsertMedia struct {
+			Target string `json:"target"`
+		} `json:"#VirtualMedia.InsertMedia"`
+	} `json:"Actions"`
+	ConnectedVia           string   `json:"ConnectedVia"`
+	Description            string   `json:"Description"`
+	ID                     string   `json:"Id"`
+	Image                  string   `json:"Image"`
+	ImageName              string   `json:"ImageName"`
+	Inserted               bool     `json:"Inserted"`
+	MediaTypes             []string `json:"MediaTypes"`
+	MediaTypes_odata_count int64    `json:"MediaTypes@odata.count"`
+	Name                   string   `json:"Name"`
+	WriteProtected         bool     `json:"WriteProtected"`
+}

@@ -1196,3 +1196,56 @@ func (c *IloClient) GetComponentAttr(comp string) (ExportConfigResponse, error) 
 
 	return ExportConfigResponse{}, nil
 }
+
+//MountImageDell ... Will mount a image over http share
+//Supports for 4.x Firmware
+func (c *IloClient) MountImageDell(image string) (string, error) {
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/VirtualMedia/CD/Actions/VirtualMedia.InsertMedia"
+
+	data, _ := json.Marshal(map[string]interface{}{
+		"Image":          image,
+		"Inserted":       true,
+		"WriteProtected": true,
+	})
+
+	_, _, status, err := queryData(c, "POST", url, []byte(data))
+	if err != nil {
+		return "", err
+	}
+
+	if status == 204 {
+		return "Image Uploaded", nil
+	} else if status == 500 {
+		return "Image Not Uploaded", err
+	}
+
+	return "", nil
+}
+
+//UnMountImageDell ... Will unmount a imoge
+//Supports for 4.x Firmware
+func (c *IloClient) UnMountImageDell() (string, error) {
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/VirtualMedia/CD/Actions/VirtualMedia.EjectMedia"
+	payload := "{}"
+	_, _, _, err := queryData(c, "POST", url, []byte(payload))
+	if err != nil {
+		return "", err
+	}
+	return "Image Unmounted", nil
+}
+
+//GetRemoteImageStatusDell ... Get remote image status
+func (c *IloClient) GetRemoteImageStatusDell() (ImageStatusDell, error) {
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/VirtualMedia/CD"
+
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return ImageStatusDell{}, err
+	}
+
+	var x ImageStatusDell
+
+	json.Unmarshal(resp, &x)
+
+	return x, nil
+}
