@@ -485,7 +485,7 @@ func (c *IloClient) GetSensorsHealthDell() ([]HealthList, error) {
 
 }
 
-//
+//GetStorageDriveDetailsDell ... Will Fetch the Storage Drive Details
 func (c *IloClient) GetStorageDriveDetailsDell() ([]StorageDriveDetailsDell, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Storage"
@@ -1077,6 +1077,41 @@ func (c *IloClient) GetSystemEventLogsDell(version string) ([]SystemEventLogRes,
 		return _systemEventLogs, nil
 	}
 	return nil, err
+}
+
+//GetLifeCycleEventLogsDell ... Fetch the LifeCycle Event Logs from the Idrac
+func (c *IloClient) GetLifeCycleEventLogsDell(version string) ([]LifeCycleEventLogRes, error) {
+
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Logs/Lclog"
+
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var x LifeCycleLogsV1Dell
+
+	json.Unmarshal(resp, &x)
+
+	var _lfyCycleEventLogs []LifeCycleEventLogRes
+
+	for i := range x.Members {
+
+		_result := LifeCycleEventLogRes{
+			Created:     x.Members[i].Created,
+			Description: x.Members[i].Description,
+			EntryType:   x.Members[i].EntryType,
+			ID:          x.Members[i].ID,
+			Message:     x.Members[i].Message,
+			MessageID:   x.Members[i].MessageID,
+			Name:        x.Members[i].Name,
+			Severity:    x.Members[i].Severity,
+		}
+
+		_lfyCycleEventLogs = append(_lfyCycleEventLogs, _result)
+	}
+
+	return _lfyCycleEventLogs, nil
 }
 
 //GetUserAccountsDell ... Fetch the current users created

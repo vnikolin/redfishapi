@@ -2208,6 +2208,34 @@ type SystemEventLogsV2Dell struct {
 	Name                string `json:"Name"`
 }
 
+//LifeCycleLogsV1Dell ...
+type LifeCycleLogsV1Dell struct {
+	Odata_context string
+	Odata_id      string
+	Odata_type    string
+	Description   string `json:"Description"`
+	Members       []struct {
+		Odata_id    string
+		Odata_type  string
+		Created     string `json:"Created"`
+		Description string `json:"Description"`
+		EntryType   string `json:"EntryType"`
+		ID          string `json:"Id"`
+		Links       struct {
+			OriginOfCondition struct {
+				Odata_id string `json:"@odata.id"`
+			} `json:"OriginOfCondition"`
+		} `json:"Links"`
+		Message                 string   `json:"Message"`
+		MessageArgs             []string `json:"MessageArgs"`
+		MessageArgs_odata_count int64    `json:"MessageArgs@odata.count"`
+		MessageID               string   `json:"MessageId"`
+		Name                    string   `json:"Name"`
+		OemRecordFormat         string   `json:"OemRecordFormat"`
+		Severity                string   `json:"Severity"`
+	} `json:"Members"`
+}
+
 //ThermalHealthListDell ...
 type ThermalHealthListDell struct {
 	_odata_context string
@@ -3699,6 +3727,18 @@ type SystemEventLogRes struct {
 	Name       string `json:"name"`
 	SensorType string `json:"sensor_type"`
 	Severity   string `json:"severity"`
+}
+
+//LifeCycleEventLogRes ...
+type LifeCycleEventLogRes struct {
+	Created     string `json:"created"`
+	Description string `json:"description"`
+	EntryType   string `json:"entry_type"`
+	ID          string `json:"id"`
+	Message     string `json:"message"`
+	MessageID   string `json:"message_id"`
+	Name        string `json:"name"`
+	Severity    string `json:"severity"`
 }
 
 //Accounts ...
