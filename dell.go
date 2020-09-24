@@ -1080,7 +1080,7 @@ func (c *IloClient) GetSystemEventLogsDell(version string) ([]SystemEventLogRes,
 }
 
 //GetLifeCycleEventLogsDell ... Fetch the LifeCycle Event Logs from the Idrac
-func (c *IloClient) GetLifeCycleEventLogsDell(version string) ([]LifeCycleEventLogRes, error) {
+func (c *IloClient) GetLifeCycleEventLogsDell() ([]LifeCycleEventLogRes, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Logs/Lclog"
 
