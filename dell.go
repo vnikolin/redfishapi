@@ -1082,33 +1082,37 @@ func (c *IloClient) GetSystemEventLogsDell(version string) ([]SystemEventLogRes,
 //GetLifeCycleEventLogsDell ... Fetch the LifeCycle Event Logs from the Idrac
 func (c *IloClient) GetLifeCycleEventLogsDell() ([]LifeCycleEventLogRes, error) {
 
-	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Logs/Lclog"
-
-	resp, _, _, err := queryData(c, "GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	var x LifeCycleLogsV1Dell
-
-	json.Unmarshal(resp, &x)
-
 	var _lfyCycleEventLogs []LifeCycleEventLogRes
 
-	for i := range x.Members {
+	size := make([]struct{}, 10)
+	for i := range size {
 
-		_result := LifeCycleEventLogRes{
-			Created:     x.Members[i].Created,
-			Description: x.Members[i].Description,
-			EntryType:   x.Members[i].EntryType,
-			ID:          x.Members[i].ID,
-			Message:     x.Members[i].Message,
-			MessageID:   x.Members[i].MessageID,
-			Name:        x.Members[i].Name,
-			Severity:    x.Members[i].Severity,
+		url := fmt.Sprintf("%s/%s%d", c.Hostname, "redfish/v1/Managers/iDRAC.Embedded.1/LogServices/Lclog/Entries?$skip=", i)
+
+		resp, _, _, err := queryData(c, "GET", url, nil)
+		if err != nil {
+			return nil, err
 		}
 
-		_lfyCycleEventLogs = append(_lfyCycleEventLogs, _result)
+		var x LifeCycleLogsV1Dell
+
+		json.Unmarshal(resp, &x)
+
+		for i := range x.Members {
+
+			_result := LifeCycleEventLogRes{
+				Created:     x.Members[i].Created,
+				Description: x.Members[i].Description,
+				EntryType:   x.Members[i].EntryType,
+				ID:          x.Members[i].ID,
+				Message:     x.Members[i].Message,
+				MessageID:   x.Members[i].MessageID,
+				Name:        x.Members[i].Name,
+				Severity:    x.Members[i].Severity,
+			}
+
+			_lfyCycleEventLogs = append(_lfyCycleEventLogs, _result)
+		}
 	}
 
 	return _lfyCycleEventLogs, nil
