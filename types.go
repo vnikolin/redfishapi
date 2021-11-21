@@ -1633,9 +1633,29 @@ type NetworkPortsDell struct {
 			Odata_id string `json:"@odata.id"`
 		} `json:"NetworkDeviceFunction"`
 	} `json:"NetDevFuncMinBWAlloc"`
-	NetDevFuncMinBWAlloc_odata_count int64  `json:"NetDevFuncMinBWAlloc@odata.count"`
-	PhysicalPortNumber               string `json:"PhysicalPortNumber"`
-	Status                           struct {
+	NetDevFuncMinBWAlloc_odata_count int64 `json:"NetDevFuncMinBWAlloc@odata.count"`
+	Oem                              struct {
+		Dell struct {
+			Odata_type             string `json:"@odata.type"`
+			DellNetworkTransceiver struct {
+				DeviceDescription string `json:"DeviceDescription"`
+				FQDD              string `json:"FQDD"`
+				Id                string `json:"Id"`
+				IdentifierType    string `json:"IdentifierType"`
+				InterfaceType     string `json:"InterfaceType"`
+				Name              string `json:"Name"`
+				PartNumber        string `json:"PartNumber"`
+				Revision          string `json:"Revision"`
+				SerialNumber      string `json:"SerialNumber"`
+				VendorName        string `json:"VendorName"`
+				Odata_context     string `json:"@odata.context"`
+				Odata_type        string `json:"@odata.type"`
+				Oddata_id         string `json:"@odata.id"`
+			} `json:"DellNetworkTransceiver"`
+		} `json:"Dell"`
+	} `json:"Oem"`
+	PhysicalPortNumber string `json:"PhysicalPortNumber"`
+	Status             struct {
 		Health       string `json:"Health"`
 		HealthRollup string `json:"HealthRollup"`
 		State        string `json:"State"`
@@ -3752,12 +3772,15 @@ type Accounts struct {
 
 //MACData ...
 type MACData struct {
-	MacAddress  string `json:"macaddress"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Status      string `json:"status"`
-	State       string `json:"state"`
-	Vlan        string `json:"vlan"`
+	MacAddress   string `json:"macaddress"`
+	Name         string `json:"name"`
+	Description  string `json:"description"`
+	Status       string `json:"status"`
+	State        string `json:"state"`
+	Vlan         string `json:"vlan"`
+	PartNumber   string `json:"partnumber"`
+	SerialNumber string `json:"serialnumber"`
+	VendorName   string `json:"verndorname"`
 }
 
 //BootOrderData ...

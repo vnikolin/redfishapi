@@ -17,6 +17,19 @@ const (
 	StatusBadRequest          = "Bad Request"
 )
 
+//Check MACData struct for empty string
+func (intInfo *MACData) updateEmpty() {
+	if intInfo.PartNumber == "" {
+		intInfo.PartNumber = "NULL"
+	}
+	if intInfo.SerialNumber == "" {
+		intInfo.SerialNumber = "NULL"
+	}
+	if intInfo.VendorName == "" {
+		intInfo.VendorName = "NULL"
+	}
+}
+
 //StartServerDell ...
 // ResetType@Redfish.AllowableValues
 // 0	"On"
@@ -253,13 +266,18 @@ func (c *IloClient) GetNetworkPortsDell() ([]MACData, error) {
 			var z NetworkPortsDell
 			json.Unmarshal(resp, &z)
 			macData := MACData{
-				Name:        z.ID,
-				Description: z.Description,
-				MacAddress:  z.AssociatedNetworkAddresses[0],
-				Status:      z.Status.Health,
-				State:       z.LinkStatus,
-				Vlan:        "NULL",
+				Name:         z.ID,
+				Description:  z.Description,
+				MacAddress:   z.AssociatedNetworkAddresses[0],
+				Status:       z.Status.Health,
+				State:        z.LinkStatus,
+				PartNumber:   z.Oem.Dell.DellNetworkTransceiver.PartNumber,
+				SerialNumber: z.Oem.Dell.DellNetworkTransceiver.SerialNumber,
+				VendorName:   z.Oem.Dell.DellNetworkTransceiver.VendorName,
+				Vlan:         "NULL",
 			}
+
+			macData.updateEmpty()
 			Macs = append(Macs, macData)
 		}
 
@@ -673,28 +691,26 @@ func (c *IloClient) GetFirmwareDell() ([]FirmwareData, error) {
 	json.Unmarshal(resp, &x)
 
 	for i := range x.Members {
-		r, _ := regexp.Compile("Installed")
-		if r.MatchString(x.Members[i].OdataId) == true {
-			_url := c.Hostname + x.Members[i].OdataId
-			resp, _, _, err := queryData(c, "GET", _url, nil)
-			if err != nil {
-				return nil, err
-			}
 
-			var y FirmwareDataDell
-
-			json.Unmarshal(resp, &y)
-
-			firmData := FirmwareData{
-				Name:       y.Name,
-				Id:         y.ID,
-				Version:    y.Version,
-				Updateable: y.Updateable,
-			}
-
-			_firmdata = append(_firmdata, firmData)
-
+		_url := c.Hostname + x.Members[i].OdataId
+		resp, _, _, err := queryData(c, "GET", _url, nil)
+		if err != nil {
+			return nil, err
 		}
+
+		var y FirmwareDataDell
+
+		json.Unmarshal(resp, &y)
+
+		firmData := FirmwareData{
+			Name:       y.Name,
+			Id:         y.ID,
+			Version:    y.Version,
+			Updateable: y.Updateable,
+		}
+
+		_firmdata = append(_firmdata, firmData)
+
 	}
 
 	return _firmdata, nil
