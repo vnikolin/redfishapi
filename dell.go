@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -16,19 +17,6 @@ const (
 	StatusInternalServerError = "Server Error"
 	StatusBadRequest          = "Bad Request"
 )
-
-//Check MACData struct for empty string
-func (intInfo *MACData) updateEmpty() {
-	if intInfo.PartNumber == "" {
-		intInfo.PartNumber = "NULL"
-	}
-	if intInfo.SerialNumber == "" {
-		intInfo.SerialNumber = "NULL"
-	}
-	if intInfo.VendorName == "" {
-		intInfo.VendorName = "NULL"
-	}
-}
 
 //StartServerDell ...
 // ResetType@Redfish.AllowableValues
@@ -236,6 +224,64 @@ func (c *IloClient) SetAttributesDell(service string, jsonData []byte) (string, 
 	return k.MessageExtendedInfo[0].Message, nil
 }
 
+//GetStorageRaidDell ... Will Fetch the Storage Raid Details
+func (c *IloClient) GetStorageRaidDell() ([]StorageRaidDetailsDell, error) {
+
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Storage"
+
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		x         MemberCountDell
+		_raiddata []StorageRaidDetailsDell
+	)
+
+	json.Unmarshal(resp, &x)
+	for i := range x.Members {
+
+		_url := c.Hostname + x.Members[i].OdataId + "/Volumes"
+		resp, _, _, err := queryData(c, "GET", _url, nil)
+		if err != nil {
+			return nil, err
+		}
+		var y MemberCountDell
+		json.Unmarshal(resp, &y)
+
+		for i := range y.Members {
+
+			_url := c.Hostname + y.Members[i].OdataId
+			resp, _, _, err := queryData(c, "GET", _url, nil)
+			if err != nil {
+				return nil, err
+			}
+			//fmt.Println(string([]byte(resp)))
+
+			var z StorageRaidRawDell
+			json.Unmarshal(resp, &z)
+			raidDevice := StorageRaidDetailsDell{
+				Name:             z.Name,
+                                Id:               z.Id,
+				Layout:           z.RAIDType,
+				MediaType:        z.Oem.Dell.DellVirtualDisk.MediaType,
+				DrivesCount:      strconv.Itoa(z.Links.DrivesCount),
+				ReadCachePolicy:  z.Oem.Dell.DellVirtualDisk.ReadCachePolicy,
+				CapacityBytes:    strconv.Itoa(z.CapacityBytes),
+				StripeSize:       z.Oem.Dell.DellVirtualDisk.StripeSize,
+				WriteCachePolicy: z.Oem.Dell.DellVirtualDisk.WriteCachePolicy,
+			}
+
+			_raiddata = append(_raiddata, raidDevice)
+
+		}
+
+	}
+	return _raiddata, nil
+
+}
+
 //GetNetworkPortsDell .... Will fetch network port info
 func (c *IloClient) GetNetworkPortsDell() ([]MACData, error) {
 	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/NetworkAdapters"
@@ -277,7 +323,7 @@ func (c *IloClient) GetNetworkPortsDell() ([]MACData, error) {
 				Vlan:         "NULL",
 			}
 
-			macData.updateEmpty()
+			macData.UpdateEmpty()
 			Macs = append(Macs, macData)
 		}
 
@@ -342,6 +388,7 @@ func (c *IloClient) GetMacAddressModelDell() ([]MACModelDell, error) {
 				result := MACModelDell{
 					MacName:  firmName[len(firmName)-1],
 					MacModel: y.Model,
+                                        MacManufacturer: y.Manufacturer,
 				}
 				Macs = append(Macs, result)
 			}
@@ -1000,6 +1047,18 @@ func (c *IloClient) GetBootOrderDell() ([]BootOrderData, error) {
 			Index:   x.Attributes.BootSeq[i].Index,
 			Name:    x.Attributes.BootSeq[i].Name,
 			ID:      x.Attributes.BootSeq[i].ID,
+		}
+
+		_bootOrder = append(_bootOrder, _result)
+	}
+
+	for i := range x.Attributes.UefiBootSeq {
+
+		_result := BootOrderData{
+			Enabled: x.Attributes.UefiBootSeq[i].Enabled,
+			Index:   x.Attributes.UefiBootSeq[i].Index,
+			Name:    x.Attributes.UefiBootSeq[i].Name,
+			ID:      x.Attributes.UefiBootSeq[i].ID,
 		}
 
 		_bootOrder = append(_bootOrder, _result)

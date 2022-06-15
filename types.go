@@ -1603,6 +1603,7 @@ type GetMacAddressDell struct {
 type MACModelDell struct {
 	MacName  string `json:"mac_name"`
 	MacModel string `json:"mac_model"`
+        MacManufacturer string `json:"mac_manufacturer"`
 }
 
 // NetworkPortsDell ...
@@ -1936,6 +1937,12 @@ type BootOrderDell struct {
 			Index   int    `json:"Index"`
 			Name    string `json:"Name"`
 		} `json:"BootSeq"`
+		UefiBootSeq []struct {
+			Enabled bool   `json:"Enabled"`
+			ID      string `json:"Id"`
+			Index   int    `json:"Index"`
+			Name    string `json:"Name"`
+		} `json:"UefiBootSeq"`
 	} `json:"Attributes"`
 	Description string `json:"Description"`
 	ID          string `json:"Id"`
@@ -3770,6 +3777,82 @@ type Accounts struct {
 	Username string `json:"username"`
 }
 
+// StorageRaidRawDell ...
+type StorageRaidRawDell struct {
+	Odata_context        string   `json:"@odata.context"`
+	Odata_id             string   `json:"@odata.id"`
+	Odata_type           string   `json:"@odata.type"`
+	BlockSizeBytes       int      `json:"BlockSizeBytes"`
+	CapacityBytes        int      `json:"CapacityBytes"`
+	Description          string   `json:"Description"`
+	Encrypted            bool     `json:"Encrypted"`
+	EncryptionTypes      []string `json:"EncryptionTypes"`
+	EnctyptionTypesCount int      `json:"EncryptionTypes@odata.count"`
+	Id                   string   `json:"Id"`
+	IdentifiersCount     int      `json:"Identifiers@odata.count"`
+	Links                struct {
+		Drives      []string `json:"Drives"`
+		DrivesCount int      `json:"Drives@odata.count"`
+	} `json:"Links"`
+	Name string `json:"Name"`
+	Oem  struct {
+		Dell struct {
+			Odata_type      string `json:"@odata.type"`
+			DellVirtualDisk struct {
+				BusProtocol              string `json:"BusProtocol"`
+				Cachecade                string `json:"Cachecade"`
+				Description              string `json:"Description"`
+				DiskCachePolicy          string `json:"DiskCachePolicy"`
+				Id                       string `json:"Id"`
+				LastSystemInventoryTime  string `json:"LastSystemInventoryTime"`
+				LastUpdateTime           string `json:"LastUpdateTime"`
+				LockStatus               string `json:"LockStatus"`
+				MediaType                string `json:"MediaType"`
+				Name                     string `json:"Name"`
+				ObjectStatus             string `json:"ObjectStatus"`
+				OperationName            string `json:"OperationName"`
+				OperationPercentComplete string `json:"OperationPercentComplete"`
+				PrimaryStatus            string `json:"PrimaryStatus"`
+				RaidStatus               string `json:"RaidStatus"`
+				ReadCachePolicy          string `json:"ReadCachePolicy"`
+				RemainingRedundancy      int    `json:"RemainingRedundancy"`
+				SpanDepth                int    `json:"SpanDepth"`
+				SpanLength               int    `json:"SpanLength"`
+				StartingLBAinBlocks      int    `json:"StartingLBAinBlocks"`
+				StripeSize               string `json:"StripeSize"`
+				T10PIStatus              string `json:"T10PIStatus"`
+				VirtualDiskTargetID      int    `json:"VirtualDiskTargetID"`
+				WriteCachePolicy         string `json:"WriteCachePolicy"`
+				Odata_context            string `json:"@odata.context"`
+				Odata_type               string `json:"@odata.type"`
+				Oddata_id                string `json:"@odata.id"`
+			} `json:"DellVirtualDisk"`
+		} `json:"Dell"`
+	} `json:"Oem"`
+	OperationsCount    int    `json:"Operations@odata.count"`
+	OptimumIOSizeBytes int    `json:"OptimumIOSizeBytes"`
+	RAIDType           string `json:"RAIDType"`
+	Status             struct {
+		Health       string `json:"Health"`
+		HealthRollup string `json:"HealthRollup"`
+		State        string `json:"State"`
+	} `json:"Status"`
+	VolumeType string `json:"VolumeType"`
+}
+
+//StorageRaidDetailsDell ...
+type StorageRaidDetailsDell struct {
+	Name             string `json:"name"`
+        Id               string `json:"id"`
+	Layout           string `json:"raidtype"`
+	MediaType        string `json:"mediatype"`
+	DrivesCount      string `json:"drivescount"`
+	ReadCachePolicy  string `json:"readcachepolicy"`
+	CapacityBytes    string `json:"capacitybytes"`
+	StripeSize       string `json:"stripesize"`
+	WriteCachePolicy string `json:"writecachepolicy"`
+}
+
 //MACData ...
 type MACData struct {
 	MacAddress   string `json:"macaddress"`
@@ -3781,6 +3864,19 @@ type MACData struct {
 	PartNumber   string `json:"partnumber"`
 	SerialNumber string `json:"serialnumber"`
 	VendorName   string `json:"verndorname"`
+}
+
+//Check MACData struct for empty string
+func (intInfo *MACData) UpdateEmpty() {
+	if intInfo.PartNumber == "" {
+		intInfo.PartNumber = "NULL"
+	}
+	if intInfo.SerialNumber == "" {
+		intInfo.SerialNumber = "NULL"
+	}
+	if intInfo.VendorName == "" {
+		intInfo.VendorName = "NULL"
+	}
 }
 
 //BootOrderData ...
