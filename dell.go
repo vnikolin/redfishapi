@@ -263,7 +263,7 @@ func (c *IloClient) GetStorageRaidDell() ([]StorageRaidDetailsDell, error) {
 			json.Unmarshal(resp, &z)
 			raidDevice := StorageRaidDetailsDell{
 				Name:             z.Name,
-                                Id:               z.Id,
+				Id:               z.Id,
 				Layout:           z.RAIDType,
 				MediaType:        z.Oem.Dell.DellVirtualDisk.MediaType,
 				DrivesCount:      strconv.Itoa(z.Links.DrivesCount),
@@ -386,9 +386,9 @@ func (c *IloClient) GetMacAddressModelDell() ([]MACModelDell, error) {
 			for _, z := range k.Links.NetworkDeviceFunctions {
 				firmName := strings.Split(z.OdataId, "/")
 				result := MACModelDell{
-					MacName:  firmName[len(firmName)-1],
-					MacModel: y.Model,
-                                        MacManufacturer: y.Manufacturer,
+					MacName:         firmName[len(firmName)-1],
+					MacModel:        y.Model,
+					MacManufacturer: y.Manufacturer,
 				}
 				Macs = append(Macs, result)
 			}
@@ -676,7 +676,7 @@ func (c *IloClient) GetAggHealthDataDell(model string) ([]HealthList, error) {
 
 		return nil, nil
 
-	} else if strings.ToLower(model) == "r740xd" {
+	} else if strings.ToLower(model) == "r740xd" || strings.ToLower(model) == "r650" || strings.ToLower(model) == "r750" {
 		url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
 
 		resp, _, _, err := queryData(c, "GET", url, nil)
