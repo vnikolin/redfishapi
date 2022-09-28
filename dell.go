@@ -311,16 +311,21 @@ func (c *IloClient) GetNetworkPortsDell() ([]MACData, error) {
 			}
 			var z NetworkPortsDell
 			json.Unmarshal(resp, &z)
-			macData := MACData{
-				Name:         z.ID,
-				Description:  z.Description,
-				MacAddress:   z.AssociatedNetworkAddresses[0],
-				Status:       z.Status.Health,
-				State:        z.LinkStatus,
-				PartNumber:   z.Oem.Dell.DellNetworkTransceiver.PartNumber,
-				SerialNumber: z.Oem.Dell.DellNetworkTransceiver.SerialNumber,
-				VendorName:   z.Oem.Dell.DellNetworkTransceiver.VendorName,
-				Vlan:         "NULL",
+			var macData MACData
+			if len(z.AssociatedNetworkAddresses) > 0 {
+				macData = MACData{
+					Name:         z.ID,
+					Description:  z.Description,
+					MacAddress:   z.AssociatedNetworkAddresses[0],
+					Status:       z.Status.Health,
+					State:        z.LinkStatus,
+					PartNumber:   z.Oem.Dell.DellNetworkTransceiver.PartNumber,
+					SerialNumber: z.Oem.Dell.DellNetworkTransceiver.SerialNumber,
+					VendorName:   z.Oem.Dell.DellNetworkTransceiver.VendorName,
+					Vlan:         "NULL",
+				}
+			} else {
+				continue
 			}
 
 			macData.UpdateEmpty()
