@@ -283,11 +283,11 @@ func (c *IloClient) GetStorageRaidDell() ([]StorageRaidDetailsDell, error) {
 }
 
 // GetNetworkSwitchInfoDell ... Will fetch the Network Switch Info
-func (c *IloClient) GetNetworkSwitchInfoDell() (string, error) {
+func (c *IloClient) GetNetworkSwitchInfoDell() ([]SwitchData, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/NetworkPorts/Oem/Dell/DellSwitchConnections/"
 	resp, _, _, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	var x MemberCountDell
 	var SwitchInfo []SwitchData
@@ -296,7 +296,7 @@ func (c *IloClient) GetNetworkSwitchInfoDell() (string, error) {
 		_url := c.Hostname + x.Members[i].OdataId
 		resp, _, _, err := queryData(c, "GET", _url, nil)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		var y GetSwitchInfoDell
 		json.Unmarshal(resp, &y)
@@ -309,8 +309,8 @@ func (c *IloClient) GetNetworkSwitchInfoDell() (string, error) {
 		}
 		SwitchInfo = append(SwitchInfo, switchData)
 	}
-	output, _ := json.Marshal(SwitchInfo)
-	return string(output), nil
+	// output, _ := json.Marshal(SwitchInfo)
+	return SwitchInfo, nil
 }
 
 // GetNetworkPortsDell .... Will fetch network port info
