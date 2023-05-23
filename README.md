@@ -2,14 +2,15 @@
 Title: RedFish API Go
 Description: Redfish api to support any server type that is enabled with Redfish standards
 Author: kgrvamsi
+Maintainer: vnikolin
 -->
 
 # Redfish API
 
 This Library supports both Dell and Hp Servers which have Redfish API enabled.
 
-[![GoDoc](https://godoc.org/github.com/kgrvamsi/redfishapi?status.svg)](https://godoc.org/github.com/kgrvamsi/redfishapi)
-[![Go Report Card](https://goreportcard.com/badge/github.com/kgrvamsi/redfishapi)](https://goreportcard.com/report/github.com/kgrvamsi/redfishapi)
+[![GoDoc](https://godoc.org/github.com/vnikolin/redfishapi?status.svg)](https://godoc.org/github.com/vnikolin/redfishapi)
+[![Go Report Card](https://goreportcard.com/badge/github.com/vnikolin/redfishapi)](https://goreportcard.com/report/github.com/vnikolin/redfishapi)
 
 ## Usage
 
@@ -18,7 +19,7 @@ This Library supports both Dell and Hp Servers which have Redfish API enabled.
 package main
 
 import "fmt"
-import "github.com/kgrvamsi/redfishapi"
+import "github.com/vnikolin/redfishapi"
 
 func main() {
     client := redfishapi.NewIloClient("https://hostname-0", "username", "password")

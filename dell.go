@@ -18,7 +18,7 @@ const (
 	StatusBadRequest          = "Bad Request"
 )
 
-//StartServerDell ...
+// StartServerDell ...
 // ResetType@Redfish.AllowableValues
 // 0	"On"
 // 1	"ForceOff"
@@ -40,7 +40,7 @@ func (c *IloClient) StartServerDell() (string, error) {
 	return "Server Started", nil
 }
 
-//StopServerDell ... Will Request to stop the server
+// StopServerDell ... Will Request to stop the server
 // works: R730xd,R740xd
 func (c *IloClient) StopServerDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
@@ -54,7 +54,7 @@ func (c *IloClient) StopServerDell() (string, error) {
 	return "Server Stopped", nil
 }
 
-//GracefulRestartDell ... Will Reset Idrac and will take some time to come up
+// GracefulRestartDell ... Will Reset Idrac and will take some time to come up
 func (c *IloClient) GracefulRestartDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Actions/Manager.Reset"
 
@@ -68,7 +68,7 @@ func (c *IloClient) GracefulRestartDell() (string, error) {
 
 }
 
-//GetServerPowerStateDell ... Will fetch the current state of the Server
+// GetServerPowerStateDell ... Will fetch the current state of the Server
 // works: R730xd,R740xd
 func (c *IloClient) GetServerPowerStateDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
@@ -85,7 +85,7 @@ func (c *IloClient) GetServerPowerStateDell() (string, error) {
 
 }
 
-//CheckLoginDell ... Will check the credentials of the Server
+// CheckLoginDell ... Will check the credentials of the Server
 // works: R730xd,R740xd
 func (c *IloClient) CheckLoginDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
@@ -183,7 +183,7 @@ func (c *IloClient) SetBiosSettingsDell(jsonData []byte) (string, error) {
 	return k.MessageExtendedInfo[0].Message, nil
 }
 
-//ClearJobsDell ... Deletes all the Jobs in the jobs queue
+// ClearJobsDell ... Deletes all the Jobs in the jobs queue
 func (c *IloClient) ClearJobsDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs"
 	resp, _, _, err := queryData(c, "GET", url, nil)
@@ -224,7 +224,7 @@ func (c *IloClient) SetAttributesDell(service string, jsonData []byte) (string, 
 	return k.MessageExtendedInfo[0].Message, nil
 }
 
-//GetStorageRaidDell ... Will Fetch the Storage Raid Details
+// GetStorageRaidDell ... Will Fetch the Storage Raid Details
 func (c *IloClient) GetStorageRaidDell() ([]StorageRaidDetailsDell, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Storage"
@@ -282,7 +282,38 @@ func (c *IloClient) GetStorageRaidDell() ([]StorageRaidDetailsDell, error) {
 
 }
 
-//GetNetworkPortsDell .... Will fetch network port info
+// GetNetworkSwitchInfoDell ... Will fetch the Network Switch Info
+func (c *IloClient) GetNetworkSwitchInfoDell() (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/NetworkPorts/Oem/Dell/DellSwitchConnections/"
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return "", err
+	}
+	var x MemberCountDell
+	var SwitchInfo []SwitchData
+	json.Unmarshal(resp, &x)
+	for i := range x.Members {
+		_url := c.Hostname + x.Members[i].OdataId
+		resp, _, _, err := queryData(c, "GET", _url, nil)
+		if err != nil {
+			return "", err
+		}
+		var y GetSwitchInfoDell
+		json.Unmarshal(resp, &y)
+		switchData := SwitchData{
+			Name:                   y.ID,
+			Description:            y.Description,
+			StaleData:              y.StaleData,
+			SwitchConnectionID:     y.SwitchConnectionID,
+			SwitchPortConnectionID: y.SwitchPortConnectionID,
+		}
+		SwitchInfo = append(SwitchInfo, switchData)
+	}
+	output, _ := json.Marshal(SwitchInfo)
+	return string(output), nil
+}
+
+// GetNetworkPortsDell .... Will fetch network port info
 func (c *IloClient) GetNetworkPortsDell() ([]MACData, error) {
 	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/NetworkAdapters"
 	resp, _, _, err := queryData(c, "GET", url, nil)
@@ -336,7 +367,7 @@ func (c *IloClient) GetNetworkPortsDell() ([]MACData, error) {
 	return Macs, nil
 }
 
-//GetMacAddressDell ... Will fetch all the mac address of a particular Server
+// GetMacAddressDell ... Will fetch all the mac address of a particular Server
 func (c *IloClient) GetMacAddressDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/EthernetInterfaces/"
 	resp, _, _, err := queryData(c, "GET", url, nil)
@@ -403,7 +434,7 @@ func (c *IloClient) GetMacAddressModelDell() ([]MACModelDell, error) {
 
 }
 
-//GetProcessorHealthDell ... Will Fetch the Processor Health Details
+// GetProcessorHealthDell ... Will Fetch the Processor Health Details
 // works: R730xd,R740xd
 func (c *IloClient) GetProcessorHealthDell() ([]HealthList, error) {
 	///redfish/v1/Systems/System.Embedded.1/Processors
@@ -446,7 +477,7 @@ func (c *IloClient) GetProcessorHealthDell() ([]HealthList, error) {
 
 // func (c *IloClient) GetMemoryHealthDell() (string, error) {}
 
-//GetPowerHealthDell ... Will Fetch the Power Health Details
+// GetPowerHealthDell ... Will Fetch the Power Health Details
 // works: R730xd,R740xd
 func (c *IloClient) GetPowerHealthDell() ([]HealthList, error) {
 	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/Power"
@@ -499,7 +530,7 @@ func (c *IloClient) GetPowerHealthDell() ([]HealthList, error) {
 	return powerSupplies, nil
 }
 
-//GetSensorsHealthDell ... Will Fetch the Sensors Health Details
+// GetSensorsHealthDell ... Will Fetch the Sensors Health Details
 // works: R730xd,R740xd
 func (c *IloClient) GetSensorsHealthDell() ([]HealthList, error) {
 
@@ -555,7 +586,7 @@ func (c *IloClient) GetSensorsHealthDell() ([]HealthList, error) {
 
 }
 
-//GetStorageDriveDetailsDell ... Will Fetch the Storage Drive Details
+// GetStorageDriveDetailsDell ... Will Fetch the Storage Drive Details
 func (c *IloClient) GetStorageDriveDetailsDell() ([]StorageDriveDetailsDell, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Storage"
@@ -607,7 +638,7 @@ func (c *IloClient) GetStorageDriveDetailsDell() ([]StorageDriveDetailsDell, err
 
 }
 
-//GetStorageHealthDell ... Will Fetch the Storage Health Details
+// GetStorageHealthDell ... Will Fetch the Storage Health Details
 // works: R730xd,R740xd
 func (c *IloClient) GetStorageHealthDell() ([]StorageHealthList, error) {
 
@@ -674,7 +705,7 @@ func (c *IloClient) GetStorageHealthDell() ([]StorageHealthList, error) {
 
 }
 
-//GetAggHealthDataDell ... will fetch the data related to all components health(aggregated view)
+// GetAggHealthDataDell ... will fetch the data related to all components health(aggregated view)
 func (c *IloClient) GetAggHealthDataDell(model string) ([]HealthList, error) {
 
 	if strings.ToLower(model) == "r730xd" {
@@ -725,7 +756,7 @@ func (c *IloClient) GetAggHealthDataDell(model string) ([]HealthList, error) {
 	return nil, nil
 }
 
-//GetFirmwareDell ... will fetch the Firmware details
+// GetFirmwareDell ... will fetch the Firmware details
 func (c *IloClient) GetFirmwareDell() ([]FirmwareData, error) {
 
 	url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
@@ -769,7 +800,7 @@ func (c *IloClient) GetFirmwareDell() ([]FirmwareData, error) {
 
 }
 
-//FirmwareUpdateDell ... will create a job plan for firmware update
+// FirmwareUpdateDell ... will create a job plan for firmware update
 func (c *IloClient) FirmwareUpdateDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/UpdateService/FirmwareInventory"
 
@@ -822,7 +853,7 @@ func (c *IloClient) FirmwareUpdateDell() (string, error) {
 
 }
 
-//FirmwareUploadDell ... will fetch the payload from remote repo
+// FirmwareUploadDell ... will fetch the payload from remote repo
 func (c *IloClient) FirmwareUploadDell(repoUrl string) (string, error) {
 
 	url := c.Hostname + "/redfish/v1/UpdateService/Actions/UpdateService.SimpleUpdate"
@@ -855,9 +886,10 @@ func (c *IloClient) TaskStatusDell(taskUrl string) (ExportConfigStatus, error) {
 
 }
 
-//GetBiosDataDell ... will fetch the Bios Details
+// GetBiosDataDell ... will fetch the Bios Details
 func (c *IloClient) GetBiosDataDell() (BiosAttributesData, error) {
 
+	fmt.Println("durga")
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios"
 
 	resp, _, _, err := queryData(c, "GET", url, nil)
@@ -873,7 +905,7 @@ func (c *IloClient) GetBiosDataDell() (BiosAttributesData, error) {
 
 }
 
-//GetLifecycleAttrDell ... will fetch the lifecycle attributes
+// GetLifecycleAttrDell ... will fetch the lifecycle attributes
 func (c *IloClient) GetLifecycleAttrDell() (LifeCycleData, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/LifecycleController.Embedded.1/Attributes"
@@ -918,7 +950,7 @@ func (c *IloClient) GetLifecycleAttrDell() (LifeCycleData, error) {
 
 }
 
-//ListUsersDell ...
+// ListUsersDell ...
 func (c *IloClient) ListUsersDell() ([]UserListDell, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Accounts"
@@ -957,7 +989,7 @@ func (c *IloClient) ListUsersDell() ([]UserListDell, error) {
 	return _userdata, nil
 }
 
-//CreateUserDell ... will create a new user
+// CreateUserDell ... will create a new user
 func (c *IloClient) CreateUserDell(num int, username string, password string, role string, status bool) (string, error) {
 	url := fmt.Sprintf("%s/redfish/v1/Managers/iDRAC.Embedded.1/Accounts/%d", c.Hostname, num)
 	data, _ := json.Marshal(map[string]interface{}{
@@ -976,7 +1008,7 @@ func (c *IloClient) CreateUserDell(num int, username string, password string, ro
 	return k.MessageExtendedInfo[0].Message, nil
 }
 
-//DeleteUserDell ... will delete a user
+// DeleteUserDell ... will delete a user
 func (c *IloClient) DeleteUserDell(num int, role string, status bool) (string, error) {
 	url := fmt.Sprintf("%s/redfish/v1/Managers/iDRAC.Embedded.1/Accounts/%d", c.Hostname, num)
 	data, _ := json.Marshal(map[string]interface{}{
@@ -993,7 +1025,7 @@ func (c *IloClient) DeleteUserDell(num int, role string, status bool) (string, e
 	return k.MessageExtendedInfo[0].Message, nil
 }
 
-//GetIDRACAttrDell ... will fetch the Idrac attributes
+// GetIDRACAttrDell ... will fetch the Idrac attributes
 func (c *IloClient) GetIDRACAttrDell() (IDRACAttributesData, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Attributes"
@@ -1011,7 +1043,7 @@ func (c *IloClient) GetIDRACAttrDell() (IDRACAttributesData, error) {
 
 }
 
-//GetSysAttrDell ... will fetch the System Attributes
+// GetSysAttrDell ... will fetch the System Attributes
 func (c *IloClient) GetSysAttrDell() (SysAttributesData, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/System.Embedded.1/Attributes"
@@ -1029,7 +1061,7 @@ func (c *IloClient) GetSysAttrDell() (SysAttributesData, error) {
 
 }
 
-//GetBootOrderDell ... will fetch the BootOrder Details
+// GetBootOrderDell ... will fetch the BootOrder Details
 func (c *IloClient) GetBootOrderDell() ([]BootOrderData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/BootSources"
@@ -1073,7 +1105,7 @@ func (c *IloClient) GetBootOrderDell() ([]BootOrderData, error) {
 
 }
 
-//SetBootOrderDell ... Set the Boot Order f
+// SetBootOrderDell ... Set the Boot Order f
 func (c *IloClient) SetBootOrderDell(jsonData []byte) (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/BootSources/Settings"
 	resp, _, _, err := queryData(c, "PATCH", url, jsonData)
@@ -1091,7 +1123,7 @@ func (c *IloClient) SetBootOrderDell(jsonData []byte) (string, error) {
 
 }
 
-//GetSystemEventLogsDell ... Fetch the System Event Logs from the Idrac
+// GetSystemEventLogsDell ... Fetch the System Event Logs from the Idrac
 func (c *IloClient) GetSystemEventLogsDell(version string) ([]SystemEventLogRes, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Logs/Sel"
@@ -1159,7 +1191,7 @@ func (c *IloClient) GetSystemEventLogsDell(version string) ([]SystemEventLogRes,
 	return nil, err
 }
 
-//GetLifeCycleEventLogsDell ... Fetch the LifeCycle Event Logs from the Idrac
+// GetLifeCycleEventLogsDell ... Fetch the LifeCycle Event Logs from the Idrac
 func (c *IloClient) GetLifeCycleEventLogsDell() ([]LifeCycleEventLogRes, error) {
 
 	var _lfyCycleEventLogs []LifeCycleEventLogRes
@@ -1198,7 +1230,7 @@ func (c *IloClient) GetLifeCycleEventLogsDell() ([]LifeCycleEventLogRes, error) 
 	return _lfyCycleEventLogs, nil
 }
 
-//GetUserAccountsDell ... Fetch the current users created
+// GetUserAccountsDell ... Fetch the current users created
 func (c *IloClient) GetUserAccountsDell() ([]Accounts, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Accounts"
@@ -1239,7 +1271,7 @@ func (c *IloClient) GetUserAccountsDell() ([]Accounts, error) {
 
 }
 
-//GetSystemInfoDell ... Will fetch the system info
+// GetSystemInfoDell ... Will fetch the system info
 func (c *IloClient) GetSystemInfoDell() (SystemData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
@@ -1266,8 +1298,8 @@ func (c *IloClient) GetSystemInfoDell() (SystemData, error) {
 
 }
 
-//GetComponentAttr ... Will fetch all the component level attributes
-//Supported values are: ALL, System, BIOS, IDRAC, NIC, FC, LifecycleController, RAID.
+// GetComponentAttr ... Will fetch all the component level attributes
+// Supported values are: ALL, System, BIOS, IDRAC, NIC, FC, LifecycleController, RAID.
 func (c *IloClient) GetComponentAttr(comp string) (ExportConfigResponse, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Actions/Oem/EID_674_Manager.ExportSystemConfiguration"
@@ -1316,8 +1348,8 @@ func (c *IloClient) GetComponentAttr(comp string) (ExportConfigResponse, error) 
 	return ExportConfigResponse{}, nil
 }
 
-//MountImageDell ... Will mount a image over http share
-//Supports for 4.x Firmware
+// MountImageDell ... Will mount a image over http share
+// Supports for 4.x Firmware
 func (c *IloClient) MountImageDell(image string) (string, error) {
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/VirtualMedia/CD/Actions/VirtualMedia.InsertMedia"
 
@@ -1341,8 +1373,8 @@ func (c *IloClient) MountImageDell(image string) (string, error) {
 	return "", nil
 }
 
-//UnMountImageDell ... Will unmount a imoge
-//Supports for 4.x Firmware
+// UnMountImageDell ... Will unmount a imoge
+// Supports for 4.x Firmware
 func (c *IloClient) UnMountImageDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/VirtualMedia/CD/Actions/VirtualMedia.EjectMedia"
 	payload := "{}"
@@ -1353,7 +1385,7 @@ func (c *IloClient) UnMountImageDell() (string, error) {
 	return "Image Unmounted", nil
 }
 
-//GetRemoteImageStatusDell ... Get remote image status
+// GetRemoteImageStatusDell ... Get remote image status
 func (c *IloClient) GetRemoteImageStatusDell() (ImageStatusDell, error) {
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/VirtualMedia/CD"
 
