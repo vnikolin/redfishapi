@@ -1192,14 +1192,18 @@ func (c *IloClient) GetSystemEventLogsDell(version string) ([]SystemEventLogRes,
 }
 
 // GetLifeCycleEventLogsDell ... Fetch the LifeCycle Event Logs from the Idrac
-func (c *IloClient) GetLifeCycleEventLogsDell() ([]LifeCycleEventLogRes, error) {
+func (c *IloClient) GetLifeCycleEventLogsDell(totalPages int) ([]LifeCycleEventLogRes, error) {
 
+	// totalPages corresponds to total pages of 50 logs
 	var _lfyCycleEventLogs []LifeCycleEventLogRes
+	var skipCount int
 
-	size := make([]struct{}, 10)
-	for i := range size {
+	size := make([]struct{}, totalPages)
+	for range size {
 
-		url := fmt.Sprintf("%s/%s%d", c.Hostname, "redfish/v1/Managers/iDRAC.Embedded.1/LogServices/Lclog/Entries?$skip=", i)
+		// fmt.Println("i is:", i)
+		// fmt.Println("skipCount is:", skipCount)
+		url := fmt.Sprintf("%s/%s%d", c.Hostname, "redfish/v1/Managers/iDRAC.Embedded.1/LogServices/Lclog/Entries?$skip=", skipCount)
 
 		resp, _, _, err := queryData(c, "GET", url, nil)
 		if err != nil {
@@ -1225,9 +1229,29 @@ func (c *IloClient) GetLifeCycleEventLogsDell() ([]LifeCycleEventLogRes, error) 
 
 			_lfyCycleEventLogs = append(_lfyCycleEventLogs, _result)
 		}
+
+		if len(x.Members) < 50 {
+			return _lfyCycleEventLogs, nil
+		}
+
+		skipCount += len(x.Members)
 	}
 
 	return _lfyCycleEventLogs, nil
+}
+
+// WriteLCLog ... Will write entry to LC Log
+func (c *IloClient) WriteLCLog(messageDesctiption string) (string, error) {
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Oem/Dell/DellLCService/Actions/DellLCService.InsertCommentInLCLog"
+
+	// var jsonStr = []byte(`{"Comment": "dummyentry"}`)
+	var jsonStr = []byte(`{"Comment": "` + messageDesctiption + `"}`)
+	_, _, _, err := queryData(c, "POST", url, jsonStr)
+	if err != nil {
+		return "", err
+	}
+
+	return "LCLog Entry Written", nil
 }
 
 // GetUserAccountsDell ... Fetch the current users created
