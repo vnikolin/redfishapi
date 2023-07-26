@@ -937,7 +937,6 @@ func (c *redfishProvider) TaskStatusDell(taskUrl string) (ExportConfigStatus, er
 // GetBiosDataDell ... will fetch the Bios Details
 func (c *redfishProvider) GetBiosDataDell() (BiosAttributesData, error) {
 
-	fmt.Println("durga")
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios"
 
 	resp, _, _, err := queryData(c, "GET", url, nil)
