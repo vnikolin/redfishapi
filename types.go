@@ -4150,6 +4150,7 @@ type SystemData struct {
 	Memory          float32 `json:"memory"`
 	Processors      int     `json:"processors"`
 	ProcessorFamily string  `json:"processor_family"`
+	ServiceTag      string  `json:"service_tag"`
 }
 
 // FirmwareData ...
