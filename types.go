@@ -1378,23 +1378,6 @@ type BiosAttributesData struct {
 	NvmeMode                     string      `json:"NvmeMode"`
 	OneTimeBootMode              string      `json:"OneTimeBootMode"`
 	OneTimeBootSeqDev            string      `json:"OneTimeBootSeqDev"`
-	OneTimeUefiBootSeqDev        string      `json:"OneTimeUefiBootSeqDev"`
-	PxeDev1EnDis                 string      `json:"PxeDev1EnDis"`
-	PxeDev1Interface             string      `json:"PxeDev1Interface"`
-	PxeDev1Protocol              string      `json:"PxeDev1Protocol"`
-	PxeDev1VlanEnDis             string      `json:"PxeDev1VlanEnDis"`
-	PxeDev2EnDis                 string      `json:"PxeDev2EnDis"`
-	PxeDev2Interface             string      `json:"PxeDev2Interface"`
-	PxeDev2Protocol              string      `json:"PxeDev2Protocol"`
-	PxeDev2VlanEnDis             string      `json:"PxeDev2VlanEnDis"`
-	PxeDev3EnDis                 string      `json:"PxeDev3EnDis"`
-	PxeDev3Interface             string      `json:"PxeDev3Interface"`
-	PxeDev3Protocol              string      `json:"PxeDev3Protocol"`
-	PxeDev3VlanEnDis             string      `json:"PxeDev3VlanEnDis"`
-	PxeDev4EnDis                 string      `json:"PxeDev4EnDis"`
-	PxeDev4Interface             string      `json:"PxeDev4Interface"`
-	PxeDev4Protocol              string      `json:"PxeDev4Protocol"`
-	PxeDev4VlanEnDis             string      `json:"PxeDev4VlanEnDis"`
 	OppSrefEn                    string      `json:"OppSrefEn"`
 	OsWatchdogTimer              string      `json:"OsWatchdogTimer"`
 	PasswordStatus               string      `json:"PasswordStatus"`

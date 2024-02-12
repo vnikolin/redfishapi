@@ -1,33 +1,16 @@
 package redfishapi
 
-// //IloClient ... Contstructor required Variables
-// type IloClient struct {
-// 	Hostname string
-// 	Username string
-// 	Password string
-// }
-
-// //NewIloClient ... Initializes the Constructor with the above variables
-// func NewIloClient(hostname string, username string, password string) *IloClient {
-
-// 	return &IloClient{
-// 		Hostname: hostname,
-// 		Username: username,
-// 		Password: password,
-// 	}
-// }
-
-// redfishProvider ... Contstructor required Variables
-type redfishProvider struct {
+//IloClient ... Contstructor required Variables
+type IloClient struct {
 	Hostname string
 	Username string
 	Password string
 }
 
-// NewRedfishProvider ... Initializes the Constructor with the above variables
-func NewRedfishProvider(hostname string, username string, password string) RedfishProvider {
+//NewIloClient ... Initializes the Constructor with the above variables
+func NewIloClient(hostname string, username string, password string) *IloClient {
 
-	return &redfishProvider{
+	return &IloClient{
 		Hostname: hostname,
 		Username: username,
 		Password: password,
