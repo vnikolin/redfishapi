@@ -1363,6 +1363,7 @@ func (c *redfishProvider) GetSystemInfoDell() (SystemData, error) {
 		Processors:      x.ProcessorSummary.Count,
 		ProcessorFamily: x.ProcessorSummary.Model,
 		SerialNumber:    x.SerialNumber,
+		ServiceTag:      x.SKU,
 	}
 
 	return _result, nil
