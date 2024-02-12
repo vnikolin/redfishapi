@@ -11,14 +11,14 @@ import (
 	"time"
 )
 
-// basicAuth ... will create the basicauth encoded string for the credentials
+//basicAuth ... will create the basicauth encoded string for the credentials
 func basicAuth(username, password string) string {
 	auth := username + ":" + password
 	return base64.StdEncoding.EncodeToString([]byte(auth))
 }
 
-// queryData ... will make REST verbs based on the url
-func queryData(c *redfishProvider, call string, link string, data []byte) ([]byte, http.Header, int, error) {
+//queryData ... will make REST verbs based on the url
+func queryData(c *IloClient, call string, link string, data []byte) ([]byte, http.Header, int, error) {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	req, err := http.NewRequest(call, link, bytes.NewBuffer(data))
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
