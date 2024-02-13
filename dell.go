@@ -447,6 +447,37 @@ func (c *redfishProvider) GetMacAddressDell() (string, error) {
 	return string(output), nil
 }
 
+// GetIdracLicenses ... Will fetch all iDRAC licenses
+func (c *redfishProvider) GetIdracLicenses() ([]LicenseData, error) {
+	url := c.Hostname + "/redfish/v1/LicenseService/Licenses/"
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return []LicenseData{}, err
+	}
+	var x MemberCountDell
+	var Licenses []LicenseData
+	json.Unmarshal(resp, &x)
+	for i := range x.Members {
+		_url := c.Hostname + x.Members[i].OdataId
+		resp, _, _, err := queryData(c, "GET", _url, nil)
+		if err != nil {
+			return []LicenseData{}, err
+		}
+		var y GetLicenseDell
+		json.Unmarshal(resp, &y)
+		licenseData := LicenseData{
+			AuthorizationScope: y.AuthorizationScope,
+			Description:        y.Description,
+			Id:                 y.ID,
+			LicenseType:        y.LicenseType,
+			Status:             y.Status.Health,
+			State:              y.Status.State,
+		}
+		Licenses = append(Licenses, licenseData)
+	}
+	return Licenses, nil
+}
+
 // GetMacAddressModelDell ... Will fetch the Nic Model
 func (c *redfishProvider) GetMacAddressModelDell() ([]MACModelDell, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/NetworkAdapters/"
