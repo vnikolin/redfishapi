@@ -35,6 +35,7 @@ type RedfishProvider interface {
 	GetNetworkSwitchInfoDell() ([]SwitchData, error)
 	GetNetworkPortsDell() ([]MACData, error)
 	GetMacAddressDell() (string, error)
+	GetIdracLicenses() ([]LicenseData, error)
 	GetMacAddressModelDell() ([]MACModelDell, error)
 	GetProcessorHealthDell() ([]HealthList, error)
 	GetPowerHealthDell() ([]HealthList, error)
