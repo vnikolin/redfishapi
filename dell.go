@@ -3,6 +3,7 @@ package redfishapi
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
@@ -136,15 +137,15 @@ func (c *redfishProvider) GetServerPowerStateDell() (string, error) {
 
 // CheckLoginDell ... Will check the credentials of the Server
 // works: R730xd,R740xd
-func (c *redfishProvider) CheckLoginDell() (string, error) {
+func (c *redfishProvider) CheckLoginDell() (string, http.Header, int, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
-	resp, _, _, err := queryData(c, "GET", url, nil)
+	resp, httpHeader, retCode, err := queryData(c, "GET", url, nil)
 	if err != nil {
-		return "", err
+		return "", httpHeader, retCode, err
 	}
 	var data SystemViewDell
 	json.Unmarshal(resp, &data)
-	return string(data.Status.Health), nil
+	return string(data.Status.Health), httpHeader, retCode, nil
 }
 
 //ImportConfigDell ... Importing the configurations to Server
