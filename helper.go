@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"regexp"
@@ -28,6 +29,8 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 		Timeout: time.Second * 300,
 	}
 	resp, err := client.Do(req)
+	// ablakmak... try to test status code here
+	fmt.Println("ablakmak resp.StatusCode: ", resp.StatusCode)
 	if err != nil {
 		r, _ := regexp.Compile("dial tcp")
 		if r.MatchString(err.Error()) == true {
