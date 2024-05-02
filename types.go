@@ -1616,6 +1616,30 @@ type GetMacAddressDell struct {
 	VLAN           string `json:"VLAN"`
 }
 
+// GetLicenseDell ... Fetch the License from the Redfish API
+type GetLicenseDell struct {
+	_odata_context     string
+	_odata_id          string
+	_odata_type        string
+	AuthorizationScope string `json:"AuthorizationScope"`
+	Description        string `json:"Description"`
+	DownloadURI        string `json:"DownloadURI"`
+	EntitlementID      string `json:"EntitlementID"`
+	ExpirationDate     string `json:"ExpirationDate"`
+	ID                 string `json:"Id"`
+	InstallDate        string `json:"InstallDate"`
+	LicenseInfoURI     string `json:"LicenseInfoURI"`
+	LicenseOrigin      string `json:"LicenseOrigin"`
+	LicenseType        string `json:"LicenseType"`
+	Name               string `json:"Name"`
+	Removable          bool   `json:"Removable"`
+	Status             struct {
+		Health string `json:"Health"`
+		State  string `json:"State"`
+	} `json:"Status"`
+	// Links struct {} `json:"Links"`
+}
+
 // GetSwitchInfoDell ... Fetch the Mac Address Info from the Redfish API
 type GetSwitchInfoDell struct {
 	_odata_context         string
@@ -3896,6 +3920,16 @@ type MACData struct {
 	PartNumber   string `json:"partnumber"`
 	SerialNumber string `json:"serialnumber"`
 	VendorName   string `json:"verndorname"`
+}
+
+// LicenseData ...
+type LicenseData struct {
+	AuthorizationScope string `json:"authorizationscope"`
+	Description        string `json:"description"`
+	Id                 string `json:"id"`
+	LicenseType        string `json:"licensetype"`
+	Status             string `json:"status"`
+	State              string `json:"state"`
 }
 
 // SwitchData ...

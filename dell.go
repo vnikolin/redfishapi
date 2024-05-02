@@ -35,6 +35,7 @@ type RedfishProvider interface {
 	GetNetworkSwitchInfoDell() ([]SwitchData, error)
 	GetNetworkPortsDell() ([]MACData, error)
 	GetMacAddressDell() (string, error)
+	GetIdracLicenses() ([]LicenseData, error)
 	GetMacAddressModelDell() ([]MACModelDell, error)
 	GetProcessorHealthDell() ([]HealthList, error)
 	GetPowerHealthDell() ([]HealthList, error)
@@ -445,6 +446,37 @@ func (c *redfishProvider) GetMacAddressDell() (string, error) {
 	}
 	output, _ := json.Marshal(Macs)
 	return string(output), nil
+}
+
+// GetIdracLicenses ... Will fetch all iDRAC licenses
+func (c *redfishProvider) GetIdracLicenses() ([]LicenseData, error) {
+	url := c.Hostname + "/redfish/v1/LicenseService/Licenses/"
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return []LicenseData{}, err
+	}
+	var x MemberCountDell
+	var Licenses []LicenseData
+	json.Unmarshal(resp, &x)
+	for i := range x.Members {
+		_url := c.Hostname + x.Members[i].OdataId
+		resp, _, _, err := queryData(c, "GET", _url, nil)
+		if err != nil {
+			return []LicenseData{}, err
+		}
+		var y GetLicenseDell
+		json.Unmarshal(resp, &y)
+		licenseData := LicenseData{
+			AuthorizationScope: y.AuthorizationScope,
+			Description:        y.Description,
+			Id:                 y.ID,
+			LicenseType:        y.LicenseType,
+			Status:             y.Status.Health,
+			State:              y.Status.State,
+		}
+		Licenses = append(Licenses, licenseData)
+	}
+	return Licenses, nil
 }
 
 // GetMacAddressModelDell ... Will fetch the Nic Model
