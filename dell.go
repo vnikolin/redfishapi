@@ -24,7 +24,7 @@ type RedfishProvider interface {
 	StopServerDell() (string, error)
 	GracefulRestartDell() (string, error)
 	GetServerPowerStateDell() (string, error)
-	CheckLoginDell() (string, error)
+	CheckLoginDell() (string, http.Header, int, error)
 	ImportConfigDell(jsonData []byte) (string, error)
 	CreateJobDell(jsonData []byte) (string, error)
 	GetJobsStatusDell() ([]JobStatusDell, error)
