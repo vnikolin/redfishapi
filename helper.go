@@ -30,7 +30,9 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 	}
 	resp, err := client.Do(req)
 	// ablakmak... try to test status code here
-	fmt.Println("ablakmak resp.StatusCode: ", resp.StatusCode)
+	if resp != nil {
+		fmt.Println("ablakmak resp.StatusCode: ", resp.StatusCode)
+	}
 	if err != nil {
 		r, _ := regexp.Compile("dial tcp")
 		if r.MatchString(err.Error()) == true {
