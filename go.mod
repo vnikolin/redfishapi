@@ -1,8 +1,5 @@
 module github.com/vnikolin/redfishapi
 
-go 1.12
+go 1.21.3
 
-require (
-	github.com/Jeffail/gabs v1.4.0
-	github.com/hashicorp/go-version v1.2.0
-)
+require github.com/Masterminds/semver/v3 v3.2.1

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	ver "github.com/hashicorp/go-version"
+	ver "github.com/Masterminds/semver/v3"
 )
 
 // Declaring the Constant Values
@@ -1212,10 +1212,18 @@ func (c *redfishProvider) GetSystemEventLogsDell(version string) ([]SystemEventL
 		return nil, err
 	}
 
-	// v1, err := ver.NewVersion("3.15.17.15")
 	v1, verErr := ver.NewConstraint("<= 3.15.17.15")
+	if verErr != nil {
+		return nil, verErr
+	}
 	v2, verErr := ver.NewConstraint("<= 3.21.26.22")
+	if verErr != nil {
+		return nil, verErr
+	}
 	v3, verErr := ver.NewConstraint("> 3.21.26.22")
+	if verErr != nil {
+		return nil, verErr
+	}
 	v4, verErr := ver.NewVersion(version)
 	if verErr != nil {
 		return nil, verErr
