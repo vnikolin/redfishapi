@@ -3,6 +3,7 @@ package redfishapi
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
@@ -66,6 +67,7 @@ type RedfishProvider interface {
 	UnMountImageDell() (string, error)
 	GetRemoteImageStatusDell() (ImageStatusDell, error)
 	ClearStorageControllerRaidDell(controllerID string) (string, error)
+	GetJobStatusDell(jobID string) (JobStatusDell, error)
 }
 
 // StartServerDell ...
@@ -207,6 +209,18 @@ func (c *redfishProvider) GetJobsStatusDell() ([]JobStatusDell, error) {
 	return jobs, nil
 }
 
+// GetJobStatusDell ... Get the status of the Job
+func (c *redfishProvider) GetJobStatusDell(jobID string) (JobStatusDell, error) {
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs/" + jobID
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return JobStatusDell{}, err
+	}
+	var output JobStatusDell
+	json.Unmarshal(resp, &output)
+	return output, nil
+}
+
 func (c *redfishProvider) GetAllJobsDell() ([]Members, error) {
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs"
 	resp, _, _, err := queryData(c, "GET", url, nil)
@@ -274,7 +288,7 @@ func (c *redfishProvider) SetAttributesDell(service string, jsonData []byte) (st
 	return k.MessageExtendedInfo[0].Message, nil
 }
 
-// ClearStorageControllerRaidDell ... Clears Raid of the Storage Controller
+// ClearStorageControllerRaidDell ... Clears Raid of the Storage Controller and returns the jub URL
 func (c *redfishProvider) ClearStorageControllerRaidDell(controllerID string) (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Oem/Dell/DellRaidService/Actions/DellRaidService.ResetConfig"
 
@@ -282,25 +296,23 @@ func (c *redfishProvider) ClearStorageControllerRaidDell(controllerID string) (s
 		"TargetFQDD": controllerID,
 	})
 
-	byte, header, status, err := queryData(c, "POST", url, []byte(data))
+	_, header, status, err := queryData(c, "POST", url, []byte(data))
 
 	if err != nil {
 		return "", err
 	}
 
-	// log byte return
-	fmt.Println("byte is:", string(byte))
-	// log header return
-	fmt.Printf("header is: %+v\n", header)
-	// log status return
-	fmt.Println("status is:", status)
-	fmt.Println("header Location is:", header.Get("Location"))
-	// if resp.StatusCode == http.StatusAccepted {
-	// location := resp.Header.Get("Location")
-	// location = raidResetTaskURL + string(location[strings.LastIndex(location, "/")+1:])
-	// logger.Info(fmt.Sprintf("Waiting for raid %s delete task %s to complete for %s", storageController, location, deleteStorageInfo.endpoint))
+	// check if the status is 202
+	if status != http.StatusAccepted {
+		return "", fmt.Errorf("unexpected status code: %d", status)
+	}
 
-	return "Raid Cleared and taskid", nil
+	// ablakmak clean this up after testing
+	fmt.Printf("in ClearStorageControllerRaidDell complete header is: %+v\n", header)
+	fmt.Println("in ClearStorageControllerRaidDell status is:", status)
+	fmt.Println("in ClearStorageControllerRaidDell header Location is:", header.Get("Location"))
+
+	return header.Get("Location"), nil
 }
 
 // GetStorageRaidDell ... Will Fetch the Storage Raid Details
