@@ -273,6 +273,9 @@ func (c *redfishProvider) SetAttributesDell(service string, jsonData []byte) (st
 	return k.MessageExtendedInfo[0].Message, nil
 }
 
+// ClearStorageRaidDell ... Will Clear the Storage Raid
+// func (c *redfishProvider) ClearStorageRaidDell() (string, error) {
+
 // GetStorageRaidDell ... Will Fetch the Storage Raid Details
 func (c *redfishProvider) GetStorageRaidDell() ([]StorageRaidDetailsDell, error) {
 
@@ -291,13 +294,23 @@ func (c *redfishProvider) GetStorageRaidDell() ([]StorageRaidDetailsDell, error)
 	json.Unmarshal(resp, &x)
 	for i := range x.Members {
 
+		// check controller
+		controllerUrl := c.Hostname + x.Members[i].OdataId
+		respController, _, _, err := queryData(c, "GET", controllerUrl, nil)
+		if err != nil {
+			return nil, err
+		}
+		var storageControllerDell StorageControllerDell
+		json.Unmarshal(respController, &storageControllerDell)
+
+		// check volumes
 		_url := c.Hostname + x.Members[i].OdataId + "/Volumes"
-		resp, _, _, err := queryData(c, "GET", _url, nil)
+		respVolumes, _, _, err := queryData(c, "GET", _url, nil)
 		if err != nil {
 			return nil, err
 		}
 		var y MemberCountDell
-		json.Unmarshal(resp, &y)
+		json.Unmarshal(respVolumes, &y)
 
 		for i := range y.Members {
 
@@ -313,6 +326,7 @@ func (c *redfishProvider) GetStorageRaidDell() ([]StorageRaidDetailsDell, error)
 			raidDevice := StorageRaidDetailsDell{
 				Name:             z.Name,
 				Id:               z.Id,
+				ControllerId:     storageControllerDell.ID,
 				Layout:           z.RAIDType,
 				MediaType:        z.Oem.Dell.DellVirtualDisk.MediaType,
 				DrivesCount:      strconv.Itoa(z.Links.DrivesCount),
