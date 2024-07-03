@@ -65,6 +65,7 @@ type RedfishProvider interface {
 	MountImageDell(image string) (string, error)
 	UnMountImageDell() (string, error)
 	GetRemoteImageStatusDell() (ImageStatusDell, error)
+	ClearStorageControllerRaidDell(controllerID string) (string, error)
 }
 
 // StartServerDell ...
@@ -273,8 +274,34 @@ func (c *redfishProvider) SetAttributesDell(service string, jsonData []byte) (st
 	return k.MessageExtendedInfo[0].Message, nil
 }
 
-// ClearStorageRaidDell ... Will Clear the Storage Raid
-// func (c *redfishProvider) ClearStorageRaidDell() (string, error) {
+// ClearStorageControllerRaidDell ... Clears Raid of the Storage Controller
+func (c *redfishProvider) ClearStorageControllerRaidDell(controllerID string) (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Oem/Dell/DellRaidService/Actions/DellRaidService.ResetConfig"
+
+	data, _ := json.Marshal(map[string]interface{}{
+		"TargetFQDD": controllerID,
+	})
+
+	byte, header, status, err := queryData(c, "POST", url, []byte(data))
+
+	if err != nil {
+		return "", err
+	}
+
+	// log byte return
+	fmt.Println("byte is:", string(byte))
+	// log header return
+	fmt.Printf("header is: %+v\n", header)
+	// log status return
+	fmt.Println("status is:", status)
+	fmt.Println("header Location is:", header.Get("Location"))
+	// if resp.StatusCode == http.StatusAccepted {
+	// location := resp.Header.Get("Location")
+	// location = raidResetTaskURL + string(location[strings.LastIndex(location, "/")+1:])
+	// logger.Info(fmt.Sprintf("Waiting for raid %s delete task %s to complete for %s", storageController, location, deleteStorageInfo.endpoint))
+
+	return "Raid Cleared and taskid", nil
+}
 
 // GetStorageRaidDell ... Will Fetch the Storage Raid Details
 func (c *redfishProvider) GetStorageRaidDell() ([]StorageRaidDetailsDell, error) {
