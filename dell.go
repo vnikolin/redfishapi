@@ -73,7 +73,7 @@ type RedfishProvider interface {
 	ClearStorageControllerRaidDell(controllerID string) (string, error)
 	GetJobStatusDell(jobID string) (JobStatusDell, error)
 	ClearJobsDellForce() (string, error)
-	FleaDrainDell() (string, error)
+	FleaDrainDell(jsonString []byte) (string, error)
 }
 
 // StartServerDell ...
@@ -349,12 +349,12 @@ func (c *redfishProvider) ClearStorageControllerRaidDell(controllerID string) (s
 }
 
 // FleaDrainDell ... Will Flea Drain the Server
-func (c *redfishProvider) FleaDrainDell() (string, error) {
+func (c *redfishProvider) FleaDrainDell(jsonStr []byte) (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios/Settings"
 
 	// var jsonStr = []byte(`{"JobID": "JID_CLEARALL_FORCE"}`)
 	// var jsonStr = []byte(`{“Attributes”:{“PowerCycleRequest”:“FullPowerCycle:},"@Redfish.SettingsApplyTime":{"@odata.type":"#Settings.v1_1_0.PreferredApplyTime","ApplyTime":"OnReset"}}`)
-	var jsonStr = []byte(`{“Attributes”:{“PowerCycleRequest”:“FullPowerCycle:},"@Redfish.SettingsApplyTime":{"@odata.type":"#Settings.v1_1_0.PreferredApplyTime","ApplyTime":"Immediate"}}`)
+	// var jsonStr = []byte(`{"Attributes":{"PowerCycleRequest":"FullPowerCycle"},"@Redfish.SettingsApplyTime":{"@odata.type":"#Settings.v1_1_0.PreferredApplyTime","ApplyTime":"Immediate"}}`)
 	// _, header, status, err := queryData(c, "PATCH", url, []byte(data))
 	_, header, status, err := queryData(c, "PATCH", url, jsonStr)
 
