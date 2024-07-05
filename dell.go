@@ -68,6 +68,7 @@ type RedfishProvider interface {
 	GetRemoteImageStatusDell() (ImageStatusDell, error)
 	ClearStorageControllerRaidDell(controllerID string) (string, error)
 	GetJobStatusDell(jobID string) (JobStatusDell, error)
+	ClearJobsDellForce() (string, error)
 }
 
 // StartServerDell ...
@@ -264,6 +265,33 @@ func (c *redfishProvider) ClearJobsDell() (string, error) {
 		}
 	}
 	return "Jobs Deleted", nil
+}
+
+// ClearJobsDellForce ... Forces the deletion of all the Jobs in the jobs queue
+func (c *redfishProvider) ClearJobsDellForce() (string, error) {
+
+	url := c.Hostname + "/redfish/v1/Dell/Managers/iDRAC.Embedded.1/DellJobService/Actions/DellJobService.DeleteJobQueue"
+	var jsonStr = []byte(`{"JobID": "JID_CLEARALL_FORCE"}`)
+
+	_, header, status, err := queryData(c, "POST", url, jsonStr)
+
+	if err != nil {
+		return "failure", err
+	}
+
+	// ablakmak clean this up after testing
+	fmt.Printf("in ClearJobsDellForce complete header is: %+v\n", header)
+	fmt.Println("in ClearJobsDellForce status is:", status)
+	fmt.Println("in ClearJobsDellForce header Location is:", header.Get("Location"))
+
+	// check if the status is 200
+	// if status != http.StatusAccepted {
+	if status != http.StatusOK {
+		return "failure", fmt.Errorf("unexpected status code: %d", status)
+	}
+
+	return "success", nil
+
 }
 
 //SetAttributesDell ... Will set the Attributes for IDRAC,Lifecycle Attributes and System
