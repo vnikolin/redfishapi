@@ -20,6 +20,7 @@ const (
 	JobStateCompleted         = "Completed"
 	JobStateFailed            = "Failed"
 	JobStateRunning           = "Running"
+	JobStateScheduled         = "Scheduled"
 )
 
 type RedfishProvider interface {
@@ -72,6 +73,7 @@ type RedfishProvider interface {
 	ClearStorageControllerRaidDell(controllerID string) (string, error)
 	GetJobStatusDell(jobID string) (JobStatusDell, error)
 	ClearJobsDellForce() (string, error)
+	FleaDrainDell() (string, error)
 }
 
 // StartServerDell ...
@@ -342,6 +344,33 @@ func (c *redfishProvider) ClearStorageControllerRaidDell(controllerID string) (s
 	fmt.Printf("in ClearStorageControllerRaidDell complete header is: %+v\n", header)
 	fmt.Println("in ClearStorageControllerRaidDell status is:", status)
 	fmt.Println("in ClearStorageControllerRaidDell header Location is:", header.Get("Location"))
+
+	return header.Get("Location"), nil
+}
+
+// FleaDrainDell ... Will Flea Drain the Server
+func (c *redfishProvider) FleaDrainDell() (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios/Settings"
+
+	// var jsonStr = []byte(`{"JobID": "JID_CLEARALL_FORCE"}`)
+	// var jsonStr = []byte(`{“Attributes”:{“PowerCycleRequest”:“FullPowerCycle:},"@Redfish.SettingsApplyTime":{"@odata.type":"#Settings.v1_1_0.PreferredApplyTime","ApplyTime":"OnReset"}}`)
+	var jsonStr = []byte(`{“Attributes”:{“PowerCycleRequest”:“FullPowerCycle:},"@Redfish.SettingsApplyTime":{"@odata.type":"#Settings.v1_1_0.PreferredApplyTime","ApplyTime":"Immediate"}}`)
+	// _, header, status, err := queryData(c, "PATCH", url, []byte(data))
+	_, header, status, err := queryData(c, "PATCH", url, jsonStr)
+
+	if err != nil {
+		return "", err
+	}
+
+	// ablakmak clean this up after testing
+	fmt.Printf("in ClearStorageControllerRaidDell complete header is: %+v\n", header)
+	fmt.Println("in ClearStorageControllerRaidDell status is:", status)
+	fmt.Println("in ClearStorageControllerRaidDell header Location is:", header.Get("Location"))
+
+	// check if the status is 202
+	if status != http.StatusAccepted {
+		return "", fmt.Errorf("unexpected status code: %d", status)
+	}
 
 	return header.Get("Location"), nil
 }
