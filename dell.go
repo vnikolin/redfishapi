@@ -17,6 +17,9 @@ const (
 	StatusUnauthorized        = "Unauthorized"
 	StatusInternalServerError = "Server Error"
 	StatusBadRequest          = "Bad Request"
+	JobStateCompleted         = "Completed"
+	JobStateFailed            = "Failed"
+	JobStateRunning           = "Running"
 )
 
 type RedfishProvider interface {
