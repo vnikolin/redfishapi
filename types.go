@@ -4255,9 +4255,10 @@ type ExportConfigStatus struct {
 			TargetSettingsURI interface{}   `json:"TargetSettingsURI"`
 		} `json:"Dell"`
 	} `json:"Oem"`
-	StartTime  string `json:"StartTime"`
-	TaskState  string `json:"TaskState"`
-	TaskStatus string `json:"TaskStatus"`
+	StartTime       string `json:"StartTime"`
+	TaskState       string `json:"TaskState"`
+	TaskStatus      string `json:"TaskStatus"`
+	PercentComplete int    `json:"PercentComplete"`
 }
 
 type ExportConfigResponse struct {
