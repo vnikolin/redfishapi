@@ -22,6 +22,11 @@ const (
 	JobStateFailed            = "Failed"
 	JobStateRunning           = "Running"
 	JobStateScheduled         = "Scheduled"
+	TaskStateStarting         = "Starting"
+	TaskStateRunning          = "Running"
+	TaskStateCompleted        = "Completed"
+	TaskStatusOK              = "OK"
+	TaskStatusCritical        = "Critical"
 )
 
 type RedfishProvider interface {
