@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -73,19 +74,40 @@ type RedfishProvider interface {
 	ClearStorageControllerRaidDell(controllerID string) (string, error)
 	GetJobStatusDell(jobID string) (JobStatusDell, error)
 	ClearJobsDellForce() (string, error)
-	FleaDrainDell(jsonString []byte) (string, error)
+	FleaDrainDell() (string, error)
+	PowerActionServerDell(powerAction string) (string, error)
+}
+
+// ResetType@Redfish.AllowableValues
+// "On"
+// "ForceOff"
+// "ForceRestart"
+// "GracefulRestart"
+// "GracefulShutdown"
+// "PushPowerButton"
+// "Nmi"
+// "PowerCycle"
+// target: "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
+// works: R730xd,R740xd
+func (c *redfishProvider) PowerActionServerDell(powerAction string) (string, error) {
+
+	allowableActions := []string{"On", "ForceOff", "ForceRestart", "GracefulRestart", "GracefulShutdown", "PushPowerButton", "Nmi", "PowerCycle"}
+	// check if the action is valid
+	if !slices.Contains(allowableActions, powerAction) {
+		return "", fmt.Errorf("invalid power action: %s", powerAction)
+	}
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
+
+	var jsonStr = []byte(`{"ResetType": "` + powerAction + `"}`)
+	_, _, _, err := queryData(c, "POST", url, jsonStr)
+	if err != nil {
+		return "", err
+	}
+
+	return "Server " + powerAction, nil
 }
 
 // StartServerDell ...
-// ResetType@Redfish.AllowableValues
-// 0	"On"
-// 1	"ForceOff"
-// 2	"GracefulRestart"
-// 3	"GracefulShutdown"
-// 4	"PushPowerButton"
-// 5	"Nmi"
-// target: "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
-// works: R730xd,R740xd
 func (c *redfishProvider) StartServerDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
 
@@ -348,14 +370,11 @@ func (c *redfishProvider) ClearStorageControllerRaidDell(controllerID string) (s
 	return header.Get("Location"), nil
 }
 
-// FleaDrainDell ... Will Flea Drain the Server
-func (c *redfishProvider) FleaDrainDell(jsonStr []byte) (string, error) {
+// FleaDrainDell ... Will Flea Drain the Server at next reboot
+func (c *redfishProvider) FleaDrainDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios/Settings"
 
-	// var jsonStr = []byte(`{"JobID": "JID_CLEARALL_FORCE"}`)
-	// var jsonStr = []byte(`{“Attributes”:{“PowerCycleRequest”:“FullPowerCycle:},"@Redfish.SettingsApplyTime":{"@odata.type":"#Settings.v1_1_0.PreferredApplyTime","ApplyTime":"OnReset"}}`)
-	// var jsonStr = []byte(`{"Attributes":{"PowerCycleRequest":"FullPowerCycle"},"@Redfish.SettingsApplyTime":{"@odata.type":"#Settings.v1_1_0.PreferredApplyTime","ApplyTime":"Immediate"}}`)
-	// _, header, status, err := queryData(c, "PATCH", url, []byte(data))
+	var jsonStr = []byte(`{"Attributes": {"PowerCycleRequest": "FullPowerCycle"}, "@Redfish.SettingsApplyTime": {"ApplyTime": "OnReset"}}`)
 	_, header, status, err := queryData(c, "PATCH", url, jsonStr)
 
 	if err != nil {
@@ -363,9 +382,9 @@ func (c *redfishProvider) FleaDrainDell(jsonStr []byte) (string, error) {
 	}
 
 	// ablakmak clean this up after testing
-	fmt.Printf("in ClearStorageControllerRaidDell complete header is: %+v\n", header)
-	fmt.Println("in ClearStorageControllerRaidDell status is:", status)
-	fmt.Println("in ClearStorageControllerRaidDell header Location is:", header.Get("Location"))
+	fmt.Printf("in FleaDrainDell complete header is: %+v\n", header)
+	fmt.Println("in FleaDrainDell status is:", status)
+	fmt.Println("in FleaDrainDell header Location is:", header.Get("Location"))
 
 	// check if the status is 202
 	if status != http.StatusAccepted {
