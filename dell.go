@@ -480,7 +480,7 @@ func (c *redfishProvider) GetIdracLicenses() ([]LicenseData, error) {
 	}
 
 	// fall back on OEM API if generic API doesn't work
-	url = c.Hostname + "https://10.1.13.12/redfish/v1/Dell/Managers/iDRAC.Embedded.1/DellLicenseCollection"
+	url = c.Hostname + "/redfish/v1/Dell/Managers/iDRAC.Embedded.1/DellLicenseCollection"
 	resp, _, _, err = queryData(c, "GET", url, nil)
 	if err != nil {
 		return []LicenseData{}, err
