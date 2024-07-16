@@ -467,15 +467,48 @@ func (c *redfishProvider) GetIdracLicenses() ([]LicenseData, error) {
 		var y GetLicenseDell
 		json.Unmarshal(resp, &y)
 		licenseData := LicenseData{
-			AuthorizationScope: y.AuthorizationScope,
-			Description:        y.Description,
-			Id:                 y.ID,
-			LicenseType:        y.LicenseType,
-			Status:             y.Status.Health,
-			State:              y.Status.State,
+			Description: y.Description,
+			Id:          y.ID,
+			LicenseType: y.LicenseType,
+			Status:      y.Status.Health,
 		}
 		Licenses = append(Licenses, licenseData)
 	}
+
+	if len(Licenses) > 0 {
+		return Licenses, nil
+	}
+
+	// fall back on OEM API if generic API doesn't work
+	url = c.Hostname + "https://10.1.13.12/redfish/v1/Dell/Managers/iDRAC.Embedded.1/DellLicenseCollection"
+	resp, _, _, err = queryData(c, "GET", url, nil)
+	if err != nil {
+		return []LicenseData{}, err
+	}
+	json.Unmarshal(resp, &x)
+	for i := range x.Members {
+		_url := c.Hostname + x.Members[i].OdataId
+		resp, _, _, err := queryData(c, "GET", _url, nil)
+		if err != nil {
+			return []LicenseData{}, err
+		}
+		var (
+			y                  GetLicenseDellOEM
+			licenseDescription string
+		)
+		json.Unmarshal(resp, &y)
+		if len(y.LicenseDescription) > 0 {
+			licenseDescription = y.LicenseDescription[0]
+		}
+		licenseData := LicenseData{
+			Description: licenseDescription,
+			Id:          y.ID,
+			LicenseType: y.LicenseType,
+			Status:      y.LicensePrimaryStatus,
+		}
+		Licenses = append(Licenses, licenseData)
+	}
+
 	return Licenses, nil
 }
 
