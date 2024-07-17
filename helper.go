@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"regexp"
@@ -29,6 +30,7 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 	}
 	resp, err := client.Do(req)
 	if err != nil {
+		fmt.Printf("in queryData error: %s\n", err)
 		r, _ := regexp.Compile("dial tcp")
 		if r.MatchString(err.Error()) == true {
 			err := errors.New(StatusInternalServerError)
