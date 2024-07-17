@@ -138,7 +138,11 @@ func (c *redfishProvider) GetServerPowerStateDell() (string, error) {
 // works: R730xd,R740xd
 func (c *redfishProvider) CheckLoginDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
-	resp, _, _, err := queryData(c, "GET", url, nil)
+	resp, header, status, err := queryData(c, "GET", url, nil)
+	fmt.Printf("resp: %+v\n", resp)
+	fmt.Printf("header: %+v\n", header)
+	fmt.Printf("status: %+v\n", status)
+	fmt.Printf("err: %+v\n", err)
 	if err != nil {
 		return "", err
 	}
