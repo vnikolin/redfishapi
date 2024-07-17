@@ -139,15 +139,17 @@ func (c *redfishProvider) GetServerPowerStateDell() (string, error) {
 func (c *redfishProvider) CheckLoginDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
 	resp, header, status, err := queryData(c, "GET", url, nil)
-	fmt.Printf("resp: %+v\n", resp)
+	var data SystemViewDell
+	json.Unmarshal(resp, &data)
+	fmt.Printf("resp: %+v\n", data)
 	fmt.Printf("header: %+v\n", header)
 	fmt.Printf("status: %+v\n", status)
 	fmt.Printf("err: %+v\n", err)
 	if err != nil {
 		return "", err
 	}
-	var data SystemViewDell
-	json.Unmarshal(resp, &data)
+	// var data SystemViewDell
+	// json.Unmarshal(resp, &data)
 	return string(data.Status.Health), nil
 }
 
