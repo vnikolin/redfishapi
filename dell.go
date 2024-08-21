@@ -271,14 +271,38 @@ func (c *redfishProvider) GetAllJobsDell() ([]Members, error) {
 */
 func (c *redfishProvider) SetBiosSettingsDell(jsonData []byte) (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios/Settings"
-	resp, _, _, err := queryData(c, "PATCH", url, jsonData)
+
+	// var jsonStr = []byte(`{"Attributes": {"PowerCycleRequest": "FullPowerCycle"}, "@Redfish.SettingsApplyTime": {"ApplyTime": "OnReset"}}`)
+	_, header, status, err := queryData(c, "PATCH", url, jsonData)
+
 	if err != nil {
 		return "", err
 	}
-	var k JobResponseDell
-	json.Unmarshal(resp, &k)
-	return k.MessageExtendedInfo[0].Message, nil
+
+	// ablakmak clean this up after testing
+	fmt.Printf("in SetBiosSettingsDell complete header is: %+v\n", header)
+	fmt.Println("in SetBiosSettingsDell status is:", status)
+	fmt.Println("in SetBiosSettingsDell header Location is:", header.Get("Location"))
+
+	// check if the status is 202
+	if status != http.StatusAccepted {
+		return "", fmt.Errorf("unexpected status code: %d", status)
+	}
+
+	return header.Get("Location"), nil
 }
+
+// ablakmak delete this after testing
+// func (c *redfishProvider) SetBiosSettingsDell(jsonData []byte) (string, error) {
+// 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios/Settings"
+// 	resp, _, _, err := queryData(c, "PATCH", url, jsonData)
+// 	if err != nil {
+// 		return "", err
+// 	}
+// 	var k JobResponseDell
+// 	json.Unmarshal(resp, &k)
+// 	return k.MessageExtendedInfo[0].Message, nil
+// }
 
 // ClearJobsDell ... Deletes all the Jobs in the jobs queue
 func (c *redfishProvider) ClearJobsDell() (string, error) {
