@@ -279,30 +279,12 @@ func (c *redfishProvider) SetBiosSettingsDell(jsonData []byte) (string, error) {
 		return "", err
 	}
 
-	// ablakmak clean this up after testing
-	fmt.Printf("in SetBiosSettingsDell complete header is: %+v\n", header)
-	fmt.Println("in SetBiosSettingsDell status is:", status)
-	fmt.Println("in SetBiosSettingsDell header Location is:", header.Get("Location"))
-
-	// check if the status is 202
 	if status != http.StatusAccepted {
 		return "", fmt.Errorf("unexpected status code: %d", status)
 	}
 
 	return header.Get("Location"), nil
 }
-
-// ablakmak delete this after testing
-// func (c *redfishProvider) SetBiosSettingsDell(jsonData []byte) (string, error) {
-// 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios/Settings"
-// 	resp, _, _, err := queryData(c, "PATCH", url, jsonData)
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	var k JobResponseDell
-// 	json.Unmarshal(resp, &k)
-// 	return k.MessageExtendedInfo[0].Message, nil
-// }
 
 // ClearJobsDell ... Deletes all the Jobs in the jobs queue
 func (c *redfishProvider) ClearJobsDell() (string, error) {
@@ -329,19 +311,12 @@ func (c *redfishProvider) ClearJobsDellForce() (string, error) {
 	url := c.Hostname + "/redfish/v1/Dell/Managers/iDRAC.Embedded.1/DellJobService/Actions/DellJobService.DeleteJobQueue"
 	var jsonStr = []byte(`{"JobID": "JID_CLEARALL_FORCE"}`)
 
-	_, header, status, err := queryData(c, "POST", url, jsonStr)
+	_, _, status, err := queryData(c, "POST", url, jsonStr)
 
 	if err != nil {
 		return "failure", err
 	}
 
-	// ablakmak clean this up after testing
-	fmt.Printf("in ClearJobsDellForce complete header is: %+v\n", header)
-	fmt.Println("in ClearJobsDellForce status is:", status)
-	fmt.Println("in ClearJobsDellForce header Location is:", header.Get("Location"))
-
-	// check if the status is 200
-	// if status != http.StatusAccepted {
 	if status != http.StatusOK {
 		return "failure", fmt.Errorf("unexpected status code: %d", status)
 	}
@@ -391,11 +366,6 @@ func (c *redfishProvider) ClearStorageControllerRaidDell(controllerID string) (s
 		return "", fmt.Errorf("unexpected status code: %d", status)
 	}
 
-	// ablakmak clean this up after testing
-	fmt.Printf("in ClearStorageControllerRaidDell complete header is: %+v\n", header)
-	fmt.Println("in ClearStorageControllerRaidDell status is:", status)
-	fmt.Println("in ClearStorageControllerRaidDell header Location is:", header.Get("Location"))
-
 	return header.Get("Location"), nil
 }
 
@@ -410,12 +380,6 @@ func (c *redfishProvider) FleaDrainDell() (string, error) {
 		return "", err
 	}
 
-	// ablakmak clean this up after testing
-	fmt.Printf("in FleaDrainDell complete header is: %+v\n", header)
-	fmt.Println("in FleaDrainDell status is:", status)
-	fmt.Println("in FleaDrainDell header Location is:", header.Get("Location"))
-
-	// check if the status is 202
 	if status != http.StatusAccepted {
 		return "", fmt.Errorf("unexpected status code: %d", status)
 	}
