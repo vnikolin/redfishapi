@@ -2430,6 +2430,16 @@ type MemberCountDell struct {
 	Name                string    `json:"Name"`
 }
 
+// StorageControllerDell ...
+type StorageControllerDell struct {
+	OdataContext string `json:"@odata.context"`
+	OdataId      string `json:"@odata.id"`
+	OdataType    string `json:"@odata.type"`
+	Description  string `json:"Description"`
+	Name         string `json:"Name"`
+	ID           string `json:"Id"`
+}
+
 type Members struct {
 	OdataId string `json:"@odata.id"`
 }
@@ -3914,6 +3924,7 @@ type StorageRaidRawDell struct {
 type StorageRaidDetailsDell struct {
 	Name             string `json:"name"`
 	Id               string `json:"id"`
+	ControllerId     string `json:"controllerid"`
 	Layout           string `json:"raidtype"`
 	MediaType        string `json:"mediatype"`
 	DrivesCount      string `json:"drivescount"`
@@ -4256,9 +4267,10 @@ type ExportConfigStatus struct {
 			TargetSettingsURI interface{}   `json:"TargetSettingsURI"`
 		} `json:"Dell"`
 	} `json:"Oem"`
-	StartTime  string `json:"StartTime"`
-	TaskState  string `json:"TaskState"`
-	TaskStatus string `json:"TaskStatus"`
+	StartTime       string `json:"StartTime"`
+	TaskState       string `json:"TaskState"`
+	TaskStatus      string `json:"TaskStatus"`
+	PercentComplete int    `json:"PercentComplete"`
 }
 
 type ExportConfigResponse struct {

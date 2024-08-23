@@ -3,7 +3,9 @@ package redfishapi
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -16,6 +18,15 @@ const (
 	StatusUnauthorized        = "Unauthorized"
 	StatusInternalServerError = "Server Error"
 	StatusBadRequest          = "Bad Request"
+	JobStateCompleted         = "Completed"
+	JobStateFailed            = "Failed"
+	JobStateRunning           = "Running"
+	JobStateScheduled         = "Scheduled"
+	TaskStateStarting         = "Starting"
+	TaskStateRunning          = "Running"
+	TaskStateCompleted        = "Completed"
+	TaskStatusOK              = "OK"
+	TaskStatusCritical        = "Critical"
 )
 
 type RedfishProvider interface {
@@ -65,18 +76,43 @@ type RedfishProvider interface {
 	MountImageDell(image string) (string, error)
 	UnMountImageDell() (string, error)
 	GetRemoteImageStatusDell() (ImageStatusDell, error)
+	ClearStorageControllerRaidDell(controllerID string) (string, error)
+	GetJobStatusDell(jobID string) (JobStatusDell, error)
+	ClearJobsDellForce() (string, error)
+	FleaDrainDell() (string, error)
+	PowerActionServerDell(powerAction string) (string, error)
+}
+
+// ResetType@Redfish.AllowableValues
+// "On"
+// "ForceOff"
+// "ForceRestart"
+// "GracefulRestart"
+// "GracefulShutdown"
+// "PushPowerButton"
+// "Nmi"
+// "PowerCycle"
+// target: "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
+// works: R730xd,R740xd
+func (c *redfishProvider) PowerActionServerDell(powerAction string) (string, error) {
+
+	allowableActions := []string{"On", "ForceOff", "ForceRestart", "GracefulRestart", "GracefulShutdown", "PushPowerButton", "Nmi", "PowerCycle"}
+	// check if the action is valid
+	if !slices.Contains(allowableActions, powerAction) {
+		return "", fmt.Errorf("invalid power action: %s", powerAction)
+	}
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
+
+	var jsonStr = []byte(`{"ResetType": "` + powerAction + `"}`)
+	_, _, _, err := queryData(c, "POST", url, jsonStr)
+	if err != nil {
+		return "", err
+	}
+
+	return "Server " + powerAction, nil
 }
 
 // StartServerDell ...
-// ResetType@Redfish.AllowableValues
-// 0	"On"
-// 1	"ForceOff"
-// 2	"GracefulRestart"
-// 3	"GracefulShutdown"
-// 4	"PushPowerButton"
-// 5	"Nmi"
-// target: "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
-// works: R730xd,R740xd
 func (c *redfishProvider) StartServerDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
 
@@ -206,6 +242,18 @@ func (c *redfishProvider) GetJobsStatusDell() ([]JobStatusDell, error) {
 	return jobs, nil
 }
 
+// GetJobStatusDell ... Get the status of the Job
+func (c *redfishProvider) GetJobStatusDell(jobID string) (JobStatusDell, error) {
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs/" + jobID
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return JobStatusDell{}, err
+	}
+	var output JobStatusDell
+	json.Unmarshal(resp, &output)
+	return output, nil
+}
+
 func (c *redfishProvider) GetAllJobsDell() ([]Members, error) {
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs"
 	resp, _, _, err := queryData(c, "GET", url, nil)
@@ -223,13 +271,19 @@ func (c *redfishProvider) GetAllJobsDell() ([]Members, error) {
 */
 func (c *redfishProvider) SetBiosSettingsDell(jsonData []byte) (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios/Settings"
-	resp, _, _, err := queryData(c, "PATCH", url, jsonData)
+
+	// var jsonStr = []byte(`{"Attributes": {"PowerCycleRequest": "FullPowerCycle"}, "@Redfish.SettingsApplyTime": {"ApplyTime": "OnReset"}}`)
+	_, header, status, err := queryData(c, "PATCH", url, jsonData)
+
 	if err != nil {
 		return "", err
 	}
-	var k JobResponseDell
-	json.Unmarshal(resp, &k)
-	return k.MessageExtendedInfo[0].Message, nil
+
+	if status != http.StatusAccepted {
+		return "", fmt.Errorf("unexpected status code: %d", status)
+	}
+
+	return header.Get("Location"), nil
 }
 
 // ClearJobsDell ... Deletes all the Jobs in the jobs queue
@@ -249,6 +303,26 @@ func (c *redfishProvider) ClearJobsDell() (string, error) {
 		}
 	}
 	return "Jobs Deleted", nil
+}
+
+// ClearJobsDellForce ... Forces the deletion of all the Jobs in the jobs queue
+func (c *redfishProvider) ClearJobsDellForce() (string, error) {
+
+	url := c.Hostname + "/redfish/v1/Dell/Managers/iDRAC.Embedded.1/DellJobService/Actions/DellJobService.DeleteJobQueue"
+	var jsonStr = []byte(`{"JobID": "JID_CLEARALL_FORCE"}`)
+
+	_, _, status, err := queryData(c, "POST", url, jsonStr)
+
+	if err != nil {
+		return "failure", err
+	}
+
+	if status != http.StatusOK {
+		return "failure", fmt.Errorf("unexpected status code: %d", status)
+	}
+
+	return "success", nil
+
 }
 
 //SetAttributesDell ... Will set the Attributes for IDRAC,Lifecycle Attributes and System
@@ -273,6 +347,46 @@ func (c *redfishProvider) SetAttributesDell(service string, jsonData []byte) (st
 	return k.MessageExtendedInfo[0].Message, nil
 }
 
+// ClearStorageControllerRaidDell ... Clears Raid of the Storage Controller and returns the jub URL
+func (c *redfishProvider) ClearStorageControllerRaidDell(controllerID string) (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Oem/Dell/DellRaidService/Actions/DellRaidService.ResetConfig"
+
+	data, _ := json.Marshal(map[string]interface{}{
+		"TargetFQDD": controllerID,
+	})
+
+	_, header, status, err := queryData(c, "POST", url, []byte(data))
+
+	if err != nil {
+		return "", err
+	}
+
+	// check if the status is 202
+	if status != http.StatusAccepted {
+		return "", fmt.Errorf("unexpected status code: %d", status)
+	}
+
+	return header.Get("Location"), nil
+}
+
+// FleaDrainDell ... Will Flea Drain the Server at next reboot
+func (c *redfishProvider) FleaDrainDell() (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Bios/Settings"
+
+	var jsonStr = []byte(`{"Attributes": {"PowerCycleRequest": "FullPowerCycle"}, "@Redfish.SettingsApplyTime": {"ApplyTime": "OnReset"}}`)
+	_, header, status, err := queryData(c, "PATCH", url, jsonStr)
+
+	if err != nil {
+		return "", err
+	}
+
+	if status != http.StatusAccepted {
+		return "", fmt.Errorf("unexpected status code: %d", status)
+	}
+
+	return header.Get("Location"), nil
+}
+
 // GetStorageRaidDell ... Will Fetch the Storage Raid Details
 func (c *redfishProvider) GetStorageRaidDell() ([]StorageRaidDetailsDell, error) {
 
@@ -291,13 +405,23 @@ func (c *redfishProvider) GetStorageRaidDell() ([]StorageRaidDetailsDell, error)
 	json.Unmarshal(resp, &x)
 	for i := range x.Members {
 
+		// check controller
+		controllerUrl := c.Hostname + x.Members[i].OdataId
+		respController, _, _, err := queryData(c, "GET", controllerUrl, nil)
+		if err != nil {
+			return nil, err
+		}
+		var storageControllerDell StorageControllerDell
+		json.Unmarshal(respController, &storageControllerDell)
+
+		// check volumes
 		_url := c.Hostname + x.Members[i].OdataId + "/Volumes"
-		resp, _, _, err := queryData(c, "GET", _url, nil)
+		respVolumes, _, _, err := queryData(c, "GET", _url, nil)
 		if err != nil {
 			return nil, err
 		}
 		var y MemberCountDell
-		json.Unmarshal(resp, &y)
+		json.Unmarshal(respVolumes, &y)
 
 		for i := range y.Members {
 
@@ -313,6 +437,7 @@ func (c *redfishProvider) GetStorageRaidDell() ([]StorageRaidDetailsDell, error)
 			raidDevice := StorageRaidDetailsDell{
 				Name:             z.Name,
 				Id:               z.Id,
+				ControllerId:     storageControllerDell.ID,
 				Layout:           z.RAIDType,
 				MediaType:        z.Oem.Dell.DellVirtualDisk.MediaType,
 				DrivesCount:      strconv.Itoa(z.Links.DrivesCount),
