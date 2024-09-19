@@ -86,6 +86,7 @@ type RedfishProvider interface {
 	ClearJobsDellForce() (string, error)
 	FleaDrainDell() (string, error)
 	PowerActionServerDell(powerAction string) (string, error)
+	UpdateFirmwareDell(firmwareDir string, firmwareFile string) (string, error)
 }
 
 // ResetType@Redfish.AllowableValues
