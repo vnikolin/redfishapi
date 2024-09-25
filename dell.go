@@ -23,6 +23,7 @@ const (
 	StatusUnauthorized        = "Unauthorized"
 	StatusInternalServerError = "Server Error"
 	StatusBadRequest          = "Bad Request"
+	StatusUnreachable         = "Unreachable"
 	JobStateCompleted         = "Completed"
 	JobStateFailed            = "Failed"
 	JobStateRunning           = "Running"

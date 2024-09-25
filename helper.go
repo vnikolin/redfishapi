@@ -34,7 +34,7 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 	if err != nil {
 		r, _ := regexp.Compile("dial tcp")
 		if r.MatchString(err.Error()) == true {
-			err := errors.New(StatusInternalServerError)
+			err := errors.New(StatusUnreachable)
 			return nil, nil, 0, err
 		}
 		return nil, nil, 0, err
