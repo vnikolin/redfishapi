@@ -60,7 +60,7 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 }
 
 // postForm ... will make REST POST request with form data
-func postForm(c *redfishProvider, link string, form *bytes.Buffer, contentType string) ([]byte, http.Header, int, error) { // ablakmak checking here...
+func postForm(c *redfishProvider, link string, form *bytes.Buffer, contentType string) ([]byte, http.Header, int, error) {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	req, err := http.NewRequest("POST", link, form)
 	if err != nil {
