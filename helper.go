@@ -5,9 +5,12 @@ import (
 	"crypto/tls"
 	"encoding/base64"
 	"errors"
+	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"strings"
 	"time"
 )
 
@@ -31,7 +34,7 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 	if err != nil {
 		r, _ := regexp.Compile("dial tcp")
 		if r.MatchString(err.Error()) == true {
-			err := errors.New(StatusInternalServerError)
+			err := errors.New(StatusUnreachable)
 			return nil, nil, 0, err
 		}
 		return nil, nil, 0, err
@@ -54,4 +57,50 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 	}
 
 	return _body, resp.Header, resp.StatusCode, nil
+}
+
+// postForm ... will make REST POST request with form data
+func postForm(c *redfishProvider, link string, form *bytes.Buffer, contentType string) ([]byte, http.Header, int, error) {
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	req, err := http.NewRequest("POST", link, form)
+	if err != nil {
+		return nil, nil, 0, err
+	}
+
+	req.Header.Set("Content-Type", contentType)
+	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
+
+	client := &http.Client{
+		Timeout: time.Second * 300,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		r, _ := regexp.Compile("dial tcp")
+		if r.MatchString(err.Error()) {
+			err := fmt.Errorf("postForm: %s", strings.ToLower(StatusInternalServerError))
+			return nil, nil, 0, err
+		}
+		return nil, nil, 0, err
+	}
+
+	// fmt.Printf("Response: %+v\n", resp)
+
+	if resp.StatusCode != 202 {
+		if resp.StatusCode == 401 {
+			err := fmt.Errorf("postForm: %s", strings.ToLower(StatusUnauthorized))
+			return nil, resp.Header, resp.StatusCode, err
+		} else if resp.StatusCode == 400 {
+			err := fmt.Errorf("postForm: %s", strings.ToLower(StatusBadRequest))
+			return nil, resp.Header, resp.StatusCode, err
+		}
+
+	}
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, nil, resp.StatusCode, err
+	}
+
+	return respBody, resp.Header, resp.StatusCode, nil
 }

@@ -1,9 +1,14 @@
 package redfishapi
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"mime/multipart"
 	"net/http"
+	"net/textproto"
+	"os"
 	"regexp"
 	"slices"
 	"strconv"
@@ -18,6 +23,7 @@ const (
 	StatusUnauthorized        = "Unauthorized"
 	StatusInternalServerError = "Server Error"
 	StatusBadRequest          = "Bad Request"
+	StatusUnreachable         = "Unreachable"
 	JobStateCompleted         = "Completed"
 	JobStateFailed            = "Failed"
 	JobStateRunning           = "Running"
@@ -81,6 +87,7 @@ type RedfishProvider interface {
 	ClearJobsDellForce() (string, error)
 	FleaDrainDell() (string, error)
 	PowerActionServerDell(powerAction string) (string, error)
+	UpdateFirmwareDell(firmwareDir string, firmwareFile string) (string, error)
 }
 
 // ResetType@Redfish.AllowableValues
@@ -1669,4 +1676,54 @@ func (c *redfishProvider) GetRemoteImageStatusDell() (ImageStatusDell, error) {
 	json.Unmarshal(resp, &x)
 
 	return x, nil
+}
+
+// UpdateFirmwareDell ... will update Dell server firmware
+func (c *redfishProvider) UpdateFirmwareDell(firmwareDir string, firmwareFile string) (string, error) {
+
+	url := c.Hostname + "/redfish/v1/UpdateService/MultipartUpload"
+	form := new(bytes.Buffer)
+	writer := multipart.NewWriter(form)
+
+	// added the below to create custom form field since CreateFormField doesn't set the Content-Type
+	h := make(textproto.MIMEHeader)
+	h.Set("Content-Disposition", `form-data; name="UpdateParameters"`)
+	h.Set("Content-Type", "application/json")
+	formField, err := writer.CreatePart(h)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = formField.Write([]byte(`{"@Redfish.OperationApplyTime":"Immediate"}`))
+	if err != nil {
+		return "", err
+	}
+
+	fw, err := writer.CreateFormFile("UpdateFile", firmwareFile)
+	if err != nil {
+		return "", err
+	}
+	fd, err := os.Open(firmwareDir + "/" + firmwareFile)
+	if err != nil {
+		return "", err
+	}
+	defer fd.Close()
+	_, err = io.Copy(fw, fd)
+	if err != nil {
+		return "", err
+	}
+
+	writer.Close()
+
+	_, header, status, err := postForm(c, url, form, writer.FormDataContentType())
+
+	if err != nil {
+		return "", err
+	}
+
+	if status != http.StatusAccepted {
+		return "", fmt.Errorf("unexpected status code: %d", status)
+	}
+
+	return header.Get("Location"), nil
 }
