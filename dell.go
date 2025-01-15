@@ -189,7 +189,7 @@ func (c *redfishProvider) CheckLoginDell() (string, bool, error) {
 	// check if c.Certificate is not empty
 	if c.Certificate != "" {
 		// check if the certificate works
-		resp, _, _, err := queryData(c, "GET", url, nil)
+		resp, _, _, err := queryDataForce(c, "GET", url, nil)
 		if err == nil {
 			json.Unmarshal(resp, &data)
 			return string(data.Status.Health), true, nil
@@ -202,7 +202,7 @@ func (c *redfishProvider) CheckLoginDell() (string, bool, error) {
 		c.Certificate = ""
 	}
 
-	resp, _, _, err := queryData(c, "GET", url, nil)
+	resp, _, _, err := queryDataForce(c, "GET", url, nil)
 	if err != nil {
 		return "", false, err
 	}
