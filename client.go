@@ -26,7 +26,7 @@ type redfishProvider struct {
 }
 
 // NewRedfishProvider ... Initializes the Constructor with the above variables
-func NewRedfishProvider(hostname string, username string, password string, certificate string, insecureSkipVerify bool) RedfishProvider {
+func NewRedfishProvider(hostname string, username string, password string, certificate string) RedfishProvider {
 
 	return &redfishProvider{
 		Hostname:    hostname,
