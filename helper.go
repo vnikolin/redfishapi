@@ -3,6 +3,7 @@ package redfishapi
 import (
 	"bytes"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -22,8 +23,19 @@ func basicAuth(username, password string) string {
 
 // queryData ... will make REST verbs based on the url
 func queryData(c *redfishProvider, call string, link string, data []byte) ([]byte, http.Header, int, error) {
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	// http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	// add certificat check logic here
+	if c.Certificate != "" {
+		certPool := x509.NewCertPool()
+		certPool.AppendCertsFromPEM([]byte(c.Certificate))
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: false, RootCAs: certPool}
+	} else {
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
 	req, err := http.NewRequest(call, link, bytes.NewBuffer(data))
+	if err != nil {
+		return nil, nil, 0, err
+	}
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
 	req.Header.Add("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
@@ -33,7 +45,7 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 	resp, err := client.Do(req)
 	if err != nil {
 		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) == true {
+		if r.MatchString(err.Error()) {
 			err := errors.New(StatusUnreachable)
 			return nil, nil, 0, err
 		}
@@ -61,7 +73,15 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 
 // postForm ... will make REST POST request with form data
 func postForm(c *redfishProvider, link string, form *bytes.Buffer, contentType string) ([]byte, http.Header, int, error) {
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	// http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	// add certificat check logic here
+	if c.Certificate != "" {
+		certPool := x509.NewCertPool()
+		certPool.AppendCertsFromPEM([]byte(c.Certificate))
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: false, RootCAs: certPool}
+	} else {
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
 	req, err := http.NewRequest("POST", link, form)
 	if err != nil {
 		return nil, nil, 0, err
