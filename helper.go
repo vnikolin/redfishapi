@@ -9,11 +9,16 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 	"time"
 )
+
+// Initialize logger
+var logger = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 // basicAuth ... will create the basicauth encoded string for the credentials
 func basicAuth(username, password string) string {
@@ -53,7 +58,7 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 				return nil, nil, 0, err
 			}
 			// return nil, nil, 0, err
-			fmt.Printf("ablakmak errored out in queryData for %s\n", link)
+			logger.Printf("ablakmak errored out in queryData for %s\n", link)
 			continue
 		}
 		defer resp.Body.Close()
@@ -87,10 +92,12 @@ func queryDataForce(c *redfishProvider, call string, link string, data []byte) (
 		certPool := x509.NewCertPool()
 		certPool.AppendCertsFromPEM([]byte(c.Certificate))
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: false, RootCAs: certPool}
-		fmt.Printf("ablakmak testing queryDataForce with certificate for %s\n", link)
+		// fmt.Printf("ablakmak testing queryDataForce with certificate for %s\n", link)
+		logger.Printf("ablakmak testing queryDataForce with certificate for %s\n", link)
 	} else {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-		fmt.Printf("ablakmak testing queryDataForce without certificate for %s\n", link)
+		// fmt.Printf("ablakmak testing queryDataForce without certificate for %s\n", link)
+		logger.Printf("ablakmak testing queryDataForce without certificate for %s\n", link)
 	}
 	req, err := http.NewRequest(call, link, bytes.NewBuffer(data))
 	if err != nil {
