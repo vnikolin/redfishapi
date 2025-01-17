@@ -185,19 +185,22 @@ func (c *redfishProvider) CheckLoginDell() (string, bool, error) {
 		data SystemViewDell
 		url  = c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
 	)
-	// url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
-	// check if c.Certificate is not empty
+
+	// if c.Certificate is there check if the certificate works
 	if c.Certificate != "" {
-		// check if the certificate works
 		resp, _, _, err := queryDataForce(c, "GET", url, nil)
 		if err == nil {
 			json.Unmarshal(resp, &data)
 			return string(data.Status.Health), true, nil
 		}
 		// check if error is StatusUnreachable, Unauthorized or BadRequest
-		if err.Error() == StatusUnreachable || err.Error() == StatusUnauthorized || err.Error() == StatusBadRequest {
+		if err.Error() == StatusUnauthorized || err.Error() == StatusBadRequest {
 			return "", true, err
 		}
+		if err.Error() == StatusUnreachable {
+			return "", false, err
+		}
+		// if we made it here certificate is not valid
 		// zero value of c.Certificate to avoid further certificate check falling back to insecureSkipVerify
 		c.Certificate = ""
 	}
