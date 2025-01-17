@@ -19,17 +19,19 @@ package redfishapi
 
 // redfishProvider ... Contstructor required Variables
 type redfishProvider struct {
-	Hostname string
-	Username string
-	Password string
+	Hostname    string
+	Username    string
+	Password    string
+	Certificate string
 }
 
 // NewRedfishProvider ... Initializes the Constructor with the above variables
-func NewRedfishProvider(hostname string, username string, password string) RedfishProvider {
+func NewRedfishProvider(hostname string, username string, password string, certificate string) RedfishProvider {
 
 	return &redfishProvider{
-		Hostname: hostname,
-		Username: username,
-		Password: password,
+		Hostname:    hostname,
+		Username:    username,
+		Password:    password,
+		Certificate: certificate,
 	}
 }

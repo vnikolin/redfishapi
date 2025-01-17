@@ -40,7 +40,7 @@ type RedfishProvider interface {
 	StopServerDell() (string, error)
 	GracefulRestartDell() (string, error)
 	GetServerPowerStateDell() (string, error)
-	CheckLoginDell() (string, error)
+	CheckLoginDell() (string, bool, error)
 	ImportConfigDell(jsonData []byte) (string, error)
 	CreateJobDell(jsonData []byte) (string, error)
 	GetJobsStatusDell() ([]JobStatusDell, error)
@@ -178,16 +178,40 @@ func (c *redfishProvider) GetServerPowerStateDell() (string, error) {
 }
 
 // CheckLoginDell ... Will check the credentials of the Server
-// works: R730xd,R740xd
-func (c *redfishProvider) CheckLoginDell() (string, error) {
-	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
-	resp, _, _, err := queryData(c, "GET", url, nil)
-	if err != nil {
-		return "", err
+// works: R730xd,R740xd,R650,R750,R660,R760
+func (c *redfishProvider) CheckLoginDell() (string, bool, error) {
+	var (
+		resp []byte
+		data SystemViewDell
+		url  = c.Hostname + "/redfish/v1/Systems/System.Embedded.1"
+	)
+
+	// if c.Certificate is there check if the certificate works
+	if c.Certificate != "" {
+		resp, _, _, err := queryDataForce(c, "GET", url, nil)
+		if err == nil {
+			json.Unmarshal(resp, &data)
+			return string(data.Status.Health), true, nil
+		}
+		// check if error is StatusUnreachable, Unauthorized or BadRequest
+		if err.Error() == StatusUnauthorized || err.Error() == StatusBadRequest {
+			return "", true, err
+		}
+		if err.Error() == StatusUnreachable {
+			return "", false, err
+		}
+		// if we made it here certificate is not valid
+		// zero value of c.Certificate to avoid further certificate check falling back to insecureSkipVerify
+		c.Certificate = ""
 	}
-	var data SystemViewDell
+
+	resp, _, _, err := queryDataForce(c, "GET", url, nil)
+	if err != nil {
+		return "", false, err
+	}
+
 	json.Unmarshal(resp, &data)
-	return string(data.Status.Health), nil
+	return string(data.Status.Health), false, nil
 }
 
 //ImportConfigDell ... Importing the configurations to Server
