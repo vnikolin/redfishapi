@@ -55,7 +55,6 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 				err := errors.New(StatusUnreachable)
 				return nil, nil, 0, err
 			}
-			// return nil, nil, 0, err
 			// fmt.Printf("errored out in queryData for %s\n", link)
 			continue
 		}
@@ -70,7 +69,6 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 			}
 
 		}
-		// defer resp.Body.Close()
 
 		_body, _ := ioutil.ReadAll(resp.Body)
 		if err != nil {
@@ -84,16 +82,15 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 
 // queryDataForce ... will make REST verbs based on the url without retrying
 func queryDataForce(c *redfishProvider, call string, link string, data []byte) ([]byte, http.Header, int, error) {
-	// http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	// add certificat check logic here
+
 	if c.Certificate != "" {
 		certPool := x509.NewCertPool()
 		certPool.AppendCertsFromPEM([]byte(c.Certificate))
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: false, RootCAs: certPool}
-		// fmt.Printf("ablakmak testing queryDataForce with certificate for %s\n", link)
+		// fmt.Printf("testing queryDataForce with certificate for %s\n", link)
 	} else {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-		// fmt.Printf("ablakmak testing queryDataForce without certificate for %s\n", link)
+		// fmt.Printf("testing queryDataForce without certificate for %s\n", link)
 	}
 	req, err := http.NewRequest(call, link, bytes.NewBuffer(data))
 	if err != nil {
@@ -137,8 +134,7 @@ func queryDataForce(c *redfishProvider, call string, link string, data []byte) (
 
 // postForm ... will make REST POST request with form data
 func postForm(c *redfishProvider, link string, form *bytes.Buffer, contentType string) ([]byte, http.Header, int, error) {
-	// http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	// add certificat check logic here
+
 	if c.Certificate != "" {
 		certPool := x509.NewCertPool()
 		certPool.AppendCertsFromPEM([]byte(c.Certificate))
