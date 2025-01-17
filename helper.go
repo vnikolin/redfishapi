@@ -26,8 +26,7 @@ func basicAuth(username, password string) string {
 
 // queryData ... will make REST verbs based on the url
 func queryData(c *redfishProvider, call string, link string, data []byte) ([]byte, http.Header, int, error) {
-	// http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	// add certificat check logic here
+
 	var err error
 	for i := 0; i < 2; i++ {
 		if c.Certificate != "" && i == 0 {
