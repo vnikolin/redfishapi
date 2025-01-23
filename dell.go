@@ -39,6 +39,7 @@ type RedfishProvider interface {
 	StartServerDell() (string, error)
 	StopServerDell() (string, error)
 	GracefulRestartDell() (string, error)
+	ResetSSLConfig() (string, error)
 	GetServerPowerStateDell() (string, error)
 	CheckLoginDell() (string, bool, error)
 	ImportConfigDell(jsonData []byte) (string, error)
@@ -157,6 +158,22 @@ func (c *redfishProvider) GracefulRestartDell() (string, error) {
 	}
 
 	return "Idrac Reset", nil
+
+}
+
+// ResetSSLConfig ... Will reset SSL configuration to factory default
+func (c *redfishProvider) ResetSSLConfig() (string, error) {
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Oem/Dell/DelliDRACCardService/Actions/DelliDRACCardService.SSLResetCfg"
+
+	var jsonStr = []byte(`{}`)
+	// payload := "{}"
+	// []byte(payload)
+	_, _, _, err := queryData(c, "POST", url, jsonStr)
+	if err != nil {
+		return "", err
+	}
+
+	return "SSL Reset", nil
 
 }
 
