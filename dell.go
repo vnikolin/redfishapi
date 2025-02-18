@@ -69,7 +69,8 @@ type RedfishProvider interface {
 	GetLifecycleAttrDell() (LifeCycleData, error)
 	ListUsersDell() ([]UserListDell, error)
 	CreateUserDell(num int, username string, password string, role string, status bool) (string, error)
-	DeleteUserDell(num int, role string, status bool) (string, error)
+	// DeleteUserDell(num int, role string, status bool) (string, error)
+	DeleteUserDell(num int) (string, error)
 	GetIDRACAttrDell() (IDRACAttributesData, error)
 	GetSysAttrDell() (SysAttributesData, error)
 	GetBootOrderDell() ([]BootOrderData, error)
@@ -1294,11 +1295,15 @@ func (c *redfishProvider) CreateUserDell(num int, username string, password stri
 }
 
 // DeleteUserDell ... will delete a user
-func (c *redfishProvider) DeleteUserDell(num int, role string, status bool) (string, error) {
+// func (c *redfishProvider) DeleteUserDell(num int, role string, status bool) (string, error) {
+func (c *redfishProvider) DeleteUserDell(num int) (string, error) {
 	url := fmt.Sprintf("%s/redfish/v1/Managers/iDRAC.Embedded.1/Accounts/%d", c.Hostname, num)
+	// data, _ := json.Marshal(map[string]interface{}{
+	// 	"Enabled":  status,
+	// })
 	data, _ := json.Marshal(map[string]interface{}{
-		"Enabled": status,
-		"RoleId":  role,
+		"Enabled":  false,
+		"UserName": "",
 	})
 
 	resp, _, _, err := queryData(c, "PATCH", url, []byte(data))
