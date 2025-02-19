@@ -4331,7 +4331,7 @@ type UserListResponseDell struct {
 	_odata_type    string `json:"@odata.type"`
 	Description    string `json:"Description"`
 	Enabled        bool   `json:"Enabled"`
-	ID             string `json:"Id"`
+	Id             string `json:"Id"`
 	Links          struct {
 		Role struct {
 			_odata_id string `json:"@odata.id"`
@@ -4346,6 +4346,7 @@ type UserListResponseDell struct {
 
 type UserListDell struct {
 	UserName string `json:"UserName"`
+	Id       string `json:"Id"`
 	RoleID   string `json:"RoleId"`
 	Enabled  bool   `json:"Enabled"`
 	Locked   bool   `json:"Locked"`

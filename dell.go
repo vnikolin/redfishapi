@@ -1270,6 +1270,7 @@ func (c *redfishProvider) ListUsersDell() ([]UserListDell, error) {
 
 		userData := UserListDell{
 			UserName: y.UserName,
+			Id:       y.Id,
 			RoleID:   y.RoleID,
 			Enabled:  y.Enabled,
 			Locked:   y.Locked,
