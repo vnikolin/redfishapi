@@ -39,6 +39,7 @@ type RedfishProvider interface {
 	StartServerDell() (string, error)
 	StopServerDell() (string, error)
 	GracefulRestartDell() (string, error)
+	ResetSSLConfigDell() (string, error)
 	GetServerPowerStateDell() (string, error)
 	CheckLoginDell() (string, bool, error)
 	ImportConfigDell(jsonData []byte) (string, error)
@@ -68,7 +69,7 @@ type RedfishProvider interface {
 	GetLifecycleAttrDell() (LifeCycleData, error)
 	ListUsersDell() ([]UserListDell, error)
 	CreateUserDell(num int, username string, password string, role string, status bool) (string, error)
-	DeleteUserDell(num int, role string, status bool) (string, error)
+	DeleteUserDell(num int) (string, error)
 	GetIDRACAttrDell() (IDRACAttributesData, error)
 	GetSysAttrDell() (SysAttributesData, error)
 	GetBootOrderDell() ([]BootOrderData, error)
@@ -160,6 +161,20 @@ func (c *redfishProvider) GracefulRestartDell() (string, error) {
 
 }
 
+// ResetSSLConfigDell ... Will reset SSL configuration to factory default
+func (c *redfishProvider) ResetSSLConfigDell() (string, error) {
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Oem/Dell/DelliDRACCardService/Actions/DelliDRACCardService.SSLResetCfg"
+
+	var jsonStr = []byte(`{}`)
+	_, _, _, err := queryData(c, "POST", url, jsonStr)
+	if err != nil {
+		return "", err
+	}
+
+	return "SSL Reset", nil
+
+}
+
 // GetServerPowerStateDell ... Will fetch the current state of the Server
 // works: R730xd,R740xd
 func (c *redfishProvider) GetServerPowerStateDell() (string, error) {
@@ -248,7 +263,11 @@ func (c *redfishProvider) CreateJobDell(jsonData []byte) (string, error) {
 	}
 	var k JobResponseDell
 	json.Unmarshal(resp, &k)
-	return k.MessageExtendedInfo[0].Message, nil
+	if len(k.MessageExtendedInfo) > 0 {
+		return k.MessageExtendedInfo[0].Message, nil
+	} else {
+		return "", nil
+	}
 }
 
 func (c *redfishProvider) GetJobsStatusDell() ([]JobStatusDell, error) {
@@ -375,7 +394,11 @@ func (c *redfishProvider) SetAttributesDell(service string, jsonData []byte) (st
 	}
 	var k JobResponseDell
 	json.Unmarshal(resp, &k)
-	return k.MessageExtendedInfo[0].Message, nil
+	if len(k.MessageExtendedInfo) > 0 {
+		return k.MessageExtendedInfo[0].Message, nil
+	} else {
+		return "", nil
+	}
 }
 
 // ClearStorageControllerRaidDell ... Clears Raid of the Storage Controller and returns the jub URL
@@ -1247,6 +1270,7 @@ func (c *redfishProvider) ListUsersDell() ([]UserListDell, error) {
 
 		userData := UserListDell{
 			UserName: y.UserName,
+			Id:       y.Id,
 			RoleID:   y.RoleID,
 			Enabled:  y.Enabled,
 			Locked:   y.Locked,
@@ -1273,15 +1297,19 @@ func (c *redfishProvider) CreateUserDell(num int, username string, password stri
 	}
 	var k JobResponseDell
 	json.Unmarshal(resp, &k)
-	return k.MessageExtendedInfo[0].Message, nil
+	if len(k.MessageExtendedInfo) > 0 {
+		return k.MessageExtendedInfo[0].Message, nil
+	} else {
+		return "", nil
+	}
 }
 
-// DeleteUserDell ... will delete a user
-func (c *redfishProvider) DeleteUserDell(num int, role string, status bool) (string, error) {
+// DeleteUserDell ... will delete a user based on ID number
+func (c *redfishProvider) DeleteUserDell(num int) (string, error) {
 	url := fmt.Sprintf("%s/redfish/v1/Managers/iDRAC.Embedded.1/Accounts/%d", c.Hostname, num)
 	data, _ := json.Marshal(map[string]interface{}{
-		"Enabled": status,
-		"RoleId":  role,
+		"Enabled":  false,
+		"UserName": "",
 	})
 
 	resp, _, _, err := queryData(c, "PATCH", url, []byte(data))
@@ -1290,7 +1318,11 @@ func (c *redfishProvider) DeleteUserDell(num int, role string, status bool) (str
 	}
 	var k JobResponseDell
 	json.Unmarshal(resp, &k)
-	return k.MessageExtendedInfo[0].Message, nil
+	if len(k.MessageExtendedInfo) > 0 {
+		return k.MessageExtendedInfo[0].Message, nil
+	} else {
+		return "", nil
+	}
 }
 
 // GetIDRACAttrDell ... will fetch the Idrac attributes
