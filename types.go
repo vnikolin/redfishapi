@@ -3936,15 +3936,16 @@ type StorageRaidDetailsDell struct {
 
 // MACData ...
 type MACData struct {
-	MacAddress   string `json:"macaddress"`
-	Name         string `json:"name"`
-	Description  string `json:"description"`
-	Status       string `json:"status"`
-	State        string `json:"state"`
-	Vlan         string `json:"vlan"`
-	PartNumber   string `json:"partnumber"`
-	SerialNumber string `json:"serialnumber"`
-	VendorName   string `json:"verndorname"`
+	MacAddress           string `json:"macaddress"`
+	Name                 string `json:"name"`
+	Description          string `json:"description"`
+	Status               string `json:"status"`
+	State                string `json:"state"`
+	Vlan                 string `json:"vlan"`
+	PartNumber           string `json:"partnumber"`
+	SerialNumber         string `json:"serialnumber"`
+	VendorName           string `json:"verndorname"`
+	CurrentLinkSpeedMbps int64  `json:"currentlinkspeedmbps"`
 }
 
 // LicenseData ...
