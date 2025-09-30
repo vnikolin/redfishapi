@@ -89,6 +89,7 @@ type RedfishProvider interface {
 	FleaDrainDell() (string, error)
 	PowerActionServerDell(powerAction string) (string, error)
 	UpdateFirmwareDell(firmwareDir string, firmwareFile string) (string, error)
+	CatalogUpdateDell(jsonData []byte) (string, error)
 }
 
 // ResetType@Redfish.AllowableValues
@@ -333,6 +334,25 @@ func (c *redfishProvider) SetBiosSettingsDell(jsonData []byte) (string, error) {
 		return "", fmt.Errorf("unexpected status code: %d", status)
 	}
 
+	return header.Get("Location"), nil
+}
+
+func (c *redfishProvider) CatalogUpdateDell(jsonData []byte) (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Oem/Dell/DellSoftwareInstallationService/Actions/DellSoftwareInstallationService.InstallFromRepository"
+
+	// var jsonStr = []byte(`{"Attributes": {"PowerCycleRequest": "FullPowerCycle"}, "@Redfish.SettingsApplyTime": {"ApplyTime": "OnReset"}}`)
+	_, header, status, err := queryData(c, "POST", url, jsonData)
+
+	if err != nil {
+		return "", err
+	}
+
+	if status != http.StatusAccepted && status != http.StatusOK {
+		return "", fmt.Errorf("unexpected status code: %d", status)
+	}
+
+	// print out complete header for debugging
+	fmt.Printf("ablakmak header is: %+v\n", header)
 	return header.Get("Location"), nil
 }
 
