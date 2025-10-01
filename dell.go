@@ -353,7 +353,7 @@ func (c *redfishProvider) CatalogUpdateDell(jsonData []byte) (string, error) {
 	}
 
 	// print out complete header for debugging
-	fmt.Printf("ablakmak header is: %+v\n", header)
+	// fmt.Printf("ablakmak header is: %+v\n", header)
 	return header.Get("Location"), nil
 }
 
@@ -361,7 +361,8 @@ func (c *redfishProvider) GetCatalogUpdateListDell(jsonData []byte) (string, err
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Oem/Dell/DellSoftwareInstallationService/Actions/DellSoftwareInstallationService.GetRepoBasedUpdateList"
 
 	// var jsonStr = []byte(`{"Attributes": {"PowerCycleRequest": "FullPowerCycle"}, "@Redfish.SettingsApplyTime": {"ApplyTime": "OnReset"}}`)
-	response, header, status, err := queryData(c, "POST", url, jsonData)
+	// response, header, status, err := queryData(c, "POST", url, jsonData)
+	response, _, status, err := queryData(c, "POST", url, jsonData)
 
 	if err != nil {
 		return "", err
@@ -372,19 +373,19 @@ func (c *redfishProvider) GetCatalogUpdateListDell(jsonData []byte) (string, err
 	}
 
 	// print out complete header for debugging
-	fmt.Printf("ablakmak header is: %+v\n", header)
+	//fmt.Printf("ablakmak header is: %+v\n", header)
 	//return header.Get("Location"), nil
-	fmt.Println("ablakmak response is: ", string(response))
+	//fmt.Println("ablakmak response is: ", string(response))
 
-	var prettyJSON bytes.Buffer
-	err = json.Indent(&prettyJSON, response, "", "  ")
-	if err != nil {
-		fmt.Println("Failed to format JSON:", err)
-		return string(response), err
-	} else {
-		fmt.Println("ablakmak response (formatted JSON):")
-		fmt.Println(prettyJSON.String())
-	}
+	// var prettyJSON bytes.Buffer
+	// err = json.Indent(&prettyJSON, response, "", "  ")
+	// if err != nil {
+	// 	fmt.Println("Failed to format JSON:", err)
+	// 	return string(response), err
+	// } else {
+	// 	fmt.Println("ablakmak response (formatted JSON):")
+	// 	fmt.Println(prettyJSON.String())
+	// }
 
 	return string(response), nil
 }
