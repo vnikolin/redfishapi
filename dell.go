@@ -361,7 +361,7 @@ func (c *redfishProvider) GetCatalogUpdateListDell(jsonData []byte) (string, err
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Oem/Dell/DellSoftwareInstallationService/Actions/DellSoftwareInstallationService.GetRepoBasedUpdateList"
 
 	// var jsonStr = []byte(`{"Attributes": {"PowerCycleRequest": "FullPowerCycle"}, "@Redfish.SettingsApplyTime": {"ApplyTime": "OnReset"}}`)
-	response, header, status, err := queryData(c, "POST", url, nil)
+	response, header, status, err := queryData(c, "POST", url, jsonData)
 
 	if err != nil {
 		return "", err
