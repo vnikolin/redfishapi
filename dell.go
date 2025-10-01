@@ -90,6 +90,7 @@ type RedfishProvider interface {
 	PowerActionServerDell(powerAction string) (string, error)
 	UpdateFirmwareDell(firmwareDir string, firmwareFile string) (string, error)
 	CatalogUpdateDell(jsonData []byte) (string, error)
+	GetCatalogUpdateListDell(jsonData []byte) (string, error)
 }
 
 // ResetType@Redfish.AllowableValues
