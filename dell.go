@@ -356,6 +356,38 @@ func (c *redfishProvider) CatalogUpdateDell(jsonData []byte) (string, error) {
 	return header.Get("Location"), nil
 }
 
+func (c *redfishProvider) GetCatalogUpdateListDell(jsonData []byte) (string, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Oem/Dell/DellSoftwareInstallationService/Actions/DellSoftwareInstallationService.GetRepoBasedUpdateList"
+
+	// var jsonStr = []byte(`{"Attributes": {"PowerCycleRequest": "FullPowerCycle"}, "@Redfish.SettingsApplyTime": {"ApplyTime": "OnReset"}}`)
+	response, header, status, err := queryData(c, "POST", url, nil)
+
+	if err != nil {
+		return "", err
+	}
+
+	if status != http.StatusAccepted && status != http.StatusOK {
+		return "", fmt.Errorf("unexpected status code: %d", status)
+	}
+
+	// print out complete header for debugging
+	fmt.Printf("ablakmak header is: %+v\n", header)
+	//return header.Get("Location"), nil
+	fmt.Println("ablakmak response is: ", string(response))
+
+	var prettyJSON bytes.Buffer
+	err = json.Indent(&prettyJSON, response, "", "  ")
+	if err != nil {
+		fmt.Println("Failed to format JSON:", err)
+		return string(response), err
+	} else {
+		fmt.Println("ablakmak response (formatted JSON):")
+		fmt.Println(prettyJSON.String())
+	}
+
+	return string(response), nil
+}
+
 // ClearJobsDell ... Deletes all the Jobs in the jobs queue
 func (c *redfishProvider) ClearJobsDell() (string, error) {
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs"
