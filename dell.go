@@ -88,7 +88,7 @@ type RedfishProvider interface {
 	ClearJobsDellForce() (string, error)
 	FleaDrainDell() (string, error)
 	PowerActionServerDell(powerAction string) (string, error)
-	UpdateFirmwareDell(firmwareDir string, firmwareFile string) (string, error)
+	UpdateFirmwareDell(firmwareDir string, firmwareFile string, immediate bool) (string, error)
 	CatalogUpdateDell(jsonData []byte) (string, error)
 	GetCatalogUpdateListDell(jsonData []byte) (string, error)
 }
@@ -1790,7 +1790,7 @@ func (c *redfishProvider) GetRemoteImageStatusDell() (ImageStatusDell, error) {
 }
 
 // UpdateFirmwareDell ... will update Dell server firmware
-func (c *redfishProvider) UpdateFirmwareDell(firmwareDir string, firmwareFile string) (string, error) {
+func (c *redfishProvider) UpdateFirmwareDell(firmwareDir string, firmwareFile string, immediate bool) (string, error) {
 
 	url := c.Hostname + "/redfish/v1/UpdateService/MultipartUpload"
 	form := new(bytes.Buffer)
@@ -1805,7 +1805,16 @@ func (c *redfishProvider) UpdateFirmwareDell(firmwareDir string, firmwareFile st
 		return "", err
 	}
 
-	_, err = formField.Write([]byte(`{"@Redfish.OperationApplyTime":"Immediate"}`))
+	// check if immediate is true and use `{"@Redfish.OperationApplyTime":"Immediate"}`, else use `{"@Redfish.OperationApplyTime":"OnReset"}`
+	if immediate {
+		_, err = formField.Write([]byte(`{"@Redfish.OperationApplyTime":"Immediate"}`))
+	} else {
+		_, err = formField.Write([]byte(`{"@Redfish.OperationApplyTime":"OnReset"}`))
+	}
+	// _, err = formField.Write([]byte(`{"@Redfish.OperationApplyTime":"Immediate"}`))
+	if err != nil {
+		return "", err
+	}
 	if err != nil {
 		return "", err
 	}
