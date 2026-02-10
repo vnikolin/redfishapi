@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"regexp"
 	"strings"
@@ -17,6 +16,9 @@ import (
 
 // Initialize logger
 // var logger = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+
+// Pre-compiled regexps for error matching
+var reDialTCP = regexp.MustCompile("dial tcp")
 
 // basicAuth ... will create the basicauth encoded string for the credentials
 func basicAuth(username, password string) string {
@@ -29,12 +31,13 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 
 	var err error
 	for i := 0; i < 2; i++ {
+		var tlsConfig *tls.Config
 		if c.Certificate != "" && i == 0 {
 			certPool := x509.NewCertPool()
 			certPool.AppendCertsFromPEM([]byte(c.Certificate))
-			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: false, RootCAs: certPool}
+			tlsConfig = &tls.Config{InsecureSkipVerify: false, RootCAs: certPool}
 		} else {
-			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+			tlsConfig = &tls.Config{InsecureSkipVerify: true}
 		}
 		req, err := http.NewRequest(call, link, bytes.NewBuffer(data))
 		if err != nil {
@@ -44,13 +47,13 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 		req.Header.Add("Accept", "application/json")
 		req.Header.Set("Content-Type", "application/json")
 		client := &http.Client{
-			Timeout: time.Second * 300,
+			Timeout:   time.Second * 300,
+			Transport: &http.Transport{TLSClientConfig: tlsConfig},
 		}
 		resp, err := client.Do(req)
 		client.CloseIdleConnections()
 		if err != nil {
-			r, _ := regexp.Compile("dial tcp")
-			if r.MatchString(err.Error()) {
+			if reDialTCP.MatchString(err.Error()) {
 				err := errors.New(StatusUnreachable)
 				return nil, nil, 0, err
 			}
@@ -69,7 +72,7 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 
 		}
 
-		_body, _ := ioutil.ReadAll(resp.Body)
+		_body, _ := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, nil, resp.StatusCode, err
 		}
@@ -82,14 +85,13 @@ func queryData(c *redfishProvider, call string, link string, data []byte) ([]byt
 // queryDataForce ... will make REST verbs based on the url without retrying
 func queryDataForce(c *redfishProvider, call string, link string, data []byte) ([]byte, http.Header, int, error) {
 
+	var tlsConfig *tls.Config
 	if c.Certificate != "" {
 		certPool := x509.NewCertPool()
 		certPool.AppendCertsFromPEM([]byte(c.Certificate))
-		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: false, RootCAs: certPool}
-		// fmt.Printf("testing queryDataForce with certificate for %s\n", link)
+		tlsConfig = &tls.Config{InsecureSkipVerify: false, RootCAs: certPool}
 	} else {
-		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-		// fmt.Printf("testing queryDataForce without certificate for %s\n", link)
+		tlsConfig = &tls.Config{InsecureSkipVerify: true}
 	}
 	req, err := http.NewRequest(call, link, bytes.NewBuffer(data))
 	if err != nil {
@@ -99,13 +101,13 @@ func queryDataForce(c *redfishProvider, call string, link string, data []byte) (
 	req.Header.Add("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 	client := &http.Client{
-		Timeout: time.Second * 300,
+		Timeout:   time.Second * 300,
+		Transport: &http.Transport{TLSClientConfig: tlsConfig},
 	}
 	resp, err := client.Do(req)
 	client.CloseIdleConnections()
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) {
+		if reDialTCP.MatchString(err.Error()) {
 			err := errors.New(StatusUnreachable)
 			return nil, nil, 0, err
 		}
@@ -123,7 +125,7 @@ func queryDataForce(c *redfishProvider, call string, link string, data []byte) (
 
 	}
 
-	_body, _ := ioutil.ReadAll(resp.Body)
+	_body, _ := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, nil, resp.StatusCode, err
 	}
@@ -134,12 +136,13 @@ func queryDataForce(c *redfishProvider, call string, link string, data []byte) (
 // postForm ... will make REST POST request with form data
 func postForm(c *redfishProvider, link string, form *bytes.Buffer, contentType string) ([]byte, http.Header, int, error) {
 
+	var tlsConfig *tls.Config
 	if c.Certificate != "" {
 		certPool := x509.NewCertPool()
 		certPool.AppendCertsFromPEM([]byte(c.Certificate))
-		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: false, RootCAs: certPool}
+		tlsConfig = &tls.Config{InsecureSkipVerify: false, RootCAs: certPool}
 	} else {
-		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		tlsConfig = &tls.Config{InsecureSkipVerify: true}
 	}
 	req, err := http.NewRequest("POST", link, form)
 	if err != nil {
@@ -150,13 +153,13 @@ func postForm(c *redfishProvider, link string, form *bytes.Buffer, contentType s
 	req.Header.Add("Authorization", "Basic "+basicAuth(c.Username, c.Password))
 
 	client := &http.Client{
-		Timeout: time.Second * 300,
+		Timeout:   time.Second * 300,
+		Transport: &http.Transport{TLSClientConfig: tlsConfig},
 	}
 	resp, err := client.Do(req)
 	client.CloseIdleConnections()
 	if err != nil {
-		r, _ := regexp.Compile("dial tcp")
-		if r.MatchString(err.Error()) {
+		if reDialTCP.MatchString(err.Error()) {
 			err := fmt.Errorf("postForm: %s", strings.ToLower(StatusInternalServerError))
 			return nil, nil, 0, err
 		}

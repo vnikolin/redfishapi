@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-//StartServerHP ...
+// StartServerHP ...
 // ResetType@Redfish.AllowableValues
 // 0	"On"
 // 1	"ForceOff"
@@ -25,7 +25,7 @@ func (c *redfishProvider) StartServerHP() (string, error) {
 	return "Server Started", nil
 }
 
-//StopServerHP ... Will Request to stop the server
+// StopServerHP ... Will Request to stop the server
 func (c *redfishProvider) StopServerHP() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/1/Actions/ComputerSystem.Reset/"
 	var jsonStr = []byte(`{"ResetType": "ForceOff"}`)
@@ -37,7 +37,7 @@ func (c *redfishProvider) StopServerHP() (string, error) {
 	return "Server Stopped", nil
 }
 
-//GetSystemInfoHP ... Will fetch the system info
+// GetSystemInfoHP ... Will fetch the system info
 func (c *redfishProvider) GetSystemInfoHP() (SystemData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1"
@@ -64,7 +64,7 @@ func (c *redfishProvider) GetSystemInfoHP() (SystemData, error) {
 
 }
 
-//GetServerPowerStateHP ... Will fetch the current state of the Server
+// GetServerPowerStateHP ... Will fetch the current state of the Server
 func (c *redfishProvider) GetServerPowerStateHP() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/1"
 	resp, _, _, err := queryData(c, "GET", url, nil)
@@ -80,7 +80,7 @@ func (c *redfishProvider) GetServerPowerStateHP() (string, error) {
 
 }
 
-//CheckLoginHP ... Will check the credentials of the Server
+// CheckLoginHP ... Will check the credentials of the Server
 func (c *redfishProvider) CheckLoginHP() (string, error) {
 	url := c.Hostname + "/redfish/v1/Systems/1"
 	resp, _, _, err := queryData(c, "GET", url, nil)
@@ -92,7 +92,7 @@ func (c *redfishProvider) CheckLoginHP() (string, error) {
 	return string(data.Status.Health), nil
 }
 
-//GetFirmwareHP ... will fetch the Firmware details
+// GetFirmwareHP ... will fetch the Firmware details
 func (c *redfishProvider) GetFirmwareHP() ([]FirmwareData, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1/FirmwareInventory/"
@@ -179,7 +179,7 @@ func (c *redfishProvider) GetFirmwareHP() ([]FirmwareData, error) {
 	return _firmdata, nil
 }
 
-//GetThermalHealthHP ... will fetch the Thermal Health
+// GetThermalHealthHP ... will fetch the Thermal Health
 func (c *redfishProvider) GetThermalHealthHP() ([]HealthList, error) {
 	url := c.Hostname + "/redfish/v1/Chassis/1/Thermal/"
 	resp, _, _, err := queryData(c, "GET", url, nil)
@@ -211,7 +211,7 @@ func (c *redfishProvider) GetThermalHealthHP() ([]HealthList, error) {
 	return _health, nil
 }
 
-//GetPowerHealthHP ... will fetch the Power Health
+// GetPowerHealthHP ... will fetch the Power Health
 func (c *redfishProvider) GetPowerHealthHP() ([]HealthList, error) {
 	url := c.Hostname + "/redfish/v1/Chassis/1/Power/"
 	resp, _, _, err := queryData(c, "GET", url, nil)
@@ -237,7 +237,7 @@ func (c *redfishProvider) GetPowerHealthHP() ([]HealthList, error) {
 	return _health, nil
 }
 
-//GetInterfaceHealthHP ... will fetch the Interface Health
+// GetInterfaceHealthHP ... will fetch the Interface Health
 func (c *redfishProvider) GetInterfaceHealthHP() ([]HealthList, error) {
 	url := c.Hostname + "/redfish/v1/Managers/1/EthernetInterfaces/"
 	resp, _, _, err := queryData(c, "GET", url, nil)
@@ -262,7 +262,7 @@ func (c *redfishProvider) GetInterfaceHealthHP() ([]HealthList, error) {
 	return _health, nil
 }
 
-//GetProcessorHealthHP ... will Fetch the Processor Health Details
+// GetProcessorHealthHP ... will Fetch the Processor Health Details
 func (c *redfishProvider) GetProcessorInfoHP() ([]ProcessorInfoHP, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1/Processors/"
@@ -296,7 +296,7 @@ func (c *redfishProvider) GetProcessorInfoHP() ([]ProcessorInfoHP, error) {
 
 }
 
-//GetProcessorHealthHP ... will Fetch the Processor Health Details
+// GetProcessorHealthHP ... will Fetch the Processor Health Details
 func (c *redfishProvider) GetProcessorHealthHP() ([]HealthList, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1/Processors/"
@@ -335,7 +335,7 @@ func (c *redfishProvider) GetProcessorHealthHP() ([]HealthList, error) {
 
 }
 
-//GetUserAccountsHP ... will fetch the current User Accounts
+// GetUserAccountsHP ... will fetch the current User Accounts
 func (c *redfishProvider) GetUserAccountsHP() ([]Accounts, error) {
 
 	url := c.Hostname + "/redfish/v1/AccountService/Accounts"
@@ -376,7 +376,7 @@ func (c *redfishProvider) GetUserAccountsHP() ([]Accounts, error) {
 
 }
 
-//GetSystemEventLogsHP ... will fetch the SystemEvent Logs
+// GetSystemEventLogsHP ... will fetch the SystemEvent Logs
 func (c *redfishProvider) GetSystemEventLogsHP() ([]SystemEventLogRes, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/1/LogServices/IEL/Entries/"
@@ -409,7 +409,7 @@ func (c *redfishProvider) GetSystemEventLogsHP() ([]SystemEventLogRes, error) {
 
 }
 
-//GetBiosDataHP ... will fetch the Bios Details
+// GetBiosDataHP ... will fetch the Bios Details
 func (c *redfishProvider) GetBiosDataHP() (BiosDataHP, error) {
 
 	url := c.Hostname + "/redfish/v1/systems/1/bios/settings/"
@@ -419,170 +419,14 @@ func (c *redfishProvider) GetBiosDataHP() (BiosDataHP, error) {
 		return BiosDataHP{}, err
 	}
 
-	var x BiosAttrHP
+	var biosData BiosDataHP
 
-	json.Unmarshal(resp, &x)
+	json.Unmarshal(resp, &biosData)
 
-	_BiosData := BiosDataHP{
-		AcpiRootBridgePxm:            x.AcpiRootBridgePxm,
-		AcpiSlit:                     x.AcpiSlit,
-		AdjSecPrefetch:               x.AdjSecPrefetch,
-		AdminEmail:                   x.AdminEmail,
-		AdminName:                    x.AdminName,
-		AdminOtherInfo:               x.AdminOtherInfo,
-		AdminPhone:                   x.AdminPhone,
-		AdvancedMemProtection:        x.AdvancedMemProtection,
-		AsrStatus:                    x.AsrStatus,
-		AsrTimeoutMinutes:            x.AsrTimeoutMinutes,
-		AssetTagProtection:           x.AssetTagProtection,
-		AutoPowerOn:                  x.AutoPowerOn,
-		BootMode:                     x.BootMode,
-		BootOrderPolicy:              x.BootOrderPolicy,
-		ChannelInterleaving:          x.ChannelInterleaving,
-		CollabPowerControl:           x.CollabPowerControl,
-		ConsistentDevNaming:          x.ConsistentDevNaming,
-		CustomPostMessage:            x.CustomPostMessage,
-		DaylightSavingsTime:          x.DaylightSavingsTime,
-		DcuIPPrefetcher:              x.DcuIPPrefetcher,
-		DcuStreamPrefetcher:          x.DcuStreamPrefetcher,
-		Description:                  x.Description,
-		Dhcpv4:                       x.Dhcpv4,
-		DynamicPowerCapping:          x.DynamicPowerCapping,
-		DynamicPowerResponse:         x.DynamicPowerResponse,
-		EmbNicEnable:                 x.EmbNicEnable,
-		EmbSas1Boot:                  x.EmbSas1Boot,
-		EmbSasEnable:                 x.EmbSasEnable,
-		EmbSata1Enable:               x.EmbSata1Enable,
-		EmbSata2Enable:               x.EmbSata2Enable,
-		EmbVideoConnection:           x.EmbVideoConnection,
-		EmbeddedDiagnostics:          x.EmbeddedDiagnostics,
-		EmbeddedDiagsMode:            x.EmbeddedDiagsMode,
-		EmbeddedSata:                 x.EmbeddedSata,
-		EmbeddedSerialPort:           x.EmbeddedSerialPort,
-		EmbeddedUefiShell:            x.EmbeddedUefiShell,
-		EmbeddedUserPartition:        x.EmbeddedUserPartition,
-		EmsConsole:                   x.EmsConsole,
-		EnergyPerfBias:               x.EnergyPerfBias,
-		EraseUserDefaults:            x.EraseUserDefaults,
-		ExtendedAmbientTemp:          x.ExtendedAmbientTemp,
-		ExtendedMemTest:              x.ExtendedMemTest,
-		F11BootMenu:                  x.F11BootMenu,
-		FCScanPolicy:                 x.FCScanPolicy,
-		FanFailPolicy:                x.FanFailPolicy,
-		FanInstallReq:                x.FanInstallReq,
-		FlexLom1Enable:               x.FlexLom1Enable,
-		HwPrefetcher:                 x.HwPrefetcher,
-		IntelDmiLinkFreq:             x.IntelDmiLinkFreq,
-		IntelNicDmaChannels:          x.IntelNicDmaChannels,
-		IntelPerfMonitoring:          x.IntelPerfMonitoring,
-		IntelProcVtd:                 x.IntelProcVtd,
-		IntelQpiFreq:                 x.IntelQpiFreq,
-		IntelQpiLinkEn:               x.IntelQpiLinkEn,
-		IntelQpiPowerManagement:      x.IntelQpiPowerManagement,
-		IntelligentProvisioning:      x.IntelligentProvisioning,
-		InternalSDCardSlot:           x.InternalSDCardSlot,
-		IoNonPostedPrefetching:       x.IoNonPostedPrefetching,
-		Ipv4Address:                  x.Ipv4Address,
-		Ipv4Gateway:                  x.Ipv4Gateway,
-		Ipv4PrimaryDNS:               x.Ipv4PrimaryDNS,
-		Ipv4SecondaryDNS:             x.Ipv4SecondaryDNS,
-		Ipv4SubnetMask:               x.Ipv4SubnetMask,
-		Ipv6Duid:                     x.Ipv6Duid,
-		MaxMemBusFreqMHz:             x.MaxMemBusFreqMHz,
-		MaxPcieSpeed:                 x.MaxPcieSpeed,
-		MemFastTraining:              x.MemFastTraining,
-		MinProcIdlePkgState:          x.MinProcIdlePkgState,
-		MinProcIdlePower:             x.MinProcIdlePower,
-		MixedPowerSupplyReporting:    x.MixedPowerSupplyReporting,
-		Modified:                     x.Modified,
-		Name:                         x.Name,
-		NetworkBootRetry:             x.NetworkBootRetry,
-		NicBoot1:                     x.NicBoot1,
-		NicBoot2:                     x.NicBoot2,
-		NicBoot3:                     x.NicBoot3,
-		NicBoot4:                     x.NicBoot4,
-		NmiDebugButton:               x.NmiDebugButton,
-		NodeInterleaving:             x.NodeInterleaving,
-		NumaGroupSizeOpt:             x.NumaGroupSizeOpt,
-		PciBusPadding:                x.PciBusPadding,
-		PciSlot3Enable:               x.PciSlot3Enable,
-		PciSlot4Enable:               x.PciSlot4Enable,
-		PciSlot6Enable:               x.PciSlot6Enable,
-		PcieExpressEcrcSupport:       x.PcieExpressEcrcSupport,
-		PostF1Prompt:                 x.PostF1Prompt,
-		PowerButton:                  x.PowerButton,
-		PowerOnDelay:                 x.PowerOnDelay,
-		PowerOnLogo:                  x.PowerOnLogo,
-		PowerProfile:                 x.PowerProfile,
-		PowerRegulator:               x.PowerRegulator,
-		PreBootNetwork:               x.PreBootNetwork,
-		ProcAes:                      x.ProcAes,
-		ProcCoreDisable:              x.ProcCoreDisable,
-		ProcHyperthreading:           x.ProcHyperthreading,
-		ProcNoExecute:                x.ProcNoExecute,
-		ProcTurbo:                    x.ProcTurbo,
-		ProcVirtualization:           x.ProcVirtualization,
-		ProcX2Apic:                   x.ProcX2Apic,
-		ProductID:                    x.ProductID,
-		QpiBandwidthOpt:              x.QpiBandwidthOpt,
-		QpiSnoopConfig:               x.QpiSnoopConfig,
-		RedundantPowerSupply:         x.RedundantPowerSupply,
-		RemovableFlashBootSeq:        x.RemovableFlashBootSeq,
-		RestoreDefaults:              x.RestoreDefaults,
-		RestoreManufacturingDefaults: x.RestoreManufacturingDefaults,
-		RomSelection:                 x.RomSelection,
-		SataSecureErase:              x.SataSecureErase,
-		SaveUserDefaults:             x.SaveUserDefaults,
-		SecureBootStatus:             x.SecureBootStatus,
-		SerialConsoleBaudRate:        x.SerialConsoleBaudRate,
-		SerialConsoleEmulation:       x.SerialConsoleEmulation,
-		SerialConsolePort:            x.SerialConsolePort,
-		SerialNumber:                 x.SerialNumber,
-		ServerAssetTag:               x.ServerAssetTag,
-		ServerName:                   x.ServerName,
-		ServerOtherInfo:              x.ServerOtherInfo,
-		ServerPrimaryOs:              x.ServerPrimaryOs,
-		ServiceEmail:                 x.ServiceEmail,
-		ServiceName:                  x.ServiceName,
-		ServiceOtherInfo:             x.ServiceOtherInfo,
-		ServicePhone:                 x.ServicePhone,
-		Slot3NicBoot1:                x.Slot3NicBoot1,
-		Slot3NicBoot2:                x.Slot3NicBoot2,
-		Slot4NicBoot1:                x.Slot4NicBoot1,
-		Slot4NicBoot2:                x.Slot4NicBoot2,
-		Slot6NicBoot1:                x.Slot6NicBoot1,
-		Slot6NicBoot2:                x.Slot6NicBoot2,
-		Sriov:                        x.Sriov,
-		ThermalConfig:                x.ThermalConfig,
-		ThermalShutdown:              x.ThermalShutdown,
-		TimeFormat:                   x.TimeFormat,
-		TimeZone:                     x.TimeZone,
-		TpmState:                     x.TpmState,
-		TpmType:                      x.TpmType,
-		Type:                         x.Type,
-		UefiOptimizedBoot:            x.UefiOptimizedBoot,
-		UefiPxeBoot:                  x.UefiPxeBoot,
-		UefiShellBootOrder:           x.UefiShellBootOrder,
-		UefiShellStartup:             x.UefiShellStartup,
-		UefiShellStartupLocation:     x.UefiShellStartupLocation,
-		UefiShellStartupURL:          x.UefiShellStartupURL,
-		URLBootFile:                  x.URLBootFile,
-		Usb3Mode:                     x.Usb3Mode,
-		UsbBoot:                      x.UsbBoot,
-		UsbControl:                   x.UsbControl,
-		UtilityLang:                  x.UtilityLang,
-		VirtualInstallDisk:           x.VirtualInstallDisk,
-		VirtualSerialPort:            x.VirtualSerialPort,
-		VlanControl:                  x.VlanControl,
-		VlanID:                       x.VlanID,
-		VlanPriority:                 x.VlanPriority,
-		WakeOnLan:                    x.WakeOnLan,
-	}
-
-	return _BiosData, nil
+	return biosData, nil
 }
 
-//GetLicenseInfoHP ... will fetch the current License Details
+// GetLicenseInfoHP ... will fetch the current License Details
 func (c *redfishProvider) GetLicenseInfoHP() (LicenseInfo, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/1/LicenseService/"
@@ -596,6 +440,10 @@ func (c *redfishProvider) GetLicenseInfoHP() (LicenseInfo, error) {
 
 	json.Unmarshal(resp, &x)
 
+	if len(x.Items) == 0 {
+		return LicenseInfo{}, fmt.Errorf("GetLicenseInfoHP: no license items returned")
+	}
+
 	_result := LicenseInfo{
 		Name:        x.Name,
 		LicenseKey:  x.Items[0].LicenseKey,
@@ -605,8 +453,8 @@ func (c *redfishProvider) GetLicenseInfoHP() (LicenseInfo, error) {
 	return _result, nil
 }
 
-//GetPCISlotsHp ... will fetch the PCI Slots Details
-func (c *redfishProvider) GetPCISlotsHp() ([]PCISlotsInfo, error) {
+// GetPCISlotsHP ... will fetch the PCI Slots Details
+func (c *redfishProvider) GetPCISlotsHP() ([]PCISlotsInfo, error) {
 
 	url := c.Hostname + "/redfish/v1/Systems/1/PCISlots/"
 
@@ -633,7 +481,7 @@ func (c *redfishProvider) GetPCISlotsHp() ([]PCISlotsInfo, error) {
 
 }
 
-//GetEthernetInterfacesHP ... will fetch the EthernetInterfaces Details
+// GetEthernetInterfacesHP ... will fetch the EthernetInterfaces Details
 func (c *redfishProvider) GetEthernetInterfacesHP() ([]MACData, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/1/EthernetInterfaces/"

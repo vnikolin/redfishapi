@@ -18,6 +18,12 @@ import (
 	ver "github.com/Masterminds/semver/v3"
 )
 
+// Pre-compiled regexps for firmware inventory filtering
+var (
+	reInstalled = regexp.MustCompile("Installed")
+	reAvailable = regexp.MustCompile("Available")
+)
+
 // Declaring the Constant Values
 const (
 	StatusUnauthorized        = "Unauthorized"
@@ -34,62 +40,6 @@ const (
 	TaskStatusOK              = "OK"
 	TaskStatusCritical        = "Critical"
 )
-
-type RedfishProvider interface {
-	StartServerDell() (string, error)
-	StopServerDell() (string, error)
-	GracefulRestartDell() (string, error)
-	ResetSSLConfigDell() (string, error)
-	GetServerPowerStateDell() (string, error)
-	CheckLoginDell() (string, bool, error)
-	ImportConfigDell(jsonData []byte) (string, error)
-	CreateJobDell(jsonData []byte) (string, error)
-	GetJobsStatusDell() ([]JobStatusDell, error)
-	GetAllJobsDell() ([]Members, error)
-	SetBiosSettingsDell(jsonData []byte) (string, error)
-	ClearJobsDell() (string, error)
-	SetAttributesDell(service string, jsonData []byte) (string, error)
-	GetStorageRaidDell() ([]StorageRaidDetailsDell, error)
-	GetNetworkSwitchInfoDell() ([]SwitchData, error)
-	GetNetworkPortsDell() ([]MACData, error)
-	GetMacAddressDell() (string, error)
-	GetIdracLicenses() ([]LicenseData, error)
-	GetMacAddressModelDell() ([]MACModelDell, error)
-	GetProcessorHealthDell() ([]HealthList, error)
-	GetPowerHealthDell() ([]HealthList, error)
-	GetSensorsHealthDell() ([]HealthList, error)
-	GetStorageDriveDetailsDell() ([]StorageDriveDetailsDell, error)
-	GetStorageHealthDell() ([]StorageHealthList, error)
-	GetAggHealthDataDell(model string) ([]HealthList, error)
-	GetFirmwareDell() ([]FirmwareData, error)
-	FirmwareUpdateDell() (string, error)
-	FirmwareUploadDell(repoUrl string) (string, error)
-	TaskStatusDell(taskUrl string) (ExportConfigStatus, error)
-	GetBiosDataDell() (BiosAttributesData, error)
-	GetLifecycleAttrDell() (LifeCycleData, error)
-	ListUsersDell() ([]UserListDell, error)
-	CreateUserDell(num int, username string, password string, role string, status bool) (string, error)
-	DeleteUserDell(num int) (string, error)
-	GetIDRACAttrDell() (IDRACAttributesData, error)
-	GetSysAttrDell() (SysAttributesData, error)
-	GetBootOrderDell() ([]BootOrderData, error)
-	SetBootOrderDell(jsonData []byte) (string, error)
-	GetSystemEventLogsDell(version string) ([]SystemEventLogRes, error)
-	GetLifeCycleEventLogsDell(totalPages int) ([]LifeCycleEventLogRes, error)
-	WriteLCLog(messageDesctiption string) (string, error)
-	GetUserAccountsDell() ([]Accounts, error)
-	GetSystemInfoDell() (SystemData, error)
-	GetComponentAttr(comp string) (ExportConfigResponse, error)
-	MountImageDell(image string) (string, error)
-	UnMountImageDell() (string, error)
-	GetRemoteImageStatusDell() (ImageStatusDell, error)
-	ClearStorageControllerRaidDell(controllerID string) (string, error)
-	GetJobStatusDell(jobID string) (JobStatusDell, error)
-	ClearJobsDellForce() (string, error)
-	FleaDrainDell() (string, error)
-	PowerActionServerDell(powerAction string) (string, error)
-	UpdateFirmwareDell(firmwareDir string, firmwareFile string) (string, error)
-}
 
 // ResetType@Redfish.AllowableValues
 // "On"
@@ -111,7 +61,7 @@ func (c *redfishProvider) PowerActionServerDell(powerAction string) (string, err
 	}
 	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Actions/ComputerSystem.Reset"
 
-	var jsonStr = []byte(`{"ResetType": "` + powerAction + `"}`)
+	jsonStr, _ := json.Marshal(map[string]string{"ResetType": powerAction})
 	_, _, _, err := queryData(c, "POST", url, jsonStr)
 	if err != nil {
 		return "", err
@@ -1021,8 +971,7 @@ func (c *redfishProvider) GetAggHealthDataDell(model string) ([]HealthList, erro
 		json.Unmarshal(resp, &x)
 
 		for i := range x.Members {
-			r, _ := regexp.Compile("Installed")
-			if r.MatchString(x.Members[i].OdataId) == true {
+			if reInstalled.MatchString(x.Members[i].OdataId) {
 				_url := c.Hostname + x.Members[i].OdataId
 				resp, _, _, err := queryData(c, "GET", _url, nil)
 				if err != nil {
@@ -1110,8 +1059,7 @@ func (c *redfishProvider) FirmwareUpdateDell() (string, error) {
 	json.Unmarshal(resp, &x)
 
 	for i := range x.Members {
-		r, _ := regexp.Compile("Available")
-		if r.MatchString(x.Members[i].OdataId) == true {
+		if reAvailable.MatchString(x.Members[i].OdataId) {
 
 			firmLinks = append(firmLinks, x.Members[i].OdataId)
 
@@ -1553,8 +1501,7 @@ func (c *redfishProvider) GetLifeCycleEventLogsDell(totalPages int) ([]LifeCycle
 func (c *redfishProvider) WriteLCLog(messageDesctiption string) (string, error) {
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Oem/Dell/DellLCService/Actions/DellLCService.InsertCommentInLCLog"
 
-	// var jsonStr = []byte(`{"Comment": "dummyentry"}`)
-	var jsonStr = []byte(`{"Comment": "` + messageDesctiption + `"}`)
+	jsonStr, _ := json.Marshal(map[string]string{"Comment": messageDesctiption})
 	_, _, _, err := queryData(c, "POST", url, jsonStr)
 	if err != nil {
 		return "", err
@@ -1657,7 +1604,8 @@ func (c *redfishProvider) GetComponentAttr(comp string) (ExportConfigResponse, e
 		}
 	}
 
-	for {
+	const maxPollAttempts = 15 // 15 iterations × 1 min = 30 min max
+	for attempt := 0; attempt < maxPollAttempts; attempt++ {
 		taskUrl := c.Hostname + taskURL
 
 		resp, _, _, err := queryData(c, "GET", taskUrl, nil)
@@ -1679,7 +1627,7 @@ func (c *redfishProvider) GetComponentAttr(comp string) (ExportConfigResponse, e
 		}
 	}
 
-	return ExportConfigResponse{}, nil
+	return ExportConfigResponse{}, fmt.Errorf("GetComponentAttr: timed out after %d minutes waiting for export task to complete", maxPollAttempts)
 }
 
 // MountImageDell ... Will mount a image over http share
