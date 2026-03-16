@@ -2027,7 +2027,10 @@ type FirmwareDataDell struct {
 	Description    string `json:"Description"`
 	ID             string `json:"Id"`
 	Name           string `json:"Name"`
-	Oem            struct {
+	RelatedItem    []struct {
+		OdataID string `json:"@odata.id"`
+	} `json:"RelatedItem"`
+	Oem struct {
 		Dell struct {
 			DellSoftwareInventory struct {
 				_odata_context   string
@@ -4213,10 +4216,11 @@ type SystemData struct {
 
 // FirmwareData ...
 type FirmwareData struct {
-	Name       string `json:"name"`
-	Id         string `json:"id"`
-	Version    string `json:"version"`
-	Updateable bool   `json:"updateable"`
+	Name         string   `json:"name"`
+	Id           string   `json:"id"`
+	Version      string   `json:"version"`
+	Updateable   bool     `json:"updateable"`
+	RelatedItems []string `json:"relatedItems,omitempty"`
 }
 
 // LicenseInfo ...

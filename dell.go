@@ -294,14 +294,31 @@ func (c *redfishProvider) GetJobsStatusDell() ([]JobStatusDell, error) {
 
 // GetJobStatusDell ... Get the status of the Job
 func (c *redfishProvider) GetJobStatusDell(jobID string) (JobStatusDell, error) {
-	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs/" + jobID
-	resp, _, _, err := queryData(c, "GET", url, nil)
-	if err != nil {
-		return JobStatusDell{}, err
+	urls := []string{
+		c.Hostname + "/redfish/v1/JobService/Jobs/" + jobID,
+		c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Jobs/" + jobID,
 	}
-	var output JobStatusDell
-	json.Unmarshal(resp, &output)
-	return output, nil
+
+	for i, url := range urls {
+		resp, _, status, err := queryData(c, "GET", url, nil)
+		if err != nil {
+			return JobStatusDell{}, err
+		}
+
+		if status == http.StatusOK {
+			var output JobStatusDell
+			json.Unmarshal(resp, &output)
+			return output, nil
+		}
+
+		if status == http.StatusNotFound && i == 0 {
+			continue
+		}
+
+		return JobStatusDell{}, fmt.Errorf("unexpected status code %d for %s", status, url)
+	}
+
+	return JobStatusDell{}, fmt.Errorf("unable to fetch job status for %s", jobID)
 }
 
 func (c *redfishProvider) GetAllJobsDell() ([]Members, error) {
@@ -512,39 +529,99 @@ func (c *redfishProvider) GetStorageRaidDell() ([]StorageRaidDetailsDell, error)
 
 // GetNetworkSwitchInfoDell ... Will fetch the Network Switch Info
 func (c *redfishProvider) GetNetworkSwitchInfoDell() ([]SwitchData, error) {
-	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/NetworkPorts/Oem/Dell/DellSwitchConnections/"
-	resp, _, _, err := queryData(c, "GET", url, nil)
-	if err != nil {
-		return nil, err
+	urls := []string{
+		c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Oem/Dell/DellSwitchConnections",
+		c.Hostname + "/redfish/v1/Systems/System.Embedded.1/NetworkPorts/Oem/Dell/DellSwitchConnections/",
 	}
-	var x MemberCountDell
-	var SwitchInfo []SwitchData
-	json.Unmarshal(resp, &x)
-	for i := range x.Members {
-		_url := c.Hostname + x.Members[i].OdataId
-		resp, _, _, err := queryData(c, "GET", _url, nil)
+
+	var lastStatus int
+	for _, url := range urls {
+		resp, _, status, err := queryData(c, "GET", url, nil)
 		if err != nil {
 			return nil, err
 		}
-		var y GetSwitchInfoDell
-		json.Unmarshal(resp, &y)
-		switchData := SwitchData{
-			Name:                   y.ID,
-			Description:            y.Description,
-			StaleData:              y.StaleData,
-			SwitchConnectionID:     y.SwitchConnectionID,
-			SwitchPortConnectionID: y.SwitchPortConnectionID,
+		if status != http.StatusOK {
+			lastStatus = status
+			continue
 		}
-		SwitchInfo = append(SwitchInfo, switchData)
+
+		var members MemberCountDell
+		var switchInfo []SwitchData
+		json.Unmarshal(resp, &members)
+		for i := range members.Members {
+			memberURL := c.Hostname + members.Members[i].OdataId
+			resp, _, _, err := queryData(c, "GET", memberURL, nil)
+			if err != nil {
+				return nil, err
+			}
+			var switchEntry GetSwitchInfoDell
+			json.Unmarshal(resp, &switchEntry)
+			switchData := SwitchData{
+				Name:                   switchEntry.ID,
+				Description:            switchEntry.Description,
+				StaleData:              switchEntry.StaleData,
+				SwitchConnectionID:     switchEntry.SwitchConnectionID,
+				SwitchPortConnectionID: switchEntry.SwitchPortConnectionID,
+			}
+			switchInfo = append(switchInfo, switchData)
+		}
+		return switchInfo, nil
 	}
-	// output, _ := json.Marshal(SwitchInfo)
-	return SwitchInfo, nil
+
+	if lastStatus != 0 {
+		return nil, fmt.Errorf("unable to fetch Dell switch connection collection, last status: %d", lastStatus)
+	}
+
+	return nil, fmt.Errorf("unable to fetch Dell switch connection collection")
 }
 
 // GetNetworkPortsDell .... Will fetch network port info
 func (c *redfishProvider) GetNetworkPortsDell() ([]MACData, error) {
-	url := c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/NetworkAdapters"
-	resp, _, _, err := queryData(c, "GET", url, nil)
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/EthernetInterfaces"
+	resp, _, status, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	if status == http.StatusOK {
+		var members MemberCountDell
+		var macs []MACData
+		json.Unmarshal(resp, &members)
+		for i := range members.Members {
+			memberURL := c.Hostname + members.Members[i].OdataId
+			resp, _, _, err := queryData(c, "GET", memberURL, nil)
+			if err != nil {
+				return nil, err
+			}
+			var iface GetMacAddressDell
+			json.Unmarshal(resp, &iface)
+
+			macAddress := iface.MACAddress
+			if macAddress == "" {
+				macAddress = iface.PermanentMACAddress
+			}
+			if macAddress == "" {
+				continue
+			}
+
+			macData := MACData{
+				Name:                 iface.ID,
+				Description:          iface.Description,
+				MacAddress:           macAddress,
+				Status:               iface.Status.Health,
+				State:                normalizeDellLinkStatus(iface.LinkStatus),
+				CurrentLinkSpeedMbps: int64(iface.SpeedMbps),
+				Vlan:                 iface.VLAN,
+			}
+			macData.UpdateEmpty()
+			macs = append(macs, macData)
+		}
+		if len(macs) > 0 {
+			return macs, nil
+		}
+	}
+
+	url = c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/NetworkAdapters"
+	resp, _, _, err = queryData(c, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -594,6 +671,17 @@ func (c *redfishProvider) GetNetworkPortsDell() ([]MACData, error) {
 
 	}
 	return Macs, nil
+}
+
+func normalizeDellLinkStatus(linkStatus string) string {
+	switch strings.ToLower(strings.TrimSpace(linkStatus)) {
+	case "linkup":
+		return "Up"
+	case "linkdown":
+		return "Down"
+	default:
+		return linkStatus
+	}
 }
 
 // GetMacAddressDell ... Will fetch all the mac address of a particular Server
@@ -694,36 +782,55 @@ func (c *redfishProvider) GetIdracLicenses() ([]LicenseData, error) {
 
 // GetMacAddressModelDell ... Will fetch the Nic Model
 func (c *redfishProvider) GetMacAddressModelDell() ([]MACModelDell, error) {
-	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/NetworkAdapters/"
-	resp, _, _, err := queryData(c, "GET", url, nil)
-	if err != nil {
-		return nil, err
+	urls := []string{
+		c.Hostname + "/redfish/v1/Systems/System.Embedded.1/NetworkAdapters/",
+		c.Hostname + "/redfish/v1/Chassis/System.Embedded.1/NetworkAdapters",
 	}
-	var x MemberCountDell
-	var Macs []MACModelDell
-	json.Unmarshal(resp, &x)
-	for i := range x.Members {
-		_url := c.Hostname + x.Members[i].OdataId
-		resp, _, _, err := queryData(c, "GET", _url, nil)
+
+	var lastStatus int
+	for _, url := range urls {
+		resp, _, status, err := queryData(c, "GET", url, nil)
 		if err != nil {
 			return nil, err
 		}
-		var y NetworkDeviceDell
-		json.Unmarshal(resp, &y)
+		if status != http.StatusOK {
+			lastStatus = status
+			continue
+		}
 
-		for _, k := range y.Controllers {
-			for _, z := range k.Links.NetworkDeviceFunctions {
-				firmName := strings.Split(z.OdataId, "/")
-				result := MACModelDell{
-					MacName:         firmName[len(firmName)-1],
-					MacModel:        y.Model,
-					MacManufacturer: y.Manufacturer,
+		var x MemberCountDell
+		var Macs []MACModelDell
+		json.Unmarshal(resp, &x)
+		for i := range x.Members {
+			_url := c.Hostname + x.Members[i].OdataId
+			resp, _, _, err := queryData(c, "GET", _url, nil)
+			if err != nil {
+				return nil, err
+			}
+			var y NetworkDeviceDell
+			json.Unmarshal(resp, &y)
+
+			for _, k := range y.Controllers {
+				for _, z := range k.Links.NetworkDeviceFunctions {
+					firmName := strings.Split(z.OdataId, "/")
+					result := MACModelDell{
+						MacName:         firmName[len(firmName)-1],
+						MacModel:        y.Model,
+						MacManufacturer: y.Manufacturer,
+					}
+					Macs = append(Macs, result)
 				}
-				Macs = append(Macs, result)
 			}
 		}
+
+		return Macs, nil
 	}
-	return Macs, nil
+
+	if lastStatus != 0 {
+		return nil, fmt.Errorf("unable to fetch Dell network adapters, last status: %d", lastStatus)
+	}
+
+	return nil, fmt.Errorf("unable to fetch Dell network adapters")
 
 }
 
@@ -1078,11 +1185,17 @@ func (c *redfishProvider) GetFirmwareDell() ([]FirmwareData, error) {
 
 		json.Unmarshal(resp, &y)
 
+		relatedItems := make([]string, 0, len(y.RelatedItem))
+		for _, relatedItem := range y.RelatedItem {
+			relatedItems = append(relatedItems, relatedItem.OdataID)
+		}
+
 		firmData := FirmwareData{
-			Name:       y.Name,
-			Id:         y.ID,
-			Version:    y.Version,
-			Updateable: y.Updateable,
+			Name:         y.Name,
+			Id:           y.ID,
+			Version:      y.Version,
+			Updateable:   y.Updateable,
+			RelatedItems: relatedItems,
 		}
 
 		_firmdata = append(_firmdata, firmData)
@@ -1243,24 +1356,60 @@ func (c *redfishProvider) GetLifecycleAttrDell() (LifeCycleData, error) {
 }
 
 // ListUsersDell ...
+func (c *redfishProvider) getAccountCollectionMembersDell() ([]Members, error) {
+	urls := []string{
+		c.Hostname + "/redfish/v1/AccountService/Accounts",
+		c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Accounts",
+	}
+
+	for i, url := range urls {
+		resp, _, status, err := queryData(c, "GET", url, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		if status == http.StatusOK {
+			var members MemberCountDell
+			json.Unmarshal(resp, &members)
+			return members.Members, nil
+		}
+
+		if status == http.StatusNotFound && i == 0 {
+			continue
+		}
+
+		return nil, fmt.Errorf("unexpected status code %d for %s", status, url)
+	}
+
+	return nil, fmt.Errorf("unable to fetch Dell account collection")
+}
+
+func (c *redfishProvider) getAccountMemberURLDell(num int) (string, bool, error) {
+	members, err := c.getAccountCollectionMembersDell()
+	if err != nil {
+		return "", false, err
+	}
+
+	targetSuffix := fmt.Sprintf("/%d", num)
+	for _, member := range members {
+		if strings.HasSuffix(member.OdataId, targetSuffix) {
+			return c.Hostname + member.OdataId, true, nil
+		}
+	}
+
+	return "", false, nil
+}
+
 func (c *redfishProvider) ListUsersDell() ([]UserListDell, error) {
-
-	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Accounts"
-
-	resp, _, _, err := queryData(c, "GET", url, nil)
+	members, err := c.getAccountCollectionMembersDell()
 	if err != nil {
 		return nil, err
 	}
 
-	var (
-		x         MemberCountDell
-		_userdata []UserListDell
-	)
+	var _userdata []UserListDell
 
-	json.Unmarshal(resp, &x)
-
-	for i := range x.Members {
-		_url := c.Hostname + x.Members[i].OdataId
+	for i := range members {
+		_url := c.Hostname + members[i].OdataId
 		resp, _, _, err := queryData(c, "GET", _url, nil)
 		if err != nil {
 			return nil, err
@@ -1307,23 +1456,42 @@ func (c *redfishProvider) CreateUserDell(num int, username string, password stri
 
 // DeleteUserDell ... will delete a user based on ID number
 func (c *redfishProvider) DeleteUserDell(num int) (string, error) {
-	url := fmt.Sprintf("%s/redfish/v1/Managers/iDRAC.Embedded.1/Accounts/%d", c.Hostname, num)
+	url, present, err := c.getAccountMemberURLDell(num)
+	if err != nil {
+		return "", err
+	}
+	if !present {
+		return "account not present", nil
+	}
+
 	data, _ := json.Marshal(map[string]interface{}{
 		"Enabled":  false,
 		"UserName": "",
 	})
 
-	resp, _, _, err := queryData(c, "PATCH", url, []byte(data))
+	resp, _, status, err := queryData(c, "PATCH", url, []byte(data))
 	if err != nil {
 		return "", err
 	}
-	var k JobResponseDell
-	json.Unmarshal(resp, &k)
-	if len(k.MessageExtendedInfo) > 0 {
-		return k.MessageExtendedInfo[0].Message, nil
-	} else {
+
+	rawResponse := strings.TrimSpace(string(resp))
+
+	if status != http.StatusOK && status != http.StatusNoContent {
+		return "", fmt.Errorf("unexpected status code %d deleting account %d via %s: %s", status, num, url, rawResponse)
+	}
+
+	if len(resp) == 0 {
 		return "", nil
 	}
+
+	var k JobResponseDell
+	if err := json.Unmarshal(resp, &k); err != nil {
+		return rawResponse, nil
+	}
+	if len(k.MessageExtendedInfo) > 0 {
+		return k.MessageExtendedInfo[0].Message, nil
+	}
+	return rawResponse, nil
 }
 
 // GetIDRACAttrDell ... will fetch the Idrac attributes
@@ -1331,14 +1499,32 @@ func (c *redfishProvider) GetIDRACAttrDell() (IDRACAttributesData, error) {
 
 	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Attributes"
 
-	resp, _, _, err := queryData(c, "GET", url, nil)
+	resp, _, status, err := queryData(c, "GET", url, nil)
 	if err != nil {
 		return IDRACAttributesData{}, err
 	}
 
 	var x IDRACAttrDell
+	if status == http.StatusOK {
+		json.Unmarshal(resp, &x)
+	}
 
-	json.Unmarshal(resp, &x)
+	if x.Attributes.CurrentNIC_1_MACAddress == "" {
+		managerInterfaceURL := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/EthernetInterfaces/NIC.1"
+		resp, _, managerStatus, err := queryData(c, "GET", managerInterfaceURL, nil)
+		if err != nil {
+			return IDRACAttributesData{}, err
+		}
+		if managerStatus == http.StatusOK {
+			var iface GetMacAddressDell
+			json.Unmarshal(resp, &iface)
+			if iface.MACAddress != "" {
+				x.Attributes.CurrentNIC_1_MACAddress = iface.MACAddress
+			} else if iface.PermanentMACAddress != "" {
+				x.Attributes.CurrentNIC_1_MACAddress = iface.PermanentMACAddress
+			}
+		}
+	}
 
 	return x.Attributes, nil
 
@@ -1364,63 +1550,92 @@ func (c *redfishProvider) GetSysAttrDell() (SysAttributesData, error) {
 
 // GetBootOrderDell ... will fetch the BootOrder Details
 func (c *redfishProvider) GetBootOrderDell() ([]BootOrderData, error) {
-
-	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/BootSources"
-
-	resp, _, _, err := queryData(c, "GET", url, nil)
-	if err != nil {
-		return nil, err
+	urls := []string{
+		c.Hostname + "/redfish/v1/Systems/System.Embedded.1/BootSources",
+		c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Oem/Dell/DellBootSources",
 	}
 
-	var x BootOrderDell
-
-	json.Unmarshal(resp, &x)
-
-	var _bootOrder []BootOrderData
-
-	for i := range x.Attributes.BootSeq {
-
-		_result := BootOrderData{
-			Enabled: x.Attributes.BootSeq[i].Enabled,
-			Index:   x.Attributes.BootSeq[i].Index,
-			Name:    x.Attributes.BootSeq[i].Name,
-			ID:      x.Attributes.BootSeq[i].ID,
+	var lastStatus int
+	for _, url := range urls {
+		resp, _, status, err := queryData(c, "GET", url, nil)
+		if err != nil {
+			return nil, err
+		}
+		if status != http.StatusOK {
+			lastStatus = status
+			continue
 		}
 
-		_bootOrder = append(_bootOrder, _result)
-	}
-
-	for i := range x.Attributes.UefiBootSeq {
-
-		_result := BootOrderData{
-			Enabled: x.Attributes.UefiBootSeq[i].Enabled,
-			Index:   x.Attributes.UefiBootSeq[i].Index,
-			Name:    x.Attributes.UefiBootSeq[i].Name,
-			ID:      x.Attributes.UefiBootSeq[i].ID,
+		var x BootOrderDell
+		if err := json.Unmarshal(resp, &x); err != nil {
+			return nil, err
 		}
 
-		_bootOrder = append(_bootOrder, _result)
+		var bootOrder []BootOrderData
+		for i := range x.Attributes.BootSeq {
+			result := BootOrderData{
+				Enabled: x.Attributes.BootSeq[i].Enabled,
+				Index:   x.Attributes.BootSeq[i].Index,
+				Name:    x.Attributes.BootSeq[i].Name,
+				ID:      x.Attributes.BootSeq[i].ID,
+			}
+
+			bootOrder = append(bootOrder, result)
+		}
+
+		for i := range x.Attributes.UefiBootSeq {
+			result := BootOrderData{
+				Enabled: x.Attributes.UefiBootSeq[i].Enabled,
+				Index:   x.Attributes.UefiBootSeq[i].Index,
+				Name:    x.Attributes.UefiBootSeq[i].Name,
+				ID:      x.Attributes.UefiBootSeq[i].ID,
+			}
+
+			bootOrder = append(bootOrder, result)
+		}
+
+		return bootOrder, nil
 	}
 
-	return _bootOrder, nil
+	if lastStatus != 0 {
+		return nil, fmt.Errorf("unable to fetch Dell boot sources, last status: %d", lastStatus)
+	}
+
+	return nil, fmt.Errorf("unable to fetch Dell boot sources")
 
 }
 
 // SetBootOrderDell ... Set the Boot Order f
 func (c *redfishProvider) SetBootOrderDell(jsonData []byte) (string, error) {
-	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/BootSources/Settings"
-	resp, _, _, err := queryData(c, "PATCH", url, jsonData)
-	if err != nil {
-		return "", err
+	urls := []string{
+		c.Hostname + "/redfish/v1/Systems/System.Embedded.1/BootSources/Settings",
+		c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Oem/Dell/DellBootSources/Settings",
 	}
 
-	var k JobResponseDell
-	json.Unmarshal(resp, &k)
-	if len(k.MessageExtendedInfo) > 0 {
-		return k.MessageExtendedInfo[0].Message, nil
-	} else {
+	var lastStatus int
+	for _, url := range urls {
+		resp, _, status, err := queryData(c, "PATCH", url, jsonData)
+		if err != nil {
+			return "", err
+		}
+		if status != http.StatusOK && status != http.StatusAccepted {
+			lastStatus = status
+			continue
+		}
+
+		var k JobResponseDell
+		json.Unmarshal(resp, &k)
+		if len(k.MessageExtendedInfo) > 0 {
+			return k.MessageExtendedInfo[0].Message, nil
+		}
 		return "", nil
 	}
+
+	if lastStatus != 0 {
+		return "", fmt.Errorf("unable to update Dell boot sources, last status: %d", lastStatus)
+	}
+
+	return "", fmt.Errorf("unable to update Dell boot sources")
 
 }
 
@@ -1565,21 +1780,15 @@ func (c *redfishProvider) WriteLCLog(messageDesctiption string) (string, error) 
 
 // GetUserAccountsDell ... Fetch the current users created
 func (c *redfishProvider) GetUserAccountsDell() ([]Accounts, error) {
-
-	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Accounts"
-
-	resp, _, _, err := queryData(c, "GET", url, nil)
+	members, err := c.getAccountCollectionMembersDell()
 	if err != nil {
 		return nil, err
 	}
 
-	var x MemberCountDell
 	var users []Accounts
 
-	json.Unmarshal(resp, &x)
-
-	for i := range x.Members {
-		_url := c.Hostname + x.Members[i].OdataId
+	for i := range members {
+		_url := c.Hostname + members[i].OdataId
 		resp, _, _, err := queryData(c, "GET", _url, nil)
 		if err != nil {
 			return nil, err
@@ -1656,6 +1865,9 @@ func (c *redfishProvider) GetComponentAttr(comp string) (ExportConfigResponse, e
 			break
 		}
 	}
+	if taskURL == "" {
+		return ExportConfigResponse{}, fmt.Errorf("missing Location header for component export task")
+	}
 
 	for {
 		taskUrl := c.Hostname + taskURL
@@ -1678,8 +1890,6 @@ func (c *redfishProvider) GetComponentAttr(comp string) (ExportConfigResponse, e
 			return y, nil
 		}
 	}
-
-	return ExportConfigResponse{}, nil
 }
 
 // MountImageDell ... Will mount a image over http share
