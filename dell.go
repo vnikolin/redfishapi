@@ -1618,7 +1618,7 @@ func (c *redfishProvider) SetBootOrderDell(jsonData []byte) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		if status != http.StatusOK && status != http.StatusAccepted {
+		if status != http.StatusOK && status != http.StatusAccepted && status != http.StatusNoContent {
 			lastStatus = status
 			continue
 		}

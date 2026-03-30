@@ -42,3 +42,24 @@ func TestGetBootOrderDellFallsBackToOemDellBootSources(t *testing.T) {
 		t.Fatalf("unexpected second boot entry: %+v", result[1])
 	}
 }
+
+func TestSetBootOrderDellTreatsNoContentAsSuccess(t *testing.T) {
+	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/redfish/v1/Systems/System.Embedded.1/BootSources/Settings":
+			w.WriteHeader(http.StatusNoContent)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	provider := &redfishProvider{Hostname: server.URL, Username: "user", Password: "pass"}
+	message, err := provider.SetBootOrderDell([]byte(`{"Attributes":{}}`))
+	if err != nil {
+		t.Fatalf("SetBootOrderDell returned error: %v", err)
+	}
+	if message != "" {
+		t.Fatalf("expected empty message for 204 response, got %q", message)
+	}
+}
