@@ -49,6 +49,7 @@ type RedfishProvider interface {
 	SetBiosSettingsDell(jsonData []byte) (string, error)
 	ClearJobsDell() (string, error)
 	SetAttributesDell(service string, jsonData []byte) (string, error)
+	GetStorageControllers() ([]Members, error)
 	GetStorageRaidDell() ([]StorageRaidDetailsDell, error)
 	GetNetworkSwitchInfoDell() ([]SwitchData, error)
 	GetNetworkPortsDell() ([]MACData, error)
@@ -456,6 +457,21 @@ func (c *redfishProvider) FleaDrainDell() (string, error) {
 	}
 
 	return header.Get("Location"), nil
+}
+
+// GetStorageControllers ... Fetch the storage collection members only.
+func (c *redfishProvider) GetStorageControllers() ([]Members, error) {
+	url := c.Hostname + "/redfish/v1/Systems/System.Embedded.1/Storage"
+
+	resp, _, _, err := queryData(c, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var members MemberCountDell
+	json.Unmarshal(resp, &members)
+
+	return members.Members, nil
 }
 
 // GetStorageRaidDell ... Will Fetch the Storage Raid Details
