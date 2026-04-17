@@ -615,9 +615,6 @@ func (c *redfishProvider) GetNetworkPortsDell() ([]MACData, error) {
 			if macAddress == "" {
 				macAddress = iface.PermanentMACAddress
 			}
-			if macAddress == "" {
-				continue
-			}
 
 			macData := MACData{
 				Name:                 iface.ID,
