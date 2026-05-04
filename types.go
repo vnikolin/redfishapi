@@ -4312,22 +4312,30 @@ type JobResponseDell struct {
 }
 
 type JobStatusDell struct {
-	OdataContext      string
-	OdataID           string
-	OdataType         string
-	CompletionTime    string        `json:"CompletionTime"`
-	Description       string        `json:"Description"`
-	EndTime           string        `json:"EndTime"`
-	ID                string        `json:"Id"`
-	JobState          string        `json:"JobState"`
-	JobType           string        `json:"JobType"`
-	Message           string        `json:"Message"`
-	MessageArgs       []interface{} `json:"MessageArgs"`
-	MessageID         string        `json:"MessageId"`
-	Name              string        `json:"Name"`
-	PercentComplete   int           `json:"PercentComplete"`
-	StartTime         string        `json:"StartTime"`
-	TargetSettingsURI interface{}   `json:"TargetSettingsURI"`
+	OdataContext   string
+	OdataID        string
+	OdataType      string
+	CompletionTime string        `json:"CompletionTime"`
+	Description    string        `json:"Description"`
+	EndTime        string        `json:"EndTime"`
+	ID             string        `json:"Id"`
+	JobState       string        `json:"JobState"`
+	JobStatus      string        `json:"JobStatus"`
+	JobType        string        `json:"JobType"`
+	Message        string        `json:"Message"`
+	MessageArgs    []interface{} `json:"MessageArgs"`
+	MessageID      string        `json:"MessageId"`
+	Messages       []struct {
+		Message                 string        `json:"Message"`
+		MessageArgs             []interface{} `json:"MessageArgs"`
+		MessageArgs_odata_count int           `json:"MessageArgs@odata.count"`
+		MessageID               string        `json:"MessageId"`
+	} `json:"Messages"`
+	Messages_odata_count int         `json:"Messages@odata.count"`
+	Name                 string      `json:"Name"`
+	PercentComplete      int         `json:"PercentComplete"`
+	StartTime            string      `json:"StartTime"`
+	TargetSettingsURI    interface{} `json:"TargetSettingsURI"`
 }
 
 type UserListResponseDell struct {
