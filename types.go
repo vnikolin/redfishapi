@@ -752,6 +752,8 @@ type IDRACAttributesData struct {
 	Serial_1_HistorySize                                                 int         `json:"Serial.1.HistorySize"`
 	Serial_1_IdleTimeout                                                 int         `json:"Serial.1.IdleTimeout"`
 	Serial_1_NoAuth                                                      string      `json:"Serial.1.NoAuth"`
+	SerialCapture_1_Enable                                               string      `json:"SerialCapture.1.Enable"`
+	SerialCapture_1_SerialDataSize                                       int         `json:"SerialCapture.1.SerialDataSize"`
 	SerialRedirection_1_Enable                                           string      `json:"SerialRedirection.1.Enable"`
 	SerialRedirection_1_QuitKey                                          string      `json:"SerialRedirection.1.QuitKey"`
 	ServerBoot_1_BootOnce                                                string      `json:"ServerBoot.1.BootOnce"`
