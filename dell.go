@@ -396,27 +396,55 @@ func (c *redfishProvider) ClearJobsDellForce() (string, error) {
 //SetAttributesDell ... Will set the Attributes for IDRAC,Lifecycle Attributes and System
 /* Payload
 {"Attributes":{"LCAttributes.1.AutoUpdate": "1"}}
+
+For service=="idrac" the OEM DellAttributes endpoint is tried first because
+it is supported on both iDRAC9 (15g/16g) and iDRAC10 (17g+); the legacy
+/Managers/iDRAC.Embedded.1/Attributes path is used as a fallback in case the
+OEM endpoint is unavailable on a given firmware build.
 */
 func (c *redfishProvider) SetAttributesDell(service string, jsonData []byte) (string, error) {
-	var url string
-	if service == "idrac" {
-		url = c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Attributes"
-	} else if service == "lc" {
-		url = c.Hostname + "/redfish/v1/Managers/LifecycleController.Embedded.1/Attributes"
-	} else if service == "system" {
-		url = c.Hostname + "/redfish/v1/Managers/System.Embedded.1/Attributes"
+	var urls []string
+	switch service {
+	case "idrac":
+		urls = []string{
+			c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Oem/Dell/DellAttributes/iDRAC.Embedded.1",
+			c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Attributes",
+		}
+	case "lc":
+		urls = []string{c.Hostname + "/redfish/v1/Managers/LifecycleController.Embedded.1/Attributes"}
+	case "system":
+		urls = []string{c.Hostname + "/redfish/v1/Managers/System.Embedded.1/Attributes"}
+	default:
+		return "", fmt.Errorf("unsupported attributes service %q", service)
 	}
-	resp, _, _, err := queryData(c, "PATCH", url, jsonData)
-	if err != nil {
-		return "", err
+
+	var (
+		resp       []byte
+		status     int
+		lastStatus int
+		err        error
+	)
+	for _, url := range urls {
+		resp, _, status, err = queryData(c, "PATCH", url, jsonData)
+		if err != nil {
+			return "", err
+		}
+		if status == http.StatusOK || status == http.StatusNoContent || status == http.StatusAccepted {
+			lastStatus = status
+			break
+		}
+		lastStatus = status
 	}
+	if lastStatus != http.StatusOK && lastStatus != http.StatusNoContent && lastStatus != http.StatusAccepted {
+		return "", fmt.Errorf("unable to set %s attributes, last status: %d", service, lastStatus)
+	}
+
 	var k JobResponseDell
 	json.Unmarshal(resp, &k)
 	if len(k.MessageExtendedInfo) > 0 {
 		return k.MessageExtendedInfo[0].Message, nil
-	} else {
-		return "", nil
 	}
+	return "", nil
 }
 
 // ClearStorageControllerRaidDell ... Clears Raid of the Storage Controller and returns the jub URL
@@ -1507,18 +1535,36 @@ func (c *redfishProvider) DeleteUserDell(num int) (string, error) {
 	return rawResponse, nil
 }
 
-// GetIDRACAttrDell ... will fetch the Idrac attributes
+// GetIDRACAttrDell ... will fetch the Idrac attributes.
+// The OEM DellAttributes endpoint is queried first because it is supported on
+// both iDRAC9 (15g/16g) and iDRAC10 (17g+); the legacy generic Attributes path
+// is tried as a fallback in case the OEM endpoint is unavailable.
 func (c *redfishProvider) GetIDRACAttrDell() (IDRACAttributesData, error) {
 
-	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Attributes"
+	urls := []string{
+		c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Oem/Dell/DellAttributes/iDRAC.Embedded.1",
+		c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Attributes",
+	}
 
-	resp, _, status, err := queryData(c, "GET", url, nil)
-	if err != nil {
-		return IDRACAttributesData{}, err
+	var (
+		resp       []byte
+		status     int
+		lastStatus int
+		err        error
+	)
+	for _, url := range urls {
+		resp, _, status, err = queryData(c, "GET", url, nil)
+		if err != nil {
+			return IDRACAttributesData{}, err
+		}
+		lastStatus = status
+		if status == http.StatusOK {
+			break
+		}
 	}
 
 	var x IDRACAttrDell
-	if status == http.StatusOK {
+	if lastStatus == http.StatusOK {
 		json.Unmarshal(resp, &x)
 	}
 
