@@ -85,6 +85,8 @@ type RedfishProvider interface {
 	UnMountImageDell() (string, error)
 	GetRemoteImageStatusDell() (ImageStatusDell, error)
 	ClearStorageControllerRaidDell(controllerID string) (string, error)
+	SystemEraseDell(components []string) (string, error)
+	SecureEraseDriveDell(secureEraseTarget string) (string, error)
 	GetJobStatusDell(jobID string) (JobStatusDell, error)
 	ClearJobsDellForce() (string, error)
 	FleaDrainDell() (string, error)
@@ -376,20 +378,27 @@ func (c *redfishProvider) ClearJobsDell() (string, error) {
 // ClearJobsDellForce ... Forces the deletion of all the Jobs in the jobs queue
 func (c *redfishProvider) ClearJobsDellForce() (string, error) {
 
-	url := c.Hostname + "/redfish/v1/Dell/Managers/iDRAC.Embedded.1/DellJobService/Actions/DellJobService.DeleteJobQueue"
+	urls := []string{
+		c.Hostname + "/redfish/v1/Dell/Managers/iDRAC.Embedded.1/DellJobService/Actions/DellJobService.DeleteJobQueue",
+		c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Oem/Dell/DellJobService/Actions/DellJobService.DeleteJobQueue",
+	}
 	var jsonStr = []byte(`{"JobID": "JID_CLEARALL_FORCE"}`)
 
-	_, _, status, err := queryData(c, "POST", url, jsonStr)
+	var lastErr error
+	for _, url := range urls {
+		_, _, status, err := queryData(c, "POST", url, jsonStr)
+		if err != nil {
+			lastErr = err
+			continue
+		}
 
-	if err != nil {
-		return "failure", err
+		if status == http.StatusOK {
+			return "success", nil
+		}
+		lastErr = fmt.Errorf("unexpected status code: %d", status)
 	}
 
-	if status != http.StatusOK {
-		return "failure", fmt.Errorf("unexpected status code: %d", status)
-	}
-
-	return "success", nil
+	return "failure", lastErr
 
 }
 
@@ -462,6 +471,55 @@ func (c *redfishProvider) ClearStorageControllerRaidDell(controllerID string) (s
 	}
 
 	// check if the status is 202
+	if status != http.StatusAccepted {
+		return "", fmt.Errorf("unexpected status code: %d", status)
+	}
+
+	return header.Get("Location"), nil
+}
+
+// SecureEraseDriveDell ... Secure erases a physical drive and returns the job URL
+func (c *redfishProvider) SecureEraseDriveDell(secureEraseTarget string) (string, error) {
+	secureEraseTarget = strings.TrimSpace(secureEraseTarget)
+	if secureEraseTarget == "" {
+		return "", fmt.Errorf("empty secure erase target")
+	}
+
+	url := secureEraseTarget
+	if strings.HasPrefix(secureEraseTarget, "/") {
+		url = c.Hostname + secureEraseTarget
+	} else if !strings.HasPrefix(strings.ToLower(secureEraseTarget), "http://") && !strings.HasPrefix(strings.ToLower(secureEraseTarget), "https://") {
+		url = c.Hostname + "/" + secureEraseTarget
+	}
+
+	_, header, status, err := queryData(c, "POST", url, []byte(`{}`))
+	if err != nil {
+		return "", err
+	}
+
+	if status != http.StatusAccepted {
+		return "", fmt.Errorf("unexpected status code: %d", status)
+	}
+
+	return header.Get("Location"), nil
+}
+
+// SystemEraseDell ... Performs a Dell Lifecycle Controller SystemErase and returns the job URL
+func (c *redfishProvider) SystemEraseDell(components []string) (string, error) {
+	if len(components) == 0 {
+		return "", fmt.Errorf("empty system erase components")
+	}
+
+	url := c.Hostname + "/redfish/v1/Managers/iDRAC.Embedded.1/Oem/Dell/DellLCService/Actions/DellLCService.SystemErase"
+	data, _ := json.Marshal(map[string]interface{}{
+		"Component": components,
+	})
+
+	_, header, status, err := queryData(c, "POST", url, []byte(data))
+	if err != nil {
+		return "", err
+	}
+
 	if status != http.StatusAccepted {
 		return "", fmt.Errorf("unexpected status code: %d", status)
 	}

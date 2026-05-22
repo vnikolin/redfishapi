@@ -2608,7 +2608,7 @@ type StorageDriveDetailsDell struct {
 	Actions struct {
 		Drive_SecureErase struct {
 			Target string `json:"target"`
-		}
+		} `json:"#Drive.SecureErase"`
 	} `json:"Actions"`
 	Assembly struct {
 		_odata_id string
